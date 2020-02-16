@@ -1,6 +1,6 @@
 Sobre o que é o Projeto?
 =====================
-O objetivo deste projeto é implementar as tecnologias usadas mais comuns e compartilhar com a comunidade um projeto base de WEB API em NET Core.
+O objetivo deste projeto foi implementar as tecnologias mais comumente usadas,  e compartilhar como um projeto base para WEB API em NET Core 3.1 
 
 ## Dê uma estrela! :star:
 Se você gostou do projeto ou ajudou de alguma maneira, dê uma estrela ;)
@@ -17,13 +17,13 @@ Para saber mais sobre como configurar seu ambiente, visite o [Guia de Download d
 ## Tecnologias implementadas:
 
 - .NET Core 3.1
-- ASP.NET WebApi Core COM JWT Bearer Authentication
+- ASP.NET WebApi Core com JWT Bearer Authentication
 - ASP.NET Identity Core
 - Entity Framework Core 3.1
 - .NET Core Native DI
 - AutoMapper
 - FluentValidator
-- Swagger UI with JWT support
+- Swagger UI com JWT support
 - Health Checks
 - Redis
 - Ip Rate Limit 
