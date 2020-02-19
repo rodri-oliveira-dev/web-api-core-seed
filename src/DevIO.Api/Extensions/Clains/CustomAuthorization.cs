@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Restaurante.IO.Api.Extensions.Clains
 {
-    public class CustomAuthorization
+    public static class CustomAuthorization
     {
         public static bool ValidarClaimsUsuario(HttpContext context, string claimName, string claimValue)
         {
@@ -14,7 +14,7 @@ namespace Restaurante.IO.Api.Extensions.Clains
                 {
                     return true;
                 }
-                return context.User.Claims.Any(c => c.Type == claimName && c.Value.Contains(claimValue));
+                return context.User.Claims.Any(c => c.Type == claimName && c.Value.Contains(claimValue,StringComparison.CurrentCultureIgnoreCase));
             }
             return false;
         }

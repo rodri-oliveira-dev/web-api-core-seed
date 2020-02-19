@@ -4,12 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Restaurante.IO.Api.ViewModels
 {
-    public class PedidoViewModel
+    public class PedidoViewModel: MainViewModel
     {
-        [Key]
-        [NotEmpty]
-        public Guid Id { get; set; }
-
         [NotEmpty]
         public Guid AtendenteId { get; set; }
 

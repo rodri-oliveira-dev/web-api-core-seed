@@ -41,7 +41,7 @@ namespace Restaurante.IO.Api.Controllers
                 statusCode: id);
         }
 
-        private string RetornaMensagemErro(int statusCode)
+        private static string RetornaMensagemErro(int statusCode)
         {
             return statusCode switch
             {

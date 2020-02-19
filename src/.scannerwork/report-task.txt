@@ -1,0 +1,6 @@
+projectKey=web-api-core-seed
+serverUrl=http://localhost:32768
+serverVersion=7.9.2.30863
+dashboardUrl=http://localhost:32768/dashboard?id=web-api-core-seed
+ceTaskId=AXBa7sv9ZSPih7C4nBHP
+ceTaskUrl=http://localhost:32768/api/ce/task?id=AXBa7sv9ZSPih7C4nBHP

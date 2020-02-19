@@ -11,7 +11,7 @@ namespace Restaurante.IO.Business.Models.Validations
                 .Length(1, 50).WithMessage("O campo {PropertyName} precisa ter entre {MinLength} e {MaxLength} caracteres");
 
             RuleFor(c => c.Lugares)
-                .LessThanOrEqualTo(0).WithMessage("O campo {PropertyName} precisa ser maior que zero");
+                .GreaterThanOrEqualTo(0).WithMessage("O campo {PropertyName} precisa ser maior que zero");
         }
     }
 }

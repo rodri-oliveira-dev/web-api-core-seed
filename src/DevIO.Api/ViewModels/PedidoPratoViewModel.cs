@@ -5,12 +5,8 @@ using Restaurante.IO.Business.Models.Enums;
 
 namespace Restaurante.IO.Api.ViewModels
 {
-    public class PedidoPratoViewModel
+    public class PedidoPratoViewModel: MainViewModel
     {
-        [Key]
-        [NotEmpty]
-        public Guid Id { get; set; }
-
         [NotEmpty]
         public Guid PedidoId { get; set; }
 

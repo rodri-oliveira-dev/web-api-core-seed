@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using System;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -8,7 +9,13 @@ namespace Restaurante.IO.Api.Configuration
     {
         public static IServiceCollection ConfigureCookie(this IServiceCollection services)
         {
-            services.ConfigureApplicationCookie(o => o.Cookie.SecurePolicy = CookieSecurePolicy.Always);
+            services.ConfigureApplicationCookie(o =>
+            {
+                o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                o.Cookie.HttpOnly = true;
+                o.Cookie.Expiration = TimeSpan.FromHours(1);
+                o.SlidingExpiration = true;
+            });
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.MinimumSameSitePolicy = SameSiteMode.Lax;
@@ -44,7 +51,7 @@ namespace Restaurante.IO.Api.Configuration
             // - Chrome on iOS 12 for iPhone, iPod Touch, iPad
             // All of which are broken by SameSite=None, because they use the iOS networking
             // stack.
-            if (userAgent.Contains("CPU iPhone OS 12") || userAgent.Contains("iPad; CPU OS 12"))
+            if (userAgent.Contains("CPU iPhone OS 12", StringComparison.CurrentCultureIgnoreCase) || userAgent.Contains("iPad; CPU OS 12", StringComparison.CurrentCultureIgnoreCase))
             {
                 return true;
             }
@@ -55,7 +62,7 @@ namespace Restaurante.IO.Api.Configuration
             // This does not include:
             // - Chrome on Mac OS X
             // Because they do not use the Mac OS networking stack.
-            if (userAgent.Contains("Macintosh; Intel Mac OS X 10_14") && userAgent.Contains("Version/") && userAgent.Contains("Safari"))
+            if (userAgent.Contains("Macintosh; Intel Mac OS X 10_14", StringComparison.CurrentCultureIgnoreCase) && userAgent.Contains("Version/", StringComparison.CurrentCultureIgnoreCase) && userAgent.Contains("Safari", StringComparison.CurrentCultureIgnoreCase))
             {
                 return true;
             }
@@ -64,7 +71,7 @@ namespace Restaurante.IO.Api.Configuration
             // and none in this range require it.
             // Note: this covers some pre-Chromium Edge versions, 
             // but pre-Chromium Edge does not require SameSite=None.
-            if (userAgent.Contains("Chrome/5") || userAgent.Contains("Chrome/6"))
+            if (userAgent.Contains("Chrome/5", StringComparison.CurrentCultureIgnoreCase) || userAgent.Contains("Chrome/6", StringComparison.CurrentCultureIgnoreCase))
             {
                 return true;
             }

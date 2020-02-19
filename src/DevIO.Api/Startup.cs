@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -15,6 +16,7 @@ using System.IO.Compression;
 using System.Linq;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+using Microsoft.AspNetCore.HttpsPolicy;
 using Restaurante.IO.Api.Configuration.Cache;
 
 namespace Restaurante.IO.Api
@@ -70,26 +72,31 @@ namespace Restaurante.IO.Api
                 services.AddHealthChecks().AddRedis(cacheSettings.ConnectionString, "Cache Redis");
             }
 
+            services.Configure<HstsOptions>(options =>
+            {
+                options.IncludeSubDomains = true;
+                options.MaxAge = TimeSpan.FromDays(365);
+            });
+
             services.AddHealthChecksUI();
 
             services.ConfigureCache(Configuration);
         }
 
-        public void Configure(IApplicationBuilder app, IHostEnvironment env, IApiVersionDescriptionProvider provider)
+        public static void Configure(IApplicationBuilder app, IHostEnvironment env, IApiVersionDescriptionProvider provider)
         {
             if (env.IsDevelopment())
             {
                 app.UseCors("Development");
-                app.UseHsts();
                 app.UseExceptionHandler("/error-local-development");
             }
             else
             {
                 app.UseCors("Production");
-                app.UseHsts();
                 app.UseExceptionHandler("/error");
             }
 
+            app.UseHsts();
             app.UseStatusCodePagesWithRedirects("/error/{0}");
             app.ConfigureRateLimit();
             app.AjustesSeguranca();
@@ -103,6 +110,7 @@ namespace Restaurante.IO.Api
                 ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 
             });
+
             app.UseHealthChecksUI(options =>
             {
                 options.UIPath = "/hc-ui";

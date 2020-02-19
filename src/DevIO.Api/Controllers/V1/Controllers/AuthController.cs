@@ -50,10 +50,10 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
                 EmailConfirmed = true
             };
 
-            var result = await _userManager.CreateAsync(user, registerUser.Password).ConfigureAwait(false);
+            var result = await _userManager.CreateAsync(user, registerUser.Password);
             if (result.Succeeded)
             {
-                await _signInManager.SignInAsync(user, false).ConfigureAwait(false);
+                await _signInManager.SignInAsync(user, false);
                 return CustomResponse(await GerarJwt(user.Email));
             }
 
@@ -73,7 +73,7 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState);
 
-            var result = await _signInManager.PasswordSignInAsync(loginUser.Email, loginUser.Password, false, true).ConfigureAwait(false);
+            var result = await _signInManager.PasswordSignInAsync(loginUser.Email, loginUser.Password, false, true);
 
             if (result.Succeeded)
             {
@@ -91,15 +91,16 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
 
         private async Task<LoginResponseViewModel> GerarJwt(string email)
         {
-            var user = await _userManager.FindByEmailAsync(email).ConfigureAwait(false);
-            var claims = await _userManager.GetClaimsAsync(user).ConfigureAwait(false);
-            var userRoles = await _userManager.GetRolesAsync(user).ConfigureAwait(false);
+            var user = await _userManager.FindByEmailAsync(email);
+            var claims = await _userManager.GetClaimsAsync(user);
+            var userRoles = await _userManager.GetRolesAsync(user);
+            var culture= new System.Globalization.CultureInfo("pt-BR");
 
             claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
             claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
             claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, ToUnixEpochDate(DateTime.UtcNow).ToString()));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(DateTime.UtcNow).ToString(), ClaimValueTypes.Integer64));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, ToUnixEpochDate(DateTime.UtcNow).ToString(culture)));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(DateTime.UtcNow).ToString(culture), ClaimValueTypes.Integer64));
             foreach (var userRole in userRoles)
             {
                 claims.Add(new Claim("role", userRole));

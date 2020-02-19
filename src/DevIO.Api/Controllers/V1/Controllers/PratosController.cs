@@ -81,7 +81,7 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<PratoViewModel>> ObterPorId(Guid id)
         {
-            var pratoViewModel = await ObterPrato(id).ConfigureAwait(false);
+            var pratoViewModel = await ObterPrato(id);
 
             if (pratoViewModel == null) return CustomResponse(tipoAcao: ETipoAcao.NaoEncontrado);
 
@@ -113,7 +113,7 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
             }
 
             pratoViewModel.Foto = imagemNome;
-            await _pratoService.Adicionar(_mapper.Map<Prato>(pratoViewModel)).ConfigureAwait(false);
+            await _pratoService.Adicionar(_mapper.Map<Prato>(pratoViewModel));
 
             return CustomResponse(pratoViewModel, ETipoAcao.Adicionado);
         }
@@ -142,7 +142,7 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
                 return CustomResponse(pratoViewModel, ETipoAcao.ModeloInvalido);
             }
 
-            var pratoAtualizacao = await ObterPrato(id).ConfigureAwait(false);
+            var pratoAtualizacao = await ObterPrato(id);
 
             if (pratoAtualizacao == null) return CustomResponse(ModelState, ETipoAcao.NaoEncontrado);
 
@@ -165,7 +165,7 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
             pratoAtualizacao.Ativo = pratoViewModel.Ativo;
             pratoAtualizacao.TipoPrato = pratoAtualizacao.TipoPrato;
 
-            await _pratoService.Atualizar(_mapper.Map<Prato>(pratoAtualizacao)).ConfigureAwait(false);
+            await _pratoService.Atualizar(_mapper.Map<Prato>(pratoAtualizacao));
 
             return CustomResponse(pratoViewModel, ETipoAcao.Atualizado);
         }
@@ -188,11 +188,11 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status404NotFound)]
         public async Task<ActionResult<PratoViewModel>> Excluir(Guid id)
         {
-            var prato = await ObterPrato(id).ConfigureAwait(false);
+            var prato = await ObterPrato(id);
 
             if (prato == null) return CustomResponse(null, ETipoAcao.NaoEncontrado);
 
-            await _pratoService.Remover(id).ConfigureAwait(false);
+            await _pratoService.Remover(id);
 
             return CustomResponse(prato, ETipoAcao.Excluido);
         }
@@ -228,7 +228,7 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
 
         private async Task<PratoViewModel> ObterPrato(Guid id)
         {
-            return _mapper.Map<PratoViewModel>(await _pratoRepository.ObterPorId(id).ConfigureAwait(false));
+            return _mapper.Map<PratoViewModel>(await _pratoRepository.ObterPorId(id));
         }
 
         private async Task<PaginationResult<PratoViewModel>> ObterPratos(PaginationParameter paginationParameter)

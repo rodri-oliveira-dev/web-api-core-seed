@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Restaurante.IO.Api.Extensions;
 using Restaurante.IO.Api.Extensions.Authorization;
+using Restaurante.IO.Api.ViewModels;
 using Restaurante.IO.Business.Intefaces;
 using Restaurante.IO.Business.Notificacoes;
 
@@ -65,7 +66,12 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
                         return Ok(new CustomResult(true, result));
 
                     case ETipoAcao.Adicionado:// HTTP Code 201
-                        return Created("", new CustomResult(true, result));
+                        if (result is MainViewModel mainView)
+                        {
+                            return Created(new Uri($"{Url.ActionContext.HttpContext.Request.Scheme}://{Url.ActionContext.HttpContext.Request.Host}{Url.ActionContext.HttpContext.Request.Path}/{mainView.Id}"), new CustomResult(true, result));
+                        }
+
+                        return Created(new Uri($"{Url.ActionContext.HttpContext.Request.Scheme}://{Url.ActionContext.HttpContext.Request.Host}{Url.ActionContext.HttpContext.Request.Path}"), new CustomResult(true, result));
 
                     case ETipoAcao.Atualizado:// HTTP Code 204
                         return new CustomNoContentResult(new CustomResult(true, result));
