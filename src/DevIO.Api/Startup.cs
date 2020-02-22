@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Data.SqlClient;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
@@ -33,14 +34,22 @@ namespace Restaurante.IO.Api
         {
             services.AddDbContext<MeuDbContext>(options =>
             {
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
+                var builder = new SqlConnectionStringBuilder(Configuration.GetConnectionString("DefaultConnection"))
+                {
+                    Password = Configuration["DbPassword"]
+                };
+
+                options.UseSqlServer(builder.ConnectionString)
                     .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 
             services.AddMvc(options => { options.RespectBrowserAcceptHeader = true; })
                 .AddNewtonsoftJson()
-                //Otimiza tamanho dos retornos removendo as propriedades nulas.
-                .AddJsonOptions(op => { op.JsonSerializerOptions.IgnoreNullValues = true; });
+                .AddJsonOptions(op => { op.JsonSerializerOptions.IgnoreNullValues = true; })
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                });
 
             services.AddIdentityConfiguration(Configuration);
             services.AddAutoMapper(typeof(Startup));
@@ -59,7 +68,12 @@ namespace Restaurante.IO.Api
             });
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.ConfigureCookie();
-            services.AddControllers(options => options.Filters.Add(new HttpResponseExceptionFilter()));
+            services.AddControllers(options => options.Filters.Add(new HttpResponseExceptionFilter()))
+                .AddJsonOptions(op => { op.JsonSerializerOptions.IgnoreNullValues = true; })
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
+                });
 
             services.AddHealthChecks().AddSqlServer(Configuration.GetConnectionString("DefaultConnection"), name: "Banco de Dados", tags: new[] { "db", "sql", "sqlserver" });
 

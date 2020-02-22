@@ -22,7 +22,10 @@ namespace Restaurante.IO.Api.Services
                 return;
             }
 
-            var serializedResponse = JsonConvert.SerializeObject(response);
+            var serializedResponse = JsonConvert.SerializeObject(response,Formatting.Indented,new JsonSerializerSettings
+            {
+                NullValueHandling = NullValueHandling.Ignore
+            });
 
             await _distributedCache.SetStringAsync(cacheKey, serializedResponse, new DistributedCacheEntryOptions
             {

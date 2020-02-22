@@ -13,7 +13,7 @@ namespace Restaurante.IO.Api.Configuration
             {
                 o.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 o.Cookie.HttpOnly = true;
-                o.Cookie.Expiration = TimeSpan.FromHours(1);
+                o.ExpireTimeSpan = TimeSpan.FromHours(1);
                 o.SlidingExpiration = true;
             });
             services.Configure<CookiePolicyOptions>(options =>

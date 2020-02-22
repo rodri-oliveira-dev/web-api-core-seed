@@ -7,10 +7,11 @@
     <TypeScriptToolsVersion>3.7</TypeScriptToolsVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <PropertyGroup>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
-    <DocumentationFile>C:\estudos\projetos\restaurante\src\DevIO.Api\bin\Debug\netcoreapp3.1\Restaurante.IO.Api.xml</DocumentationFile>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <UserSecretsId>c52dbe85-d94e-4cc2-9856-529f22712174</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>

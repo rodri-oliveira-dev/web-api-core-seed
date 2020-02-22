@@ -43,7 +43,7 @@ namespace Restaurante.IO.Api.Configuration
                     builder =>
                         builder
                             .WithMethods("GET", "POST", "PUT", "DELETE")
-                            .WithOrigins("https://localhost")
+                            .AllowAnyOrigin()
                             .SetIsOriginAllowedToAllowWildcardSubdomains()
                             .AllowAnyHeader());
             });
@@ -74,7 +74,11 @@ namespace Restaurante.IO.Api.Configuration
                 context.Response.Headers.Add("X-Xss-Protection", "1; mode=block");
                 context.Response.Headers.Add("X-Frame-Options", "DENY");
                 context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-                //context.Response.Headers.Add("Content-Security-Policy", "default-src 'self';");
+                context.Response.Headers.Add("Content-Security-Policy", "default-src 'none';" +
+                                                                        "script-src 'self' 'unsafe-inline'; " +
+                                                                        "font-src 'self' https://fonts.gstatic.com; " +
+                                                                        "img-src 'self' https://avatars3.githubusercontent.com data:;" +
+                                                                        "connect-src 'self';style-src 'self' 'unsafe-inline' https://fonts.googleapis.com");
                 context.Response.Headers.Add("Feature-Policy", "camera 'none'; microphone 'none'; speaker 'self';" +
                                                                "vibrate 'none'; geolocation 'none'; accelerometer 'none';" +
                                                                "ambient-light-sensor 'none'; autoplay 'none'; encrypted-media 'none';" +
