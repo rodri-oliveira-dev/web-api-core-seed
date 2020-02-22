@@ -1,7 +1,6 @@
 ﻿using System;
 using AutoMapper;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
@@ -38,10 +37,10 @@ namespace Restaurante.IO.Api
                     .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 
-            services.AddMvc(options =>
-            {
-                options.RespectBrowserAcceptHeader = true;
-            }).AddNewtonsoftJson();
+            services.AddMvc(options => { options.RespectBrowserAcceptHeader = true; })
+                .AddNewtonsoftJson()
+                //Otimiza tamanho dos retornos removendo as propriedades nulas.
+                .AddJsonOptions(op => { op.JsonSerializerOptions.IgnoreNullValues = true; });
 
             services.AddIdentityConfiguration(Configuration);
             services.AddAutoMapper(typeof(Startup));
@@ -53,10 +52,10 @@ namespace Restaurante.IO.Api
             //Ativa compressão dados
             services.AddResponseCompression(options =>
             {
+                options.EnableForHttps = true;
+                options.Providers.Add<BrotliCompressionProvider>();
                 options.Providers.Add<GzipCompressionProvider>();
-                options.MimeTypes =
-                    ResponseCompressionDefaults.MimeTypes.Concat(
-                        new[] { "application/json" });
+                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/json" });
             });
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.ConfigureCookie();
