@@ -44,12 +44,7 @@ namespace Restaurante.IO.Api
             });
 
             services.AddMvc(options => { options.RespectBrowserAcceptHeader = true; })
-                .AddNewtonsoftJson()
-                .AddJsonOptions(op => { op.JsonSerializerOptions.IgnoreNullValues = true; })
-                .AddNewtonsoftJson(options =>
-                {
-                    options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
-                });
+                .AddJsonOptions(op => { op.JsonSerializerOptions.IgnoreNullValues = true; });
 
             services.AddIdentityConfiguration(Configuration);
             services.AddAutoMapper(typeof(Startup));
@@ -69,11 +64,7 @@ namespace Restaurante.IO.Api
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.ConfigureCookie();
             services.AddControllers(options => options.Filters.Add(new HttpResponseExceptionFilter()))
-                .AddJsonOptions(op => { op.JsonSerializerOptions.IgnoreNullValues = true; })
-                .AddNewtonsoftJson(options =>
-                {
-                    options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore;
-                });
+                .AddJsonOptions(op => { op.JsonSerializerOptions.IgnoreNullValues = true; });
 
             services.AddHealthChecks().AddSqlServer(Configuration.GetConnectionString("DefaultConnection"), name: "Banco de Dados", tags: new[] { "db", "sql", "sqlserver" });
 

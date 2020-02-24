@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
-using Newtonsoft.Json;
 using Restaurante.IO.Api.Services.Interfaces;
+using System.Text.Json;
 
 namespace Restaurante.IO.Api.Services
 {
@@ -22,9 +22,9 @@ namespace Restaurante.IO.Api.Services
                 return;
             }
 
-            var serializedResponse = JsonConvert.SerializeObject(response,Formatting.Indented,new JsonSerializerSettings
+            var serializedResponse = JsonSerializer.Serialize(response, new JsonSerializerOptions
             {
-                NullValueHandling = NullValueHandling.Ignore
+                IgnoreNullValues = true
             });
 
             await _distributedCache.SetStringAsync(cacheKey, serializedResponse, new DistributedCacheEntryOptions
