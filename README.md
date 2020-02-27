@@ -1,4 +1,4 @@
-What is the Equinox Project?
+What is the Project?
 =====================
 The objective of this project was to implement the most commonly used technologies, and to share as a base project for WEB API in NET Core 3.1
 
