@@ -28,6 +28,8 @@ To know more about how to setup your enviroment visit the [Microsoft .NET Downlo
 - Redis
 - Ip Rate Limit 
 - OWASP Security
+- Serilog
+- Datasul / Seq
 
 ## Architecture:
 
