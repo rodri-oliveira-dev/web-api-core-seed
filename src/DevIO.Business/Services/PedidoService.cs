@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Restaurante.IO.Business.Intefaces;
-using Restaurante.IO.Business.Intefaces.Repository;
 using Restaurante.IO.Business.Intefaces.Service;
+using Restaurante.IO.Business.Interfaces.Repository;
 using Restaurante.IO.Business.Models;
 using Restaurante.IO.Business.Models.Validations;
 

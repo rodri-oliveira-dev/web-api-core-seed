@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Restaurante.IO.Business.Intefaces.Pagination;
+using Restaurante.IO.Business.Interfaces.Pagination;
 using Restaurante.IO.Business.Models;
 
-namespace Restaurante.IO.Business.Intefaces.Repository
+namespace Restaurante.IO.Business.Interfaces.Repository
 {
     public interface IRepository<TEntity> : IDisposable where TEntity : Entity
     {

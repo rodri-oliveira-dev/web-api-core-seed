@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
-using Restaurante.IO.Business.Intefaces.Pagination;
-using Restaurante.IO.Business.Intefaces.Repository;
+using Restaurante.IO.Business.Interfaces.Pagination;
+using Restaurante.IO.Business.Interfaces.Repository;
 
 
 namespace Restaurante.IO.Data.Repository
@@ -60,8 +60,16 @@ namespace Restaurante.IO.Data.Repository
 
         public virtual async Task<int> Adicionar(TEntity entity)
         {
-            DbSet.Add(entity);
-            return await SaveChanges();
+            try
+            {
+                DbSet.Add(entity);
+                return await SaveChanges();
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+                throw;
+            }
         }
 
         public virtual async Task<int> Atualizar(TEntity entity)

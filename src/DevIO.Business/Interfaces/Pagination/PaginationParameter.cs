@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace Restaurante.IO.Business.Intefaces.Pagination
+namespace Restaurante.IO.Business.Interfaces.Pagination
 {
     public class PaginationParameter
     {

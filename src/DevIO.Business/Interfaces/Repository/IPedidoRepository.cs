@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Restaurante.IO.Business.Models;
 
-namespace Restaurante.IO.Business.Intefaces.Repository
+namespace Restaurante.IO.Business.Interfaces.Repository
 {
     public interface IPedidoRepository : IRepository<Pedido>
     {

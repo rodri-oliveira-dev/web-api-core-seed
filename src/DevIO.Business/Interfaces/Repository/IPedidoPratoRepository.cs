@@ -1,6 +1,6 @@
 ﻿using Restaurante.IO.Business.Models;
 
-namespace Restaurante.IO.Business.Intefaces.Repository
+namespace Restaurante.IO.Business.Interfaces.Repository
 {
     public interface IPedidoPratoRepository : IRepository<PedidoPrato>
     {

@@ -8,8 +8,8 @@ using Restaurante.IO.Api.Extensions;
 using Restaurante.IO.Api.Extensions.Clains;
 using Restaurante.IO.Api.ViewModels;
 using Restaurante.IO.Business.Intefaces;
-using Restaurante.IO.Business.Intefaces.Repository;
 using Restaurante.IO.Business.Intefaces.Service;
+using Restaurante.IO.Business.Interfaces.Repository;
 using Restaurante.IO.Business.Models;
 
 namespace Restaurante.IO.Api.Controllers.V1.Controllers

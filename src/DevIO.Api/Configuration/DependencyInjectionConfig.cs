@@ -8,8 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Restaurante.IO.Api.Configuration.Swagger;
 using Restaurante.IO.Api.Extensions;
-using Restaurante.IO.Business.Intefaces.Repository;
 using Restaurante.IO.Business.Intefaces.Service;
+using Restaurante.IO.Business.Interfaces.Repository;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Restaurante.IO.Api.Configuration

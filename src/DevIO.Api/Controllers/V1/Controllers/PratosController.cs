@@ -6,14 +6,15 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Restaurante.IO.Api.Configuration.Cache;
 using Restaurante.IO.Api.Extensions;
 using Restaurante.IO.Api.Extensions.Clains;
 using Restaurante.IO.Api.ViewModels;
 using Restaurante.IO.Business.Intefaces;
-using Restaurante.IO.Business.Intefaces.Pagination;
-using Restaurante.IO.Business.Intefaces.Repository;
 using Restaurante.IO.Business.Intefaces.Service;
+using Restaurante.IO.Business.Interfaces.Pagination;
+using Restaurante.IO.Business.Interfaces.Repository;
 using Restaurante.IO.Business.Models;
 
 namespace Restaurante.IO.Api.Controllers.V1.Controllers
@@ -28,15 +29,21 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
         private readonly IPratoRepository _pratoRepository;
         private readonly IPratoService _pratoService;
         private readonly IMapper _mapper;
+        private readonly ILogger<PratosController> _logger;
+        private readonly IUser _user;
 
         public PratosController(INotificador notificador,
                                   IPratoRepository pratoRepository,
                                   IPratoService pratoService,
-                                  IMapper mapper) : base(notificador)
+                                  IMapper mapper,
+                                  ILogger<PratosController> logger,
+                                  IUser user) : base(notificador)
         {
             _pratoRepository = pratoRepository;
             _pratoService = pratoService;
             _mapper = mapper;
+            _logger = logger;
+            _user = user;
         }
 
         /// <summary>
@@ -61,6 +68,11 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
             var pratosViewModel = await ObterPratos(paginationParameter);
 
             if (pratosViewModel == null) return CustomResponse(tipoAcao: ETipoAcao.NaoEncontrado);
+            if (_user.IsAuthenticated())
+            {
+                _logger.LogInformation($"{_user.GetUserId()} chamou o metodo");
+            }
+            _logger.LogInformation("usuario anonimo chamou o metodo");
 
             return pratosViewModel;
         }

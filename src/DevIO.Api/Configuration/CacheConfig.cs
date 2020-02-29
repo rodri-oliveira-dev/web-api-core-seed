@@ -1,6 +1,4 @@
-﻿using AspNetCoreRateLimit;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Restaurante.IO.Api.Configuration.Cache;
 using Restaurante.IO.Api.Services;

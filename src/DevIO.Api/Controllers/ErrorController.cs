@@ -3,6 +3,9 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Logging;
+using Restaurante.IO.Api.Controllers.V1.Controllers;
+using Restaurante.IO.Business.Intefaces;
 
 namespace Restaurante.IO.Api.Controllers
 {
@@ -11,7 +14,15 @@ namespace Restaurante.IO.Api.Controllers
     [ApiExplorerSettings(IgnoreApi = true)]
     public class ErrorController : ControllerBase
     {
+        private readonly ILogger<PratosController> _logger;
+        private readonly IUser _user;
         private const string ErrorMessage = "Essa ação não deve ser chamado fora do ambientes de não desenvolvimento.";
+
+        public ErrorController(ILogger<PratosController> logger, IUser user)
+        {
+            _logger = logger;
+            _user = user;
+        }
 
         [Route("/error-local-development")]
         public IActionResult ErrorLocalDevelopment([FromServices] IWebHostEnvironment webHostEnvironment)
@@ -22,7 +33,7 @@ namespace Restaurante.IO.Api.Controllers
             }
 
             var context = HttpContext.Features.Get<IExceptionHandlerFeature>();
-
+            _logger.LogError("err");
             return Problem(
                 context.Error.StackTrace,
                 title: context.Error.Message,
@@ -30,11 +41,17 @@ namespace Restaurante.IO.Api.Controllers
         }
 
         [Route("/error")]
-        public IActionResult Error() => Problem();
+        public IActionResult Error()
+        {
+            var context = HttpContext.Features.Get<IExceptionHandlerFeature>();
+            _logger.LogError("err01");
+            return Problem();
+        }
 
         [Route("/error/{id}")]
         public IActionResult ErrorId(int id)
         {
+            _logger.LogError("err02");
             return Problem(
                 RetornaMensagemErro(id),
                 title: RetornaMensagemErro(id),

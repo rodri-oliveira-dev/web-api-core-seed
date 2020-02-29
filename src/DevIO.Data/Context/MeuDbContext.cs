@@ -1,11 +1,9 @@
-﻿using System;
-using System.IO;
+﻿using Microsoft.EntityFrameworkCore;
+using Restaurante.IO.Business.Models;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Restaurante.IO.Business.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 
 namespace Restaurante.IO.Data.Context
 {
@@ -18,6 +16,7 @@ namespace Restaurante.IO.Data.Context
         public virtual DbSet<PedidoPrato> PedidoPrato { get; set; }
         public virtual DbSet<Pedido> Pedidos { get; set; }
         public virtual DbSet<Prato> Pratos { get; set; }
+        public virtual DbSet<LogginEntity> Loggins { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

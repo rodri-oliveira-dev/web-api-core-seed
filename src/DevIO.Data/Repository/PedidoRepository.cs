@@ -1,8 +1,8 @@
-﻿using Restaurante.IO.Business.Intefaces.Repository;
-using Restaurante.IO.Business.Models;
+﻿using Restaurante.IO.Business.Models;
 using Restaurante.IO.Data.Context;
 using System;
 using System.Threading.Tasks;
+using Restaurante.IO.Business.Interfaces.Repository;
 
 namespace Restaurante.IO.Data.Repository
 {

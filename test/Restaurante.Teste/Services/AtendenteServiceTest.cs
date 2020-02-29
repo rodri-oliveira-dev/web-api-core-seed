@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Restaurante.IO.Business.Intefaces;
-using Restaurante.IO.Business.Intefaces.Repository;
+using Restaurante.IO.Business.Interfaces.Repository;
 using Restaurante.IO.Business.Notificacoes;
 using Restaurante.IO.Business.Services;
 using Restaurante.IO.Data.Context;

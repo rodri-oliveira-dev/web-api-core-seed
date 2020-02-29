@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Restaurante.IO.Business.Intefaces.Pagination
+namespace Restaurante.IO.Business.Interfaces.Pagination
 {
     public class PaginationResult<T> where T : class, new()
     {

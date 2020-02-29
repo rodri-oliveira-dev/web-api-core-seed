@@ -4,9 +4,9 @@ using Restaurante.IO.Data.Context;
 
 namespace Restaurante.IO.Data.Repository
 {
-    public class MesaRepository : Repository<Mesa>, IMesaRepository
+    public class LogginRepository : Repository<LogginEntity>, ILogginRepository
     {
-        public MesaRepository(MeuDbContext context) : base(context) { }
+        public LogginRepository(MeuDbContext context) : base(context) { }
 
     }
 }
