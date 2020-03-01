@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc.Filters;
 using Serilog;
 
-namespace Restaurante.IO.Api.Diagnostics
+namespace Restaurante.IO.Api.Filters
 {
     public class SerilogLoggingActionFilter : IActionFilter
     {

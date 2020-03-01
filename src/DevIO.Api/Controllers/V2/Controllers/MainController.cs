@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Restaurante.IO.Api.Extensions;
-using Restaurante.IO.Api.Extensions.Authorization;
+using Restaurante.IO.Api.Results;
 using Restaurante.IO.Api.ViewModels;
 using Restaurante.IO.Business.Intefaces;
 using Restaurante.IO.Business.Notificacoes;

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace Restaurante.IO.Api.Configuration.Swagger
+namespace Restaurante.IO.Api.Middlewares
 {
     public class SwaggerAuthorizedMiddleware
     {

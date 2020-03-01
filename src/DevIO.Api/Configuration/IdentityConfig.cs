@@ -7,8 +7,10 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Restaurante.IO.Api.Data;
+using Restaurante.IO.Api.DataContext;
 using Restaurante.IO.Api.Extensions;
+using Restaurante.IO.Api.Resources;
+using Restaurante.IO.Api.Settings;
 
 namespace Restaurante.IO.Api.Configuration
 {
@@ -16,14 +18,7 @@ namespace Restaurante.IO.Api.Configuration
     {
         public static IServiceCollection AddIdentityConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<ApplicationDbContext>(options =>
-            {
-                var builder = new SqlConnectionStringBuilder(configuration.GetConnectionString("DefaultConnection"))
-                {
-                    Password = configuration["DbPassword"]
-                };
-                options.UseSqlServer(builder.ConnectionString);
-            });
+            services.AddDbContext<ApplicationDbContext>(options => { options.UseSqlServer(ConnectionString.GetConnectionString()); });
 
             services.AddDefaultIdentity<IdentityUser>()
                 .AddRoles<IdentityRole>()

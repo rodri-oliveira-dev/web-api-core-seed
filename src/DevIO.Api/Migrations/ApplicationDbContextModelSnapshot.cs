@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Restaurante.IO.Api.Data;
+using Restaurante.IO.Api.DataContext;
 
 namespace Restaurante.IO.Api.Migrations
 {

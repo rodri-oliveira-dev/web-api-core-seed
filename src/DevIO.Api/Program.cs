@@ -4,7 +4,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Restaurante.IO.Api.Configuration;
+using Restaurante.IO.Api.Settings;
 using Serilog;
 using Serilog.Events;
 
@@ -33,7 +33,7 @@ namespace Restaurante.IO.Api
                 .WriteTo.Debug()
                 .WriteTo.Seq(datasulSeqSettings.Url)
                 .WriteTo.File(
-                    @"C:\estudos\myapp.txt",
+                    datasulSeqSettings.FilePath,
                     fileSizeLimitBytes: 1_000_000,
                     rollOnFileSizeLimit: true,
                     shared: true,
@@ -44,8 +44,6 @@ namespace Restaurante.IO.Api
             try
             {
                 Log.Information("Getting the motors running...");
-
-                //CreateWebHostBuilder(args).Build().Run();
                 CreateHostBuilder(args).Build().Run();
             }
             catch (Exception ex)

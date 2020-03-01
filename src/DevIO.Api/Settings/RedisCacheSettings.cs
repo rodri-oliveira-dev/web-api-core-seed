@@ -1,4 +1,4 @@
-﻿namespace Restaurante.IO.Api.Configuration.Cache
+﻿namespace Restaurante.IO.Api.Settings
 {
     public class RedisCacheSettings
     {

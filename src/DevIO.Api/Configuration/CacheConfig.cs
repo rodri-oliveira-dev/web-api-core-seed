@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Restaurante.IO.Api.Configuration.Cache;
 using Restaurante.IO.Api.Services;
 using Restaurante.IO.Api.Services.Interfaces;
+using Restaurante.IO.Api.Settings;
 
 namespace Restaurante.IO.Api.Configuration
 {

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Restaurante.IO.Api.Extensions;
+using Restaurante.IO.Api.Settings;
 using Restaurante.IO.Api.ViewModels.User;
 using Restaurante.IO.Business.Intefaces;
 

@@ -1,4 +1,4 @@
-﻿namespace Restaurante.IO.Api.Extensions
+﻿namespace Restaurante.IO.Api.Results
 {
     public class CustomResult
     {

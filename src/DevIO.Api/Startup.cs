@@ -6,18 +6,17 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.ResponseCompression;
-using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Restaurante.IO.Api.Configuration;
-using Restaurante.IO.Api.Configuration.Cache;
 using Restaurante.IO.Api.Configuration.Swagger;
-using Restaurante.IO.Api.Diagnostics;
-using Restaurante.IO.Api.Extensions;
 using Restaurante.IO.Api.Filters;
+using Restaurante.IO.Api.Middlewares;
+using Restaurante.IO.Api.Results;
+using Restaurante.IO.Api.Settings;
 using Restaurante.IO.Data.Context;
 using Serilog;
 using Serilog.Events;
@@ -26,6 +25,8 @@ using System.Data.SqlClient;
 using System.IO.Compression;
 using System.Linq;
 using System.Text.Json;
+using Restaurante.IO.Api.HealthChecks;
+using Restaurante.IO.Api.Resources;
 
 namespace Restaurante.IO.Api
 {
@@ -36,18 +37,13 @@ namespace Restaurante.IO.Api
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        public static IConfiguration Configuration { get; private set; }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            var builder = new SqlConnectionStringBuilder(Configuration.GetConnectionString("DefaultConnection"))
-            {
-                Password = Configuration["DbPassword"]
-            };
-
             services.AddDbContext<MeuDbContext>(options =>
             {
-                options.UseSqlServer(builder.ConnectionString).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                options.UseSqlServer(ConnectionString.GetConnectionString()).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 
             services.AddMvc(options => { options.RespectBrowserAcceptHeader = true; })
@@ -70,13 +66,12 @@ namespace Restaurante.IO.Api
             });
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.ConfigureCookie();
-            services.AddControllers(options =>
-                {
-                    options.Filters.Add(new HttpResponseExceptionFilter());
-                    options.Filters.Add<SerilogLoggingActionFilter>();
-                }).AddJsonOptions(op => { op.JsonSerializerOptions.IgnoreNullValues = true; });
+            services.AddControllers(options => { options.Filters.Add<SerilogLoggingActionFilter>();})
+                .AddJsonOptions(op => { op.JsonSerializerOptions.IgnoreNullValues = true; });
 
-            services.AddHealthChecks().AddSqlServer(builder.ConnectionString, name: "Banco de Dados", tags: new[] { "db", "sql", "sqlserver" });
+            services.AddHealthChecks()
+                .AddSqlServer(ConnectionString.GetConnectionString(), name: "Banco de Dados", tags: new[] { "db", "sql", "sqlserver" })
+                .AddCheck<SystemMemoryHealthcheck>("Memory");
 
             var datasulSeqSettings = new DatasulSeqSettings();
             Configuration.GetSection("DatasulSeqSettings").Bind(datasulSeqSettings);
@@ -151,16 +146,17 @@ namespace Restaurante.IO.Api
             });
 
             app.UseMiddleware<SerilogMiddleware>();
+            app.UseMiddleware(typeof(ErrorHandlingMiddleware));
             app.UseHsts();
 
             app.UseStatusCodePages(async context =>
             {
                 context.HttpContext.Response.ContentType = "application/json";
-                logger.LogWarning(RetornaMensagemErro(context.HttpContext.Response.StatusCode));
+                logger.LogWarning(HttpErrorMessages.RetornaMensagemErro(context.HttpContext.Response.StatusCode));
                 await context.HttpContext.Response.WriteAsync(JsonSerializer.Serialize(new CustomResult(false, new
                 {
                     statusCode = context.HttpContext.Response.StatusCode,
-                    errorMessage = RetornaMensagemErro(context.HttpContext.Response.StatusCode)
+                    errorMessage = HttpErrorMessages.RetornaMensagemErro(context.HttpContext.Response.StatusCode)
                 })));
             });
 
@@ -177,19 +173,6 @@ namespace Restaurante.IO.Api
             });
 
             app.UseHealthChecksUI(options => { options.UIPath = "/hc-ui"; });
-        }
-
-        private static string RetornaMensagemErro(int statusCode)
-        {
-            return statusCode switch
-            {
-                400 => "O pedido não pode ser cumprido devido à erro de sintaxe.",
-                401 => "A chamada precisa ser efetuada por um usuario autenticado.",
-                403 => "O usuário esta autenticado, mas o não possui permissão para executar essa ação.",
-                404 => "A página solicitada não pôde ser encontrada, mas pode estar disponível novamente no futuro.",
-                405 => "Foi feita uma solicitação de uma página usando um método de solicitação não suportado por essa página.",
-                _ => ReasonPhrases.GetReasonPhrase(statusCode)
-            };
         }
     }
 }

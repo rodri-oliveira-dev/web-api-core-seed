@@ -1,14 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Restaurante.IO.Api.Extensions;
 
-namespace Restaurante.IO.Api.Extensions.Authorization
+namespace Restaurante.IO.Api.Results
 {
-    public class CustomError
+    public class CustomErrorResult
     {
         public bool success { get; }
 
         public object data { get; }
 
-        public CustomError(CustomResult customResult)
+        public CustomErrorResult(CustomResult customResult)
         {
             success = customResult.success;
             data = customResult.data;

@@ -1,8 +1,10 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Restaurante.IO.Api.Extensions.Authorization;
+using Restaurante.IO.Api.Extensions;
+using Restaurante.IO.Api.Extensions.Clains;
+using Restaurante.IO.Api.Results;
 
-namespace Restaurante.IO.Api.Extensions.Clains
+namespace Restaurante.IO.Api.Filters
 {
     public class RequisitoClaimFilter : IAuthorizationFilter
     {

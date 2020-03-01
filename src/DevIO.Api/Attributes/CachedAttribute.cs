@@ -7,9 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.Extensions.DependencyInjection;
 using Restaurante.IO.Api.Services.Interfaces;
+using Restaurante.IO.Api.Settings;
 
-
-namespace Restaurante.IO.Api.Configuration.Cache
+namespace Restaurante.IO.Api.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class CachedAttribute : Attribute, IAsyncActionFilter

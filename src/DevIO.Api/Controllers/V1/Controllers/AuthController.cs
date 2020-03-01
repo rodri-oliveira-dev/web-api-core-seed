@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Restaurante.IO.Api.Extensions;
+using Restaurante.IO.Api.Settings;
 using Restaurante.IO.Api.ViewModels.User;
 using Restaurante.IO.Business.Intefaces;
 
@@ -117,7 +118,7 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
                 Audience = _appSettings.ValidoEm,
                 Subject = identityClaims,
                 Expires = DateTime.UtcNow.AddHours(_appSettings.ExpiracaoHoras),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha384Signature)
             });
 
             var encodedToken = tokenHandler.WriteToken(token);

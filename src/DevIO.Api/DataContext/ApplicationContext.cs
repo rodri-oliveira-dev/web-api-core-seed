@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace Restaurante.IO.Api.Data
+namespace Restaurante.IO.Api.DataContext
 {
     public class ApplicationDbContext : IdentityDbContext
     {

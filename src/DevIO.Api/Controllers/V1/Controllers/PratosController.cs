@@ -1,13 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Restaurante.IO.Api.Configuration.Cache;
+using Restaurante.IO.Api.Attributes;
 using Restaurante.IO.Api.Extensions;
 using Restaurante.IO.Api.Extensions.Clains;
 using Restaurante.IO.Api.ViewModels;
@@ -16,6 +12,11 @@ using Restaurante.IO.Business.Intefaces.Service;
 using Restaurante.IO.Business.Interfaces.Pagination;
 using Restaurante.IO.Business.Interfaces.Repository;
 using Restaurante.IO.Business.Models;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Threading.Tasks;
+using Restaurante.IO.Api.Results;
 
 namespace Restaurante.IO.Api.Controllers.V1.Controllers
 {
