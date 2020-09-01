@@ -1,28 +1,28 @@
-﻿using System;
-using System.Threading.Tasks;
-using Restaurante.IO.Business.Intefaces;
+﻿using Restaurante.IO.Business.Intefaces;
 using Restaurante.IO.Business.Intefaces.Service;
 using Restaurante.IO.Business.Interfaces.Repository;
 using Restaurante.IO.Business.Models;
 using Restaurante.IO.Business.Models.Validations;
+using System;
+using System.Threading.Tasks;
 
 namespace Restaurante.IO.Business.Services
 {
     public class AtendenteService : BaseService, IAtendenteService
     {
-        private readonly IAtendenteRepository _fornecedorRepository;
+        private readonly IAtendenteRepository _atendenteRepository;
 
-        public AtendenteService(IAtendenteRepository fornecedorRepository, 
+        public AtendenteService(IAtendenteRepository atendenteRepository,
                                  INotificador notificador) : base(notificador)
         {
-            _fornecedorRepository = fornecedorRepository;
+            _atendenteRepository = atendenteRepository;
         }
 
         public async Task<bool> Adicionar(Atendente atendente)
         {
-            if (!ExecutarValidacao(new AtendenteValidation(), atendente) ) return false;
+            if (!ExecutarValidacao(new AtendenteValidation(), atendente)) return false;
 
-            await _fornecedorRepository.Adicionar(atendente);
+            await _atendenteRepository.Adicionar(atendente);
             return true;
         }
 
@@ -30,19 +30,19 @@ namespace Restaurante.IO.Business.Services
         {
             if (!ExecutarValidacao(new AtendenteValidation(), atendente)) return false;
 
-            await _fornecedorRepository.Atualizar(atendente);
+            await _atendenteRepository.Atualizar(atendente);
             return true;
         }
 
         public async Task<bool> Remover(Guid id)
         {
-            await _fornecedorRepository.Remover(id);
+            await _atendenteRepository.Remover(id);
             return true;
         }
 
         public void Dispose()
         {
-            _fornecedorRepository?.Dispose();
+            _atendenteRepository?.Dispose();
         }
     }
 }

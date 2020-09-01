@@ -15,18 +15,16 @@ using Restaurante.IO.Api.Configuration;
 using Restaurante.IO.Api.Configuration.Swagger;
 using Restaurante.IO.Api.Filters;
 using Restaurante.IO.Api.Middlewares;
+using Restaurante.IO.Api.Resources;
 using Restaurante.IO.Api.Results;
 using Restaurante.IO.Api.Settings;
 using Restaurante.IO.Data.Context;
 using Serilog;
 using Serilog.Events;
 using System;
-using System.Data.SqlClient;
 using System.IO.Compression;
 using System.Linq;
 using System.Text.Json;
-using Restaurante.IO.Api.HealthChecks;
-using Restaurante.IO.Api.Resources;
 
 namespace Restaurante.IO.Api
 {
@@ -66,12 +64,11 @@ namespace Restaurante.IO.Api
             });
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.ConfigureCookie();
-            services.AddControllers(options => { options.Filters.Add<SerilogLoggingActionFilter>();})
+            services.AddControllers(options => { options.Filters.Add<SerilogLoggingActionFilter>(); })
                 .AddJsonOptions(op => { op.JsonSerializerOptions.IgnoreNullValues = true; });
 
             services.AddHealthChecks()
-                .AddSqlServer(ConnectionString.GetConnectionString(), name: "Banco de Dados", tags: new[] { "db", "sql", "sqlserver" })
-                .AddCheck<SystemMemoryHealthcheck>("Memory");
+                .AddSqlServer(ConnectionString.GetConnectionString(), name: "Banco de Dados", tags: new[] { "db", "sql", "sqlserver" });
 
             var datasulSeqSettings = new DatasulSeqSettings();
             Configuration.GetSection("DatasulSeqSettings").Bind(datasulSeqSettings);

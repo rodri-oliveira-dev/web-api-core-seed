@@ -1,0 +1,19 @@
+FROM mcr.microsoft.com/mssql/server:2017-latest
+LABEL maintainer="rodrigodotnet@gmail.com"
+
+# variaveis de ambientes
+ENV DB_MSSQL_USER=sa
+ENV DB_MSSQL_PASSWORD=YCm8hnX4UyaVRgNb
+ENV DB_MSSQL_DATABASE=master
+
+ENV ACCEPT_EULA=Y
+ENV SA_PASSWORD=${DB_MSSQL_PASSWORD}
+ENV MSSQL_DATA_DIR=/var/opt/mssql/data
+ENV MSSQL_PID=Developer
+
+VOLUME /var/opt/mssql
+EXPOSE 1433:1433
+
+# The HEALTHCHECK instruction tells Docker how to test a container to check that it is still working.
+HEALTHCHECK --interval=11s --timeout=33s --retries=3 \
+            CMD /opt/mssql-tools/bin/sqlcmd -S 0.0.0.0 -d ${DB_MSSQL_DATABASE} -U ${DB_MSSQL_USER} -P ${DB_MSSQL_PASSWORD} -Q 'select 1'

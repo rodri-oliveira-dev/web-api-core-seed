@@ -2,7 +2,7 @@
 {
     public enum ETipoAtendente
     {
-        Garcom,
+        Garcom = 0,
         Totem
     }
 }
