@@ -41,7 +41,20 @@ To know more about how to setup your enviroment visit the [Microsoft .NET Downlo
 - Native ASP.NET Core Rate Limiting
 - OWASP Security
 - Serilog
-- Datasul / Seq
+- Seq opcional
+
+## Observability
+
+OpenTelemetry is configured by the `OpenTelemetry` section and is vendor-neutral by default.
+
+- `OpenTelemetry:Enabled`: enables traces and metrics. Default: `true`.
+- `OpenTelemetry:ServiceName`: default service name: `web-api-core-seed-api`.
+- `OpenTelemetry:ServiceNamespace`: default namespace: `rodri-oliveira-dev.web-api-core-seed`.
+- `OpenTelemetry:Otlp:Enabled`: enables OTLP export. Default: `false`.
+- `OpenTelemetry:Otlp:Endpoint`: optional collector endpoint, also compatible with `OTEL_EXPORTER_OTLP_ENDPOINT`.
+- `OpenTelemetry:Otlp:Protocol`: `Grpc` or `HttpProtobuf`.
+
+Serilog remains the structured logging pipeline. Console and file logs include `TraceId` and `SpanId` when a request activity is active. Seq is optional through `SeqSettings:Enabled`.
 
 ## Architecture:
 

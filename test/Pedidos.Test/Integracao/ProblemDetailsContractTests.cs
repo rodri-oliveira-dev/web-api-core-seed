@@ -357,9 +357,10 @@ namespace Pedidos.Test.Integracao
                         ["ConnectionStrings:DefaultConnection"] = $"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog={_databaseName};Integrated Security=True;",
                         ["AppSettings:Secret"] = TestSecret,
                         ["RedisCacheSettings:Enabled"] = "false",
-                        ["DatasulSeqSettings:Enabled"] = "false",
-                        ["DatasulSeqSettings:Url"] = "http://localhost",
-                        ["DatasulSeqSettings:FilePath"] = "test-problem-details.log"
+                        ["SeqSettings:Enabled"] = "false",
+                        ["SeqSettings:Url"] = "http://localhost",
+                        ["SeqSettings:FilePath"] = "test-problem-details.log",
+                        ["OpenTelemetry:Enabled"] = "false"
                     });
 
                 });

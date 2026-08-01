@@ -76,9 +76,10 @@ sealed class OpenApiFactory : WebApplicationFactory<Restaurante.IO.Api.Program>
                 ["ConnectionStrings:DefaultConnection"] = $"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog={_databaseName};Integrated Security=True;",
                 ["AppSettings:Secret"] = "X-BURGUER@COCA-2-OPENAPI-GENERATOR-TEST-SECRET-2026",
                 ["RedisCacheSettings:Enabled"] = "false",
-                ["DatasulSeqSettings:Enabled"] = "false",
-                ["DatasulSeqSettings:Url"] = "http://localhost",
-                ["DatasulSeqSettings:FilePath"] = "openapi-generator.log"
+                ["SeqSettings:Enabled"] = "false",
+                ["SeqSettings:Url"] = "http://localhost",
+                ["SeqSettings:FilePath"] = "openapi-generator.log",
+                ["OpenTelemetry:Enabled"] = "false"
             });
         });
 

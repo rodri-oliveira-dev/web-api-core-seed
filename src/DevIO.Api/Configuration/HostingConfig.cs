@@ -1,5 +1,6 @@
 using System;
 using System.IO.Compression;
+using System.Globalization;
 using System.Linq;
 using System.Net;
 using System.Text.Json;
@@ -33,12 +34,15 @@ namespace Restaurante.IO.Api.Configuration
 {
     public static class HostingConfig
     {
+        private const string SerilogOutputTemplate =
+            "[{Timestamp:HH:mm:ss} {Level:u3} TraceId={TraceId} SpanId={SpanId}] {Message:lj} {Properties:j}{NewLine}{Exception}";
+
         public static ConfigureHostBuilder UseApiSerilog(this ConfigureHostBuilder host)
         {
             host.UseSerilog((context, _, loggerConfiguration) =>
             {
-                var datasulSeqSettings = new DatasulSeqSettings();
-                context.Configuration.GetSection(nameof(DatasulSeqSettings)).Bind(datasulSeqSettings);
+                var seqSettings = new SeqSettings();
+                context.Configuration.GetSection(SeqSettings.SectionName).Bind(seqSettings);
 
                 loggerConfiguration
                     .ReadFrom.Configuration(context.Configuration)
@@ -46,15 +50,25 @@ namespace Restaurante.IO.Api.Configuration
                     .MinimumLevel.Debug()
                     .Filter.ByExcluding("RequestPath = '/hc' and StatusCode = 200")
                     .MinimumLevel.Override("Microsoft.AspNetCore", LogEventLevel.Warning)
-                    .WriteTo.Debug()
-                    .WriteTo.Seq(datasulSeqSettings.Url)
-                    .WriteTo.File(
-                        datasulSeqSettings.FilePath,
+                    .WriteTo.Debug(outputTemplate: SerilogOutputTemplate, formatProvider: CultureInfo.InvariantCulture)
+                    .WriteTo.Console(outputTemplate: SerilogOutputTemplate, formatProvider: CultureInfo.InvariantCulture);
+
+                if (seqSettings.Enabled)
+                {
+                    loggerConfiguration.WriteTo.Seq(seqSettings.Url, formatProvider: CultureInfo.InvariantCulture);
+                }
+
+                if (!string.IsNullOrWhiteSpace(seqSettings.FilePath))
+                {
+                    loggerConfiguration.WriteTo.File(
+                        seqSettings.FilePath,
+                        outputTemplate: SerilogOutputTemplate,
+                        formatProvider: CultureInfo.InvariantCulture,
                         fileSizeLimitBytes: 1_000_000,
                         rollOnFileSizeLimit: true,
                         shared: true,
-                        flushToDiskInterval: TimeSpan.FromSeconds(1))
-                    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}");
+                        flushToDiskInterval: TimeSpan.FromSeconds(1));
+                }
             });
 
             return host;
@@ -71,7 +85,10 @@ namespace Restaurante.IO.Api.Configuration
             return webHost;
         }
 
-        public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)
+        public static IServiceCollection AddApiServices(
+            this IServiceCollection services,
+            IConfiguration configuration,
+            IHostEnvironment environment)
         {
             var defaultConnection = configuration.GetConnectionString("DefaultConnection");
 
@@ -119,6 +136,7 @@ namespace Restaurante.IO.Api.Configuration
             services.AddApiResponseCompression();
             services.ConfigureCookie();
             services.AddApiHealthChecks(configuration, defaultConnection);
+            services.AddApiOpenTelemetry(configuration, environment);
             services.ConfigureApiHsts();
             services.ConfigureCache(configuration);
 
@@ -362,12 +380,12 @@ namespace Restaurante.IO.Api.Configuration
             var healthChecks = services.AddHealthChecks()
                 .AddSqlServer(defaultConnection, name: "Banco de Dados", tags: new[] { "db", "sql", "sqlserver" });
 
-            var datasulSeqSettings = new DatasulSeqSettings();
-            configuration.GetSection(nameof(DatasulSeqSettings)).Bind(datasulSeqSettings);
+            var seqSettings = new SeqSettings();
+            configuration.GetSection(SeqSettings.SectionName).Bind(seqSettings);
 
-            if (datasulSeqSettings.Enabled)
+            if (seqSettings.Enabled)
             {
-                healthChecks.AddUrlGroup(new Uri(datasulSeqSettings.Url), "Datasul Seq Log");
+                healthChecks.AddUrlGroup(new Uri(seqSettings.Url), "Seq Log");
             }
 
             var cacheSettings = new RedisCacheSettings();

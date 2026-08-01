@@ -20,3 +20,8 @@
 | D016 | Substituir `Feature-Policy` por `Permissions-Policy` e remover `X-XSS-Protection` do middleware ativo. | Accepted | Ambos sao obsoletos; CSP e Permissions-Policy cobrem o comportamento moderno esperado. |
 | D017 | Expor `/health/live` e `/hc` apenas com status agregado e reservar detalhes de `/health/ready` para Development/Testing. | Accepted | Health publico deve ser util para operacao sem revelar nomes/status internos em producao. |
 | D018 | Configurar `RequestTimeouts` e limite de body via `RequestLimits`. | Accepted | Os limites ficam explicitos e parametrizaveis sem antecipar WAF, gateway ou infraestrutura de producao. |
+| D019 | Centralizar OpenTelemetry em `AddApiOpenTelemetry` usando SDK oficial e OTLP opcional. | Accepted | Mantem observabilidade vendor-neutral sem exigir collector ou stack externa para startup local. |
+| D020 | Manter Serilog como pipeline unico de logs e adicionar apenas correlacao `TraceId`/`SpanId`. | Accepted | Evita duplicar todos os logs entre Serilog e OpenTelemetry logs provider sem uma decisao operacional clara. |
+| D021 | Usar `OpenTelemetry.Instrumentation.EntityFrameworkCore` `1.17.0-beta.1`. | Accepted | EF Core e criterio de aceite explicito; nao havia versao estavel disponivel no NuGet durante o prompt. |
+| D022 | Nao adicionar instrumentacao Redis neste prompt. | Accepted | A instrumentacao StackExchange.Redis disponivel e pre-release e requer o `IConnectionMultiplexer`; a aplicacao ativa usa `AddStackExchangeRedisCache`, que nao expoe esse contrato sem redesenho. |
+| D023 | Renomear configuracao ativa de Seq para `SeqSettings` e manter Seq opcional. | Accepted | Remove acoplamento de nomenclatura legado e preserva integracao opcional existente. |

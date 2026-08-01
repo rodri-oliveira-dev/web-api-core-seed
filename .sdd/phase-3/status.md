@@ -5,7 +5,7 @@
 | 01 - Testes unitarios | concluido |
 | 02 - Testes de integracao | concluido |
 | 03 - Seguranca | concluido |
-| 04 - OpenTelemetry | pendente |
+| 04 - OpenTelemetry | concluido |
 | 05 - CI e gates | pendente |
 
 ## Estado inicial do prompt 01
@@ -54,4 +54,20 @@
 - Testes de integracao finais: 26.
 - Build/test final: passou.
 - `dotnet list package --vulnerable`: nenhum pacote vulneravel nas fontes atuais.
+- Push: nao realizado.
+
+## Resultado do prompt 04
+
+- OpenTelemetry centralizado em `AddApiOpenTelemetry`.
+- Instrumentacoes adicionadas: ASP.NET Core, HttpClient, EF Core e Runtime.
+- Exportacao OTLP opcional por `OpenTelemetry:Otlp`.
+- Metadados: `service.name=web-api-core-seed-api`, `service.namespace=rodri-oliveira-dev.web-api-core-seed`, versao por configuracao/assembly e ambiente por configuracao/hosting.
+- Serilog preservado como pipeline de logs com `TraceId` e `SpanId` em console/file.
+- Seq mantido opcional por `SeqSettings`.
+- Nomenclatura ativa legada de Seq removida de codigo/configuracao.
+- Redis nao recebeu spans porque a instrumentacao disponivel e pre-release e exige `IConnectionMultiplexer` exposto.
+- Testes de observabilidade adicionados: 5.
+- Testes finais: 41 em `Pedidos.Test` e 26 em `WebApiCoreSeed.IntegrationTests`.
+- Build/test final: passou.
+- `git grep -n -i "Datasul"` retorna apenas referencias historicas em `LEGACY.md` e SDD antigo; codigo/configuracao ativos nao possuem o termo.
 - Push: nao realizado.

@@ -1,0 +1,23 @@
+# Tasks - 04 OpenTelemetry
+
+- [x] Read mandatory Phase 3 and security context.
+- [x] Run initial git/build/test baseline.
+- [x] Discover existing Serilog, Seq, health, Redis, EF Core and telemetry usage.
+- [x] Evaluate OpenTelemetry packages.
+- [x] Add OpenTelemetry packages.
+- [x] Add central OpenTelemetry registration.
+- [x] Add resource metadata settings.
+- [x] Add ASP.NET Core tracing/metrics.
+- [x] Add HttpClient tracing/metrics.
+- [x] Add EF Core tracing.
+- [x] Add runtime metrics.
+- [x] Add optional OTLP exporter.
+- [x] Preserve Serilog and add trace/span correlation.
+- [x] Rename active Seq configuration to `SeqSettings`.
+- [x] Remove active product-specific Seq naming.
+- [x] Remove stale health-check database/log artifacts from the active API project.
+- [x] Add proportional tests for startup, spans, log correlation and sensitive values.
+- [x] Add README configuration notes.
+- [x] Update SDD files.
+- [x] Run final validation.
+- [ ] Create semantic commit.
