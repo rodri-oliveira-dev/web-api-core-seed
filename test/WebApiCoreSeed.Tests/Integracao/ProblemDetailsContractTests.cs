@@ -423,11 +423,11 @@ namespace WebApiCoreSeed.Tests.Integracao
 
         private sealed class FakePratoRepository : IPratoRepository
         {
-            public Task<int> Adicionar(Prato prato) => Task.FromResult(1);
+            public Task Adicionar(Prato prato) => Task.CompletedTask;
 
-            public Task<int> Atualizar(Prato prato) => Task.FromResult(1);
+            public Task Atualizar(Prato prato) => Task.CompletedTask;
 
-            public Task<int> RemoverPorId(Guid id) => Task.FromResult(1);
+            public Task RemoverPorId(Guid id) => Task.CompletedTask;
 
             public Task<Prato> ObterPorId(Guid id) => Task.FromResult<Prato>(null);
 
@@ -444,11 +444,11 @@ namespace WebApiCoreSeed.Tests.Integracao
 
         private sealed class FakeMesaRepository : IMesaRepository
         {
-            public Task<int> Adicionar(Mesa mesa) => Task.FromResult(1);
+            public Task Adicionar(Mesa mesa) => Task.CompletedTask;
 
-            public Task<int> Atualizar(Mesa mesa) => Task.FromResult(1);
+            public Task Atualizar(Mesa mesa) => Task.CompletedTask;
 
-            public Task<int> RemoverPorId(Guid id) => Task.FromResult(1);
+            public Task RemoverPorId(Guid id) => Task.CompletedTask;
 
             public Task<Mesa> ObterPorId(Guid id) => Task.FromResult<Mesa>(null);
 
@@ -459,11 +459,11 @@ namespace WebApiCoreSeed.Tests.Integracao
 
         private sealed class ThrowingPratoRepository : IPratoRepository
         {
-            public Task<int> Adicionar(Prato prato) => Task.FromException<int>(CreateException());
+            public Task Adicionar(Prato prato) => Task.FromException(CreateException());
 
-            public Task<int> Atualizar(Prato prato) => Task.FromException<int>(CreateException());
+            public Task Atualizar(Prato prato) => Task.FromException(CreateException());
 
-            public Task<int> RemoverPorId(Guid id) => Task.FromException<int>(CreateException());
+            public Task RemoverPorId(Guid id) => Task.FromException(CreateException());
 
             public Task<Prato> ObterPorId(Guid id) => Task.FromException<Prato>(CreateException());
 

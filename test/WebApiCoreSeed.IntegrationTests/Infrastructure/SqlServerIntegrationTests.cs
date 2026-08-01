@@ -1,8 +1,11 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using WebApiCoreSeed.SampleRestaurant.Models;
+using Microsoft.Extensions.DependencyInjection;
 using WebApiCoreSeed.IntegrationTests.Infrastructure;
+using WebApiCoreSeed.SampleRestaurant.Interfaces.Persistence;
+using WebApiCoreSeed.SampleRestaurant.Interfaces.Repository;
+using WebApiCoreSeed.SampleRestaurant.Models;
 
 namespace WebApiCoreSeed.IntegrationTests.Infrastructure;
 
@@ -55,6 +58,111 @@ public sealed class SqlServerIntegrationTests
 
         Assert.Equal("Moqueca de teste", persisted.Titulo);
         Assert.True(persisted.Ativo);
+    }
+
+    [Fact(DisplayName = "Unit of Work confirma criacao registrada por repositorio")]
+    public async Task UnitOfWorkQuandoRepositorioRegistraCriacaoDevePersistir()
+    {
+        await _factory.ResetStateAsync();
+        var prato = TestData.CreatePrato("UoW criacao");
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var repository = scope.ServiceProvider.GetRequiredService<IPratoRepository>();
+            var unitOfWork = scope.ServiceProvider.GetRequiredService<ISampleRestaurantUnitOfWork>();
+
+            await repository.Adicionar(prato);
+            var changes = await unitOfWork.CommitAsync();
+
+            Assert.True(changes > 0);
+        }
+
+        var persisted = await _factory.WithDomainContextAsync(context =>
+            context.Pratos.AsNoTracking().SingleAsync(item => item.Id == prato.Id));
+
+        Assert.Equal("UoW criacao", persisted.Titulo);
+    }
+
+    [Fact(DisplayName = "Unit of Work confirma atualizacao registrada por repositorio")]
+    public async Task UnitOfWorkQuandoRepositorioRegistraAtualizacaoDevePersistir()
+    {
+        await _factory.ResetStateAsync();
+        var prato = TestData.CreatePrato("UoW antes");
+
+        await _factory.WithDomainContextAsync(async context =>
+        {
+            context.Pratos.Add(prato);
+            await context.SaveChangesAsync();
+        });
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var repository = scope.ServiceProvider.GetRequiredService<IPratoRepository>();
+            var unitOfWork = scope.ServiceProvider.GetRequiredService<ISampleRestaurantUnitOfWork>();
+            var persisted = await repository.ObterPorId(prato.Id);
+            persisted.Titulo = "UoW depois";
+
+            await repository.Atualizar(persisted);
+            await unitOfWork.CommitAsync();
+        }
+
+        var updated = await _factory.WithDomainContextAsync(context =>
+            context.Pratos.AsNoTracking().SingleAsync(item => item.Id == prato.Id));
+
+        Assert.Equal("UoW depois", updated.Titulo);
+    }
+
+    [Fact(DisplayName = "Repositorio sem commit nao persiste alteracao")]
+    public async Task RepositorioQuandoEscopoTerminaSemCommitNaoDevePersistir()
+    {
+        await _factory.ResetStateAsync();
+        var prato = TestData.CreatePrato("Sem commit");
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var repository = scope.ServiceProvider.GetRequiredService<IPratoRepository>();
+
+            await repository.Adicionar(prato);
+        }
+
+        var exists = await _factory.WithDomainContextAsync(context =>
+            context.Pratos.AnyAsync(item => item.Id == prato.Id));
+
+        Assert.False(exists);
+    }
+
+    [Fact(DisplayName = "Unit of Work reverte alteracoes atomicas quando commit falha")]
+    public async Task UnitOfWorkQuandoCommitFalhaNaoDevePersistirParcialmente()
+    {
+        await _factory.ResetStateAsync();
+        var mesa = TestData.CreateMesa("UOW-TX");
+        var pedido = new Pedido
+        {
+            AtendenteId = Guid.NewGuid(),
+            MesaId = Guid.NewGuid(),
+            Numero = "PED-UOW-FAIL",
+            DataHoraCadastro = DateTime.UtcNow
+        };
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var mesaRepository = scope.ServiceProvider.GetRequiredService<IMesaRepository>();
+            var pedidoRepository = scope.ServiceProvider.GetRequiredService<IPedidoRepository>();
+            var unitOfWork = scope.ServiceProvider.GetRequiredService<ISampleRestaurantUnitOfWork>();
+
+            await mesaRepository.Adicionar(mesa);
+            await pedidoRepository.Adicionar(pedido);
+
+            await Assert.ThrowsAsync<DbUpdateException>(() => unitOfWork.CommitAsync());
+        }
+
+        var mesaExists = await _factory.WithDomainContextAsync(context =>
+            context.Mesas.AnyAsync(item => item.Id == mesa.Id));
+        var pedidoExists = await _factory.WithDomainContextAsync(context =>
+            context.Pedidos.AnyAsync(item => item.Id == pedido.Id));
+
+        Assert.False(mesaExists);
+        Assert.False(pedidoExists);
     }
 
     [Fact(DisplayName = "Constraint de chave estrangeira e aplicada pelo SQL Server")]

@@ -6,9 +6,9 @@ namespace WebApiCoreSeed.SampleRestaurant.Interfaces.Repository
 {
     public interface IMesaRepository : IDisposable
     {
-        Task<int> Adicionar(Mesa mesa);
-        Task<int> Atualizar(Mesa mesa);
-        Task<int> RemoverPorId(Guid id);
+        Task Adicionar(Mesa mesa);
+        Task Atualizar(Mesa mesa);
+        Task RemoverPorId(Guid id);
         Task<Mesa> ObterPorId(Guid id);
     }
 }

@@ -6,8 +6,8 @@ namespace WebApiCoreSeed.SampleRestaurant.Interfaces.Repository
 {
     public interface IAtendenteRepository : IDisposable
     {
-        Task<int> Adicionar(Atendente atendente);
-        Task<int> Atualizar(Atendente atendente);
-        Task<int> RemoverPorId(Guid id);
+        Task Adicionar(Atendente atendente);
+        Task Atualizar(Atendente atendente);
+        Task RemoverPorId(Guid id);
     }
 }

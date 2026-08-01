@@ -1,5 +1,6 @@
 using Moq;
 using WebApiCoreSeed.SampleRestaurant.Intefaces;
+using WebApiCoreSeed.SampleRestaurant.Interfaces.Persistence;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Repository;
 using WebApiCoreSeed.SampleRestaurant.Models;
 using WebApiCoreSeed.SampleRestaurant.Models.Core;
@@ -15,11 +16,13 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
     public class AtendenteServiceTest
     {
         private readonly Mock<IAtendenteRepository> _atendenteRepository;
+        private readonly Mock<ISampleRestaurantUnitOfWork> _unitOfWork;
         private readonly Notificador _notificador;
 
         public AtendenteServiceTest()
         {
             _atendenteRepository = new Mock<IAtendenteRepository>(MockBehavior.Strict);
+            _unitOfWork = new Mock<ISampleRestaurantUnitOfWork>(MockBehavior.Strict);
             _notificador = new Notificador();
         }
 
@@ -29,7 +32,8 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
         {
             //Arrange
             var atendente = CriarAtendenteValido();
-            _atendenteRepository.Setup(r => r.Adicionar(atendente)).ReturnsAsync(1);
+            _atendenteRepository.Setup(r => r.Adicionar(atendente)).Returns(Task.CompletedTask);
+            _unitOfWork.Setup(unitOfWork => unitOfWork.CommitAsync(default)).ReturnsAsync(1);
             var atendenteService = CriarService();
 
             //Act
@@ -39,10 +43,12 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
             Assert.True(retorno);
             Assert.False(_notificador.TemNotificacao());
             _atendenteRepository.Verify(r => r.Adicionar(atendente), Times.Once);
+            _unitOfWork.Verify(unitOfWork => unitOfWork.CommitAsync(default), Times.Once);
             _atendenteRepository.VerifyNoOtherCalls();
+            _unitOfWork.VerifyNoOtherCalls();
         }
 
-        [Fact(DisplayName = "Atendente erro na validação ao cadastrar")]
+        [Fact(DisplayName = "Atendente erro na validacao ao cadastrar")]
         [Trait("Services", "Atendente")]
         public async Task AdicionarQuandoAtendenteInvalidoDeveNotificarENaoCadastrar()
         {
@@ -59,6 +65,8 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
             Assert.NotEmpty(_notificador.ObterNotificacoes());
             _atendenteRepository.Verify(r => r.Adicionar(atendente), Times.Never);
             _atendenteRepository.VerifyNoOtherCalls();
+            _unitOfWork.Verify(unitOfWork => unitOfWork.CommitAsync(default), Times.Never);
+            _unitOfWork.VerifyNoOtherCalls();
         }
 
         [Fact(DisplayName = "Atendente alterado com sucesso")]
@@ -67,7 +75,8 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
         {
             //Arrange
             var atendente = CriarAtendenteValido();
-            _atendenteRepository.Setup(r => r.Atualizar(atendente)).ReturnsAsync(1);
+            _atendenteRepository.Setup(r => r.Atualizar(atendente)).Returns(Task.CompletedTask);
+            _unitOfWork.Setup(unitOfWork => unitOfWork.CommitAsync(default)).ReturnsAsync(1);
             var atendenteService = CriarService();
 
             //Act
@@ -77,10 +86,12 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
             Assert.True(retorno);
             Assert.False(_notificador.TemNotificacao());
             _atendenteRepository.Verify(r => r.Atualizar(atendente), Times.Once);
+            _unitOfWork.Verify(unitOfWork => unitOfWork.CommitAsync(default), Times.Once);
             _atendenteRepository.VerifyNoOtherCalls();
+            _unitOfWork.VerifyNoOtherCalls();
         }
 
-        [Fact(DisplayName = "Atendente erro na validação ao alterar")]
+        [Fact(DisplayName = "Atendente erro na validacao ao alterar")]
         [Trait("Services", "Atendente")]
         public async Task AtualizarQuandoAtendenteInvalidoDeveNotificarENaoAtualizar()
         {
@@ -98,6 +109,8 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
             _atendenteRepository.Verify(r => r.Adicionar(atendente), Times.Never);
             _atendenteRepository.Verify(r => r.Atualizar(atendente), Times.Never);
             _atendenteRepository.VerifyNoOtherCalls();
+            _unitOfWork.Verify(unitOfWork => unitOfWork.CommitAsync(default), Times.Never);
+            _unitOfWork.VerifyNoOtherCalls();
         }
 
         [Fact(DisplayName = "Atendente removido com sucesso")]
@@ -106,7 +119,8 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
         {
             //Arrange
             var id = Guid.Parse("6b0bb7e2-49ca-4b02-bff4-e6fed1007391");
-            _atendenteRepository.Setup(r => r.RemoverPorId(id)).ReturnsAsync(1);
+            _atendenteRepository.Setup(r => r.RemoverPorId(id)).Returns(Task.CompletedTask);
+            _unitOfWork.Setup(unitOfWork => unitOfWork.CommitAsync(default)).ReturnsAsync(1);
             var atendenteService = CriarService();
 
             //Act
@@ -116,12 +130,36 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
             Assert.True(retorno);
             Assert.False(_notificador.TemNotificacao());
             _atendenteRepository.Verify(r => r.RemoverPorId(id), Times.Once);
+            _unitOfWork.Verify(unitOfWork => unitOfWork.CommitAsync(default), Times.Once);
             _atendenteRepository.VerifyNoOtherCalls();
+            _unitOfWork.VerifyNoOtherCalls();
+        }
+
+        [Fact(DisplayName = "Atendente propaga erro do commit")]
+        [Trait("Services", "Atendente")]
+        public async Task AdicionarQuandoCommitFalhaDevePropagarExcecao()
+        {
+            //Arrange
+            var atendente = CriarAtendenteValido();
+            var exception = new InvalidOperationException("commit failed");
+            _atendenteRepository.Setup(r => r.Adicionar(atendente)).Returns(Task.CompletedTask);
+            _unitOfWork.Setup(unitOfWork => unitOfWork.CommitAsync(default)).ThrowsAsync(exception);
+            var atendenteService = CriarService();
+
+            //Act
+            var actual = await Assert.ThrowsAsync<InvalidOperationException>(() => atendenteService.Adicionar(atendente));
+
+            //Assert
+            Assert.Same(exception, actual);
+            _atendenteRepository.Verify(r => r.Adicionar(atendente), Times.Once);
+            _unitOfWork.Verify(unitOfWork => unitOfWork.CommitAsync(default), Times.Once);
+            _atendenteRepository.VerifyNoOtherCalls();
+            _unitOfWork.VerifyNoOtherCalls();
         }
 
         private AtendenteService CriarService()
         {
-            return new AtendenteService(_atendenteRepository.Object, _notificador);
+            return new AtendenteService(_atendenteRepository.Object, _unitOfWork.Object, _notificador);
         }
 
         private static Atendente CriarAtendenteValido()

@@ -224,11 +224,11 @@ namespace WebApiCoreSeed.Tests.Integracao
 
         private sealed class FakePratoRepository : IPratoRepository
         {
-            public Task<int> Adicionar(Prato prato) => Task.FromResult(1);
+            public Task Adicionar(Prato prato) => Task.CompletedTask;
 
-            public Task<int> Atualizar(Prato prato) => Task.FromResult(1);
+            public Task Atualizar(Prato prato) => Task.CompletedTask;
 
-            public Task<int> RemoverPorId(Guid id) => Task.FromResult(1);
+            public Task RemoverPorId(Guid id) => Task.CompletedTask;
 
             public Task<Prato> ObterPorId(Guid id) => Task.FromResult<Prato>(null);
 

@@ -3,10 +3,12 @@ using WebApiCoreSeed.SampleRestaurant.Intefaces;
 using WebApiCoreSeed.SampleRestaurant.Notificacoes;
 using WebApiCoreSeed.SampleRestaurant.Services;
 using WebApiCoreSeed.SampleRestaurant.Infrastructure.Context;
+using WebApiCoreSeed.SampleRestaurant.Infrastructure.Persistence;
 using WebApiCoreSeed.SampleRestaurant.Infrastructure.Repository;
 using Microsoft.Extensions.DependencyInjection;
 using WebApiCoreSeed.Api.Extensions;
 using WebApiCoreSeed.SampleRestaurant.Intefaces.Service;
+using WebApiCoreSeed.SampleRestaurant.Interfaces.Persistence;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Repository;
 
 namespace WebApiCoreSeed.Api.Configuration
@@ -23,6 +25,7 @@ namespace WebApiCoreSeed.Api.Configuration
             services.AddScoped<IPedidoRepository, PedidoRepository>();
             services.AddScoped<IPedidoPratoRepository, PedidoPratoRepository>();
             services.AddScoped<IPratoRepository, PratoRepository>();
+            services.AddScoped<ISampleRestaurantUnitOfWork, SampleRestaurantUnitOfWork>();
 
             //Services
             services.AddScoped<IPedidoService, PedidoService>();

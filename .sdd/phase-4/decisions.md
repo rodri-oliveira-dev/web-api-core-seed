@@ -21,3 +21,8 @@
 | D017 | Manter commit implicito nos metodos de escrita dos repositories concretos ate o Prompt 4. | Accepted | O objetivo deste prompt e remover o generic repository; a fronteira transacional sera tratada separadamente para preservar comportamento observavel. |
 | D018 | Remover `IPedidoRepository.ObterPedidoItens` nesta entrega. | Accepted | O metodo nao tinha consumidor produtivo encontrado e delegava para consulta por id sem carregar itens. |
 | D019 | Manter pagina de pratos sem ordenacao deterministica por enquanto. | Accepted | A paginacao final pertence ao Prompt 7; esta entrega preserva o contrato e comportamento legado. |
+| D020 | Criar `ISampleRestaurantUnitOfWork` como porta de saida do modulo `SampleRestaurant`. | Accepted | O contrato explicita que o limite transacional pertence ao `SampleRestaurantDbContext` e evita prometer coordenacao generica entre DbContexts. |
+| D021 | Repositorios de escrita registram alteracoes e nao retornam linhas afetadas. | Accepted | Linhas afetadas pertencem ao commit; repository deve expressar a intencao de persistencia e nao confirmar a transacao. |
+| D022 | Nao adicionar transacoes explicitas no Prompt 04. | Accepted | Um unico `SaveChangesAsync` por caso de uso ja e atomico para o provider relacional usado; transacoes explicitas seriam redundantes no estado atual. |
+| D023 | Manter `ApplicationDbContext` de Identity fora da Unit of Work do sample. | Accepted | Identity possui contexto e stores proprios, e nao ha fluxo atual que grave Identity e SampleRestaurant no mesmo caso de uso. |
+| D024 | Nao integrar domain events ao commit no Prompt 04. | Accepted | Nao existem domain events, interceptors ou outbox no codigo ativo; introduzir isso seria escopo novo. |

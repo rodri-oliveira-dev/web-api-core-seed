@@ -5,7 +5,7 @@
 | 01 - Arquitetura modular Hexagonal | concluido |
 | 02 - Separacao do dominio de exemplo | concluido |
 | 03 - Portas de persistencia | concluido |
-| 04 - Unit of Work | pendente |
+| 04 - Unit of Work | concluido |
 | 05 - CancellationToken | pendente |
 | 06 - Migrations na infraestrutura | pendente |
 | 07 - Paginacao | pendente |
@@ -60,6 +60,24 @@
 - Escrita em console na persistencia removida.
 - `PratoService` deixou de usar `.Result` para consulta de existencia.
 - Teste arquitetural adicionado para impedir repositorio generico no core e na infraestrutura do sample.
+- Build/test final: passou.
+- OpenAPI regenerado e sem diff de contrato.
+- Push: nao realizado.
+
+## Resultado do prompt 04
+
+- Porta `ISampleRestaurantUnitOfWork` criada no Application do modulo `SampleRestaurant`.
+- Implementacao `SampleRestaurantUnitOfWork` criada na Infrastructure do modulo `SampleRestaurant`.
+- Repositorios concretos deixaram de chamar `SampleRestaurantDbContext.SaveChangesAsync`.
+- Escritas de repository passaram a registrar alteracoes no `DbContext` e retornar `Task`.
+- Services/casos de uso de escrita passaram a chamar `CommitAsync` uma vez apos validacao e operacao de repository.
+- Controllers permanecem sem commit.
+- Nenhuma transacao explicita foi adicionada; o commit unico via EF Core cobre atomicidade local no `SampleRestaurantDbContext`.
+- `ApplicationDbContext` de Identity permanece em limite separado.
+- Domain events e interceptors nao existem no codigo ativo.
+- Testes unitarios/leves cobrem commit unico, ausencia de commit em validacao invalida e propagacao de excecao de commit.
+- Testes de integracao com SQL Server real cobrem criacao, atualizacao, ausencia de persistencia sem commit e rollback atomico quando o commit falha.
+- Smoke HTTP de escrita de `Mesa` adicionado.
 - Build/test final: passou.
 - OpenAPI regenerado e sem diff de contrato.
 - Push: nao realizado.

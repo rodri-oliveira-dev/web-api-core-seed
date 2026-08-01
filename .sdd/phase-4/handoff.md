@@ -1,12 +1,12 @@
 # Handoff - Phase 4
 
-## Estado final do prompt 03
+## Estado final do prompt 04
 
 - Branch atual: `phase/4-architecture-modernization`.
 - Branch-base: `phase/3-quality-and-safety`.
 - Commit-base da fase: `18af517adab5d21ae58ac9674da411244a5379b9`.
-- Prompt atual: `03 - Portas de persistencia` concluido.
-- Commit esperado: `refactor: replace generic repository with explicit ports`.
+- Prompt atual: `04 - Unit of Work` concluido.
+- Commit esperado: `refactor: define explicit unit of work boundary`.
 - Push: nao realizado.
 - PR: nao realizado.
 
@@ -82,37 +82,62 @@
 - `Console.WriteLine` de persistencia removido.
 - `PratoService.Adicionar` deixou de bloquear em `.Result` e passou a consultar existencia de forma assincrona.
 
+## Resultado do prompt 04
+
+- Contrato criado: `ISampleRestaurantUnitOfWork`.
+- Implementacao criada: `SampleRestaurantUnitOfWork`, delegando para `SampleRestaurantDbContext.SaveChangesAsync`.
+- DI registra `ISampleRestaurantUnitOfWork` como scoped.
+- Repositorios migrados:
+  - `AtendenteRepository`
+  - `MesaRepository`
+  - `PedidoRepository`
+  - `PedidoPratoRepository`
+  - `PratoRepository`
+  - `LogginRepository`
+- Casos de uso migrados:
+  - `AtendenteService.Adicionar`, `Atualizar`, `Remover`
+  - `MesaService.Adicionar`, `Atualizar`, `Remover`
+  - `PedidoService.Adicionar`, `Atualizar`, `Remover`
+  - `PedidoPratoService.Adicionar`, `Atualizar`, `Remover`
+  - `PratoService.Adicionar`, `Atualizar`, `Remover`
+  - `LogginService.Adicionar`
+- Commits removidos de repositories: 16 chamadas diretas a `SampleRestaurantDbContext.SaveChangesAsync`.
+- Transacoes explicitas adicionadas: nenhuma.
+- Justificativa: um unico `SaveChangesAsync` por caso de uso e atomico no `SampleRestaurantDbContext`.
+- Multiplos DbContexts: `SampleRestaurantDbContext` e `ApplicationDbContext` continuam separados; a Unit of Work criada cobre somente o sample.
+- Domain events/interceptors: nao existem no codigo ativo e nao foram introduzidos.
+
 ## Debitos temporarios
 
-- Unit of Work implicito permanece ate o Prompt 4.
 - CancellationToken ainda nao foi propagado de ponta a ponta; Prompt 5.
 - Migrations de Identity ainda ficam na API; Prompt 6.
 - Migrations do sample permaneceram no projeto de infraestrutura com ajuste de namespace/tipo; mover ownership definitivo fica para o Prompt 6.
 - Paginacao ainda e a implementacao legada; Prompt 7.
-- Transacao/commit: os metodos de escrita dos repositories concretos ainda chamam `SampleRestaurantDbContext.SaveChangesAsync` diretamente. Esse debito e intencional para a proxima issue.
+- Repositories ainda implementam `IDisposable` e services ainda descartam repositories; isso e legado preservado e pode ser simplificado em refatoracao futura.
 
 ## Validacao final
 
 - `dotnet restore`: passou.
-- `dotnet build --configuration Release --no-restore`: passou com 21 warnings de analyzers ja existentes na API.
-- `dotnet test --configuration Release --no-build`: passou, 48 testes em `WebApiCoreSeed.Tests` e 26 em `WebApiCoreSeed.IntegrationTests`.
-- `dotnet test test/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj --configuration Release --no-build --filter Category=Integration`: passou, 26 testes.
+- `dotnet build --configuration Release --no-restore`: passou sem warnings.
+- `dotnet test --configuration Release --no-build`: passou, 49 testes em `WebApiCoreSeed.Tests` e 31 em `WebApiCoreSeed.IntegrationTests`.
+- `dotnet test test/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj --configuration Release --no-build --filter Category=Integration`: passou, 31 testes.
+- `git grep -n "SaveChanges" -- "src/**/*.cs"`: restam apenas chamadas autorizadas em `SampleRestaurantDbContext.SaveChangesAsync`.
 - Grep literal da interface generica legada: vazio.
 - Grep literal da implementacao generica legada: vazio.
 - `git grep -n "Expression<Func" -- src test`: vazio.
 - `dotnet run --project tools/OpenApiGenerator/OpenApiGenerator.csproj --configuration Release --no-build`: passou e regenerou `docs/openapi/openapi-v1.json` e `docs/openapi/openapi-v2.json`.
 - `git diff -- docs/openapi/openapi-v1.json docs/openapi/openapi-v2.json`: sem diff de conteudo.
-- Smoke/regressao HTTP: cobertos pelas suites `WebApiCoreSeed.Tests`, `WebApiCoreSeed.IntegrationTests` e pela geracao OpenAPI.
+- Smoke/regressao HTTP: cobertos pelas suites `WebApiCoreSeed.Tests`, `WebApiCoreSeed.IntegrationTests`, pelo novo teste HTTP de escrita de `Mesa` e pela geracao OpenAPI.
 - Validacao SQL Server real e Redis: coberta pela suite de integracao `Category=Integration`; Redis nao foi alterado.
 
 ## Proxima issue
 
-- Proxima issue/prompt: `#15`, iniciando o Prompt 4 da Fase 4.
+- Proxima issue/prompt: `#16`, iniciando o Prompt 5 da Fase 4.
 
 ## Proximos prompts restantes
 
 - `03 - Portas de persistencia`: concluido.
-- `04 - Unit of Work`: pendente.
+- `04 - Unit of Work`: concluido.
 - `05 - CancellationToken`: pendente.
 - `06 - Migrations na infraestrutura`: pendente.
 - `07 - Paginacao deterministica`: pendente.

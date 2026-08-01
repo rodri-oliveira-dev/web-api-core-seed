@@ -8,9 +8,9 @@ namespace WebApiCoreSeed.SampleRestaurant.Interfaces.Repository
 {
     public interface IPratoRepository : IDisposable
     {
-        Task<int> Adicionar(Prato prato);
-        Task<int> Atualizar(Prato prato);
-        Task<int> RemoverPorId(Guid id);
+        Task Adicionar(Prato prato);
+        Task Atualizar(Prato prato);
+        Task RemoverPorId(Guid id);
         Task<Prato> ObterPorId(Guid id);
         Task<bool> ExisteComId(Guid id);
         Task<IEnumerable<Prato>> ListarPagina(PaginationParameter paginationParameter);

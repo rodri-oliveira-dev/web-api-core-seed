@@ -115,6 +115,30 @@ public sealed class ApiContractIntegrationTests
         Assert.True(problem.GetProperty("errors").TryGetProperty("notifications", out _));
     }
 
+    [Fact(DisplayName = "Endpoint de escrita persiste Mesa usando Unit of Work")]
+    public async Task AdicionarMesaQuandoPayloadValidoDevePersistirComUnitOfWork()
+    {
+        await _factory.ResetStateAsync();
+        var mesaId = Guid.NewGuid();
+        using var client = _factory.CreateApiClient(("Mesas", "Adicionar"));
+
+        var response = await client.PostAsJsonAsync("/api/v1/Mesas", new
+        {
+            id = mesaId,
+            numero = "HTTP-UOW",
+            lugares = 4,
+            ativo = true,
+            localizacaoMesa = 1
+        });
+
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+
+        var exists = await _factory.WithDomainContextAsync(context =>
+            context.Mesas.AnyAsync(item => item.Id == mesaId && item.Numero == "HTTP-UOW"));
+
+        Assert.True(exists);
+    }
+
     [Fact(DisplayName = "Rate limit publico retorna Too Many Requests Problem Details")]
     public async Task ObterPratosQuandoAcimaDoLimiteDeveRetornarTooManyRequests()
     {

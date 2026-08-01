@@ -6,6 +6,6 @@ namespace WebApiCoreSeed.SampleRestaurant.Interfaces.Repository
 {
     public interface ILogginRepository : IDisposable
     {
-        Task<int> Registrar(LogginEntity log);
+        Task Registrar(LogginEntity log);
     }
 }

@@ -15,10 +15,10 @@ namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Repository
             _context = context;
         }
 
-        public async Task<int> Registrar(LogginEntity log)
+        public Task Registrar(LogginEntity log)
         {
             _context.Loggins.Add(log);
-            return await _context.SaveChangesAsync();
+            return Task.CompletedTask;
         }
 
         public void Dispose()

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using WebApiCoreSeed.SampleRestaurant.Intefaces;
 using WebApiCoreSeed.SampleRestaurant.Intefaces.Service;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Pagination;
+using WebApiCoreSeed.SampleRestaurant.Interfaces.Persistence;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Repository;
 using WebApiCoreSeed.SampleRestaurant.Models;
 using WebApiCoreSeed.SampleRestaurant.Models.Validations;
@@ -14,12 +15,15 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
     public class PratoService : BaseService, IPratoService
     {
         private readonly IPratoRepository _pratoRepository;
+        private readonly ISampleRestaurantUnitOfWork _unitOfWork;
         private readonly INotificador _notificador;
 
         public PratoService(IPratoRepository pratoRepository,
+                                 ISampleRestaurantUnitOfWork unitOfWork,
                                  INotificador notificador) : base(notificador)
         {
             _pratoRepository = pratoRepository;
+            _unitOfWork = unitOfWork;
             _notificador = notificador;
         }
 
@@ -34,6 +38,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
             }
 
             await _pratoRepository.Adicionar(prato);
+            await _unitOfWork.CommitAsync();
             return true;
         }
 
@@ -42,12 +47,14 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
             if (!ExecutarValidacao(new PratoValidation(), prato)) return false;
 
             await _pratoRepository.Atualizar(prato);
+            await _unitOfWork.CommitAsync();
             return true;
         }
 
         public async Task<bool> Remover(Guid id)
         {
             await _pratoRepository.RemoverPorId(id);
+            await _unitOfWork.CommitAsync();
             return true;
         }
 

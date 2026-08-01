@@ -15,22 +15,22 @@ namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Repository
             _context = context;
         }
 
-        public async Task<int> Adicionar(Mesa mesa)
+        public Task Adicionar(Mesa mesa)
         {
             _context.Mesas.Add(mesa);
-            return await _context.SaveChangesAsync();
+            return Task.CompletedTask;
         }
 
-        public async Task<int> Atualizar(Mesa mesa)
+        public Task Atualizar(Mesa mesa)
         {
             _context.Mesas.Update(mesa);
-            return await _context.SaveChangesAsync();
+            return Task.CompletedTask;
         }
 
-        public async Task<int> RemoverPorId(Guid id)
+        public Task RemoverPorId(Guid id)
         {
             _context.Mesas.Remove(new Mesa { Id = id });
-            return await _context.SaveChangesAsync();
+            return Task.CompletedTask;
         }
 
         public async Task<Mesa> ObterPorId(Guid id)

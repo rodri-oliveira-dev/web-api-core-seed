@@ -6,8 +6,8 @@ namespace WebApiCoreSeed.SampleRestaurant.Interfaces.Repository
 {
     public interface IPedidoRepository : IDisposable
     {
-        Task<int> Adicionar(Pedido pedido);
-        Task<int> Atualizar(Pedido pedido);
-        Task<int> RemoverPorId(Guid id);
+        Task Adicionar(Pedido pedido);
+        Task Atualizar(Pedido pedido);
+        Task RemoverPorId(Guid id);
     }
 }
