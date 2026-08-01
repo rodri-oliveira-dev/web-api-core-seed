@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.4",
   "info": {
-    "title": "API - Restaurante",
-    "description": "Esta API atende as tratativas necessarias para um restaurante.",
+    "title": "Sample Restaurant API",
+    "description": "Esta API demonstra endpoints de restaurante do sample.",
     "version": "v2"
   },
   "servers": [

@@ -13,11 +13,11 @@ Leia somente o que for relevante para a tarefa, com prioridade para:
 1. `README.md`
 2. `LEGACY.md`
 3. `.sdd/`
-4. `RestauranteAPI.sln`
-5. `src/DevIO.Api/Restaurante.IO.Api.csproj`
-6. `src/DevIO.Business/Restaurante.IO.Business.csproj`
-7. `src/DevIO.Data/Restaurante.IO.Data.csproj`
-8. `test/Pedidos.Test/Pedidos.Test.csproj`
+4. `WebApiCoreSeed.sln`
+5. `src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj`
+6. `src/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.csproj`
+7. `src/SampleRestaurant.Infrastructure/WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj`
+8. `test/WebApiCoreSeed.Tests/WebApiCoreSeed.Tests.csproj`
 9. `.editorconfig`
 10. `.vscode/`
 11. `.github/`
@@ -26,11 +26,11 @@ Leia somente o que for relevante para a tarefa, com prioridade para:
 
 ## Estado Atual
 
-- A solution atual e `RestauranteAPI.sln`.
+- A solution atual e `WebApiCoreSeed.sln`.
 - Todos os projetos ativos miram `net10.0`.
-- O projeto da API e `src/DevIO.Api/Restaurante.IO.Api.csproj`.
-- Existem bibliotecas Business e Data em `src/DevIO.Business/` e `src/DevIO.Data/`.
-- O projeto de testes atual e `test/Pedidos.Test/Pedidos.Test.csproj`.
+- O projeto da API e `src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj`.
+- Existem bibliotecas Business e Data em `src/SampleRestaurant/` e `src/SampleRestaurant.Infrastructure/`.
+- O projeto de testes atual e `test/WebApiCoreSeed.Tests/WebApiCoreSeed.Tests.csproj`.
 - A arquitetura atual e a arquitetura legada em camadas do projeto original; ela ainda nao e um monolito modular moderno.
 - O legado preservado usa ASP.NET Core 3.1, Entity Framework Core 3.1, SQL Server, Redis, Identity, JWT, Swagger, health checks, rate limiting por pacote e Serilog.
 - A aplicacao ativa foi migrada para .NET 10 e usa o hosting moderno do ASP.NET Core com `WebApplication`.

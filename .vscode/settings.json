@@ -1,5 +1,5 @@
 {
-  "dotnet.defaultSolution": "RestauranteAPI.sln",
+  "dotnet.defaultSolution": "WebApiCoreSeed.sln",
   "dotnet.server.useOmnisharp": false,
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {

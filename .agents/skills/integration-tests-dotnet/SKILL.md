@@ -7,7 +7,7 @@ description: Use esta skill para criar ou revisar testes de integracao .NET nest
 
 Orientar testes de integracao da versao moderna do `web-api-core-seed` com foco em fidelidade, isolamento e custo de execucao.
 
-No estado atual, o repositorio possui apenas testes unitarios em `test/Pedidos.Test`. Recursos como `WebApplicationFactory` e Testcontainers sao planejados para fases futuras e devem ser tratados como condicionais ate serem implementados.
+No estado atual, o repositorio possui apenas testes unitarios em `test/WebApiCoreSeed.Tests`. Recursos como `WebApplicationFactory` e Testcontainers sao planejados para fases futuras e devem ser tratados como condicionais ate serem implementados.
 
 # Quando usar
 

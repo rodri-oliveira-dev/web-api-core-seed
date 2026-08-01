@@ -5,11 +5,11 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Restaurante.IO.Api;
-using Restaurante.IO.Api.DataContext;
-using Restaurante.IO.Api.Services.Interfaces;
-using Restaurante.IO.Api.Settings;
-using Restaurante.IO.Data.Context;
+using WebApiCoreSeed.Api;
+using WebApiCoreSeed.Api.DataContext;
+using WebApiCoreSeed.Api.Services.Interfaces;
+using WebApiCoreSeed.Api.Settings;
+using WebApiCoreSeed.SampleRestaurant.Infrastructure.Context;
 
 var documents = args.Length == 0
     ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
@@ -61,14 +61,14 @@ static Dictionary<string, string> ParseDocuments(string[] arguments)
     return documents;
 }
 
-sealed class OpenApiFactory : WebApplicationFactory<Restaurante.IO.Api.Program>
+sealed class OpenApiFactory : WebApplicationFactory<WebApiCoreSeed.Api.Program>
 {
     private readonly string _databaseName = Guid.NewGuid().ToString();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
-        builder.UseContentRoot(Path.GetFullPath("src/DevIO.Api"));
+        builder.UseContentRoot(Path.GetFullPath("src/WebApiCoreSeed.Api"));
         builder.ConfigureAppConfiguration((_, configuration) =>
         {
             configuration.AddInMemoryCollection(new Dictionary<string, string?>
@@ -85,12 +85,12 @@ sealed class OpenApiFactory : WebApplicationFactory<Restaurante.IO.Api.Program>
 
         builder.ConfigureServices(services =>
         {
-            services.RemoveAll<MeuDbContext>();
+            services.RemoveAll<SampleRestaurantDbContext>();
             services.RemoveAll<ApplicationDbContext>();
-            services.RemoveAll<DbContextOptions<MeuDbContext>>();
+            services.RemoveAll<DbContextOptions<SampleRestaurantDbContext>>();
             services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
 
-            services.AddDbContext<MeuDbContext>(options => options.UseInMemoryDatabase(_databaseName));
+            services.AddDbContext<SampleRestaurantDbContext>(options => options.UseInMemoryDatabase(_databaseName));
             services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase(_databaseName + "-identity"));
             services.PostConfigure<HealthCheckServiceOptions>(options => options.Registrations.Clear());
             services.RemoveAll<RedisCacheSettings>();

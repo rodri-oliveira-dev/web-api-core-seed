@@ -11,9 +11,9 @@
 ## Validation
 
 - [ ] `git diff --check`
-- [ ] `dotnet restore RestauranteAPI.sln`
-- [ ] `dotnet build RestauranteAPI.sln --no-restore`
-- [ ] `dotnet test RestauranteAPI.sln --no-build`
+- [ ] `dotnet restore WebApiCoreSeed.sln`
+- [ ] `dotnet build WebApiCoreSeed.sln --no-restore`
+- [ ] `dotnet test WebApiCoreSeed.sln --no-build`
 
 ## Notes
 

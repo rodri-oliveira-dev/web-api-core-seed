@@ -5,7 +5,7 @@ description: Use esta skill ao alterar a aplicacao .NET deste repositorio, inclu
 
 # Objetivo
 
-Orientar alteracoes pequenas e seguras na solution `RestauranteAPI.sln`, respeitando o estado atual em .NET Core 3.1 e a modernizacao incremental planejada para .NET 10.
+Orientar alteracoes pequenas e seguras na solution `WebApiCoreSeed.sln`, respeitando o estado atual em .NET Core 3.1 e a modernizacao incremental planejada para .NET 10.
 
 # Quando usar
 
@@ -38,9 +38,9 @@ Orientar alteracoes pequenas e seguras na solution `RestauranteAPI.sln`, respeit
 Comandos baseline, a partir da raiz:
 
 ```bash
-dotnet restore RestauranteAPI.sln
-dotnet build RestauranteAPI.sln --no-restore
-dotnet test test/Pedidos.Test/Pedidos.Test.csproj --no-build
+dotnet restore WebApiCoreSeed.sln
+dotnet build WebApiCoreSeed.sln --no-restore
+dotnet test test/WebApiCoreSeed.Tests/WebApiCoreSeed.Tests.csproj --no-build
 ```
 
 Se a validacao for bloqueada por ambiente legado, registre o bloqueio sem alterar SDK, target framework ou pacotes.

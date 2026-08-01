@@ -2,7 +2,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Restaurante.IO.Api",
+      "name": "WebApiCoreSeed.Api",
       "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "dotnet: build solution",
@@ -11,7 +11,7 @@
         "run",
         "--no-build",
         "--project",
-        "${workspaceFolder}/src/DevIO.Api/Restaurante.IO.Api.csproj"
+        "${workspaceFolder}/src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj"
       ],
       "cwd": "${workspaceFolder}",
       "env": {

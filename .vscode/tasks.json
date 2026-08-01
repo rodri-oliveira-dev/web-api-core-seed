@@ -7,7 +7,7 @@
       "command": "dotnet",
       "args": [
         "restore",
-        "${workspaceFolder}/RestauranteAPI.sln"
+        "${workspaceFolder}/WebApiCoreSeed.sln"
       ],
       "problemMatcher": "$msCompile"
     },
@@ -17,7 +17,7 @@
       "command": "dotnet",
       "args": [
         "build",
-        "${workspaceFolder}/RestauranteAPI.sln",
+        "${workspaceFolder}/WebApiCoreSeed.sln",
         "--no-restore"
       ],
       "group": {
@@ -32,7 +32,7 @@
       "command": "dotnet",
       "args": [
         "test",
-        "${workspaceFolder}/RestauranteAPI.sln",
+        "${workspaceFolder}/WebApiCoreSeed.sln",
         "--no-build"
       ],
       "group": {
@@ -48,7 +48,7 @@
       "args": [
         "run",
         "--project",
-        "${workspaceFolder}/src/DevIO.Api/Restaurante.IO.Api.csproj"
+        "${workspaceFolder}/src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj"
       ],
       "problemMatcher": "$msCompile",
       "presentation": {

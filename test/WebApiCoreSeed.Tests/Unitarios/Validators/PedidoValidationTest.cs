@@ -1,0 +1,84 @@
+using FluentValidation.TestHelper;
+using WebApiCoreSeed.SampleRestaurant.Models;
+using WebApiCoreSeed.SampleRestaurant.Models.Core;
+using WebApiCoreSeed.SampleRestaurant.Models.Enums;
+using WebApiCoreSeed.SampleRestaurant.Models.Validations;
+using System.Collections.Generic;
+using Xunit;
+
+namespace WebApiCoreSeed.Tests.Unitarios.Validators
+{
+    public class PedidoValidationTest
+    {
+        [Fact(DisplayName = "Pedido falha validação, campos obrigatorios")]
+        [Trait("Validators", "Pedido")]
+        public void PedidoQuandoCamposObrigatoriosAusentesDeveFalharValidacao()
+        {
+            //Arrange
+            var pedido = new Pedido();
+            var validator = new PedidoValidation();
+
+            //Act
+            var resultado = validator.TestValidate(pedido);
+
+            //Assert
+            resultado.ShouldHaveValidationErrorFor(p => p.Mesa);
+            resultado.ShouldHaveValidationErrorFor(p => p.Atendente);
+            resultado.ShouldHaveValidationErrorFor(p => p.PedidoPrato);
+            resultado.ShouldHaveValidationErrorFor(p => p.Numero);
+        }
+
+        [Fact(DisplayName = "Pedido passa validação, campos obrigatorios")]
+        [Trait("Validators", "Pedido")]
+        public void PedidoQuandoCamposObrigatoriosValidosDevePassarValidacao()
+        {
+            //Arrange
+            var pedido = new Pedido
+            {
+                Atendente = new Atendente
+                {
+                    Nome = "Rodrigo de Oliveira",
+                    Email = "rodrigodotnet@gmail.com",
+                    Telefone = new Telefone
+                    {
+                        Ddd = 19,
+                        Numero = 998861786,
+                        TipoTelefone = ETipoTelefone.Celular,
+                    }
+                },
+                Mesa = new Mesa
+                {
+                    LocalizacaoMesa = ELocalizacaoMesa.Interna,
+                    Numero = "07",
+                    Lugares = 4
+                },
+                PedidoPrato = new List<PedidoPrato>()
+                {
+                    new PedidoPrato
+                    {
+                        Prato= new Prato()
+                        {
+                            Titulo = "X-Burguer",
+                            Descricao = "Lanchão",
+                            Foto = "x-burguer.jpg",
+                            Preco = 25,
+                            TipoPrato = ETipoPrato.Comida,
+                        },
+                        
+                    }
+                },
+                Numero = "PED-001",
+            };
+            var validator = new PedidoValidation();
+
+            //Act
+            var resultado = validator.TestValidate(pedido);
+
+            //Assert
+            resultado.ShouldNotHaveValidationErrorFor(p => p.Mesa);
+            resultado.ShouldNotHaveValidationErrorFor(p => p.Atendente);
+            resultado.ShouldNotHaveValidationErrorFor(p => p.PedidoPrato);
+            resultado.ShouldNotHaveValidationErrorFor(p => p.Numero);
+        }
+    }
+}

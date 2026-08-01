@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
@@ -23,8 +23,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\DevIO.Api\Restaurante.IO.Api.csproj" />
-    <ProjectReference Include="..\..\src\DevIO.Data\Restaurante.IO.Data.csproj" />
+    <ProjectReference Include="..\..\src\WebApiCoreSeed.Api\WebApiCoreSeed.Api.csproj" />
+    <ProjectReference Include="..\..\src\SampleRestaurant.Infrastructure\WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

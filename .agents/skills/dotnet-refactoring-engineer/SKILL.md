@@ -46,9 +46,9 @@ Apoiar refatoracoes seguras em C# preservando comportamento observavel e respeit
 Procure comandos existentes antes de assumir. Quando nao houver instrucao especifica:
 
 ```bash
-dotnet restore RestauranteAPI.sln
-dotnet build RestauranteAPI.sln --no-restore
-dotnet test test/Pedidos.Test/Pedidos.Test.csproj --no-build
+dotnet restore WebApiCoreSeed.sln
+dotnet build WebApiCoreSeed.sln --no-restore
+dotnet test test/WebApiCoreSeed.Tests/WebApiCoreSeed.Tests.csproj --no-build
 ```
 
 Registre validacoes bloqueadas pelo ambiente sem alterar o projeto para contornar o bloqueio.

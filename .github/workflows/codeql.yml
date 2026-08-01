@@ -19,7 +19,7 @@ concurrency:
 env:
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
-  SOLUTION: RestauranteAPI.sln
+  SOLUTION: WebApiCoreSeed.sln
 
 jobs:
   analyze:

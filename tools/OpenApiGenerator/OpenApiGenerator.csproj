@@ -14,7 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\DevIO.Api\Restaurante.IO.Api.csproj" />
+    <ProjectReference Include="..\..\src\WebApiCoreSeed.Api\WebApiCoreSeed.Api.csproj" />
   </ItemGroup>
 
 </Project>

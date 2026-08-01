@@ -16,8 +16,8 @@ concurrency:
 env:
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
-  SOLUTION: RestauranteAPI.sln
-  UNIT_TEST_PROJECT: test/Pedidos.Test/Pedidos.Test.csproj
+  SOLUTION: WebApiCoreSeed.sln
+  UNIT_TEST_PROJECT: test/WebApiCoreSeed.Tests/WebApiCoreSeed.Tests.csproj
   INTEGRATION_TEST_PROJECT: test/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj
   OPENAPI_GENERATOR_PROJECT: tools/OpenApiGenerator/OpenApiGenerator.csproj
 

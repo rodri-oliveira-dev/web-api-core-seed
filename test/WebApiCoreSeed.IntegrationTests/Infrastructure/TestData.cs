@@ -1,5 +1,5 @@
-using Restaurante.IO.Business.Models;
-using Restaurante.IO.Business.Models.Enums;
+using WebApiCoreSeed.SampleRestaurant.Models;
+using WebApiCoreSeed.SampleRestaurant.Models.Enums;
 
 namespace WebApiCoreSeed.IntegrationTests.Infrastructure;
 

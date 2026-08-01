@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
-using Restaurante.IO.Api;
-using Restaurante.IO.Api.DataContext;
-using Restaurante.IO.Data.Context;
+using WebApiCoreSeed.Api;
+using WebApiCoreSeed.Api.DataContext;
+using WebApiCoreSeed.SampleRestaurant.Infrastructure.Context;
 using StackExchange.Redis;
 using Testcontainers.MsSql;
 using Testcontainers.Redis;
@@ -72,10 +72,10 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         await _redisConnection.GetDatabase().ExecuteAsync("FLUSHDB");
     }
 
-    public async Task WithDomainContextAsync(Func<MeuDbContext, Task> action)
+    public async Task WithDomainContextAsync(Func<SampleRestaurantDbContext, Task> action)
     {
         using var scope = Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<MeuDbContext>();
+        var context = scope.ServiceProvider.GetRequiredService<SampleRestaurantDbContext>();
 
         await action(context);
     }
@@ -88,10 +88,10 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         await action(context);
     }
 
-    public async Task<T> WithDomainContextAsync<T>(Func<MeuDbContext, Task<T>> action)
+    public async Task<T> WithDomainContextAsync<T>(Func<SampleRestaurantDbContext, Task<T>> action)
     {
         using var scope = Services.CreateScope();
-        var context = scope.ServiceProvider.GetRequiredService<MeuDbContext>();
+        var context = scope.ServiceProvider.GetRequiredService<SampleRestaurantDbContext>();
 
         return await action(context);
     }
@@ -193,7 +193,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
         using var scope = Services.CreateScope();
 
         var applicationContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-        var domainContext = scope.ServiceProvider.GetRequiredService<MeuDbContext>();
+        var domainContext = scope.ServiceProvider.GetRequiredService<SampleRestaurantDbContext>();
 
         await applicationContext.Database.MigrateAsync();
         await domainContext.Database.MigrateAsync();

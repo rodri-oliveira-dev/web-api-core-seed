@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
-using Restaurante.IO.Business.Models;
+using WebApiCoreSeed.SampleRestaurant.Models;
 using WebApiCoreSeed.IntegrationTests.Infrastructure;
 
 namespace WebApiCoreSeed.IntegrationTests.Infrastructure;
@@ -86,18 +86,18 @@ public sealed class SqlServerIntegrationTests
             context.Users.Add(new IdentityUser
             {
                 Id = Guid.NewGuid().ToString(),
-                UserName = "duplicado@restaurante.local",
-                NormalizedUserName = "DUPLICADO@RESTAURANTE.LOCAL",
-                Email = "duplicado-1@restaurante.local",
+                UserName = "duplicado@example.local",
+                NormalizedUserName = "DUPLICADO@EXAMPLE.LOCAL",
+                Email = "duplicado-1@example.local",
                 NormalizedEmail = "DUPLICADO-1@RESTAURANTE.LOCAL",
                 EmailConfirmed = true
             });
             context.Users.Add(new IdentityUser
             {
                 Id = Guid.NewGuid().ToString(),
-                UserName = "duplicado@restaurante.local",
-                NormalizedUserName = "DUPLICADO@RESTAURANTE.LOCAL",
-                Email = "duplicado-2@restaurante.local",
+                UserName = "duplicado@example.local",
+                NormalizedUserName = "DUPLICADO@EXAMPLE.LOCAL",
+                Email = "duplicado-2@example.local",
                 NormalizedEmail = "DUPLICADO-2@RESTAURANTE.LOCAL",
                 EmailConfirmed = true
             });

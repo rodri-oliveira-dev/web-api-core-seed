@@ -8,7 +8,7 @@ namespace WebApiCoreSeed.IntegrationTests.Infrastructure;
 public static class AuthenticationHelper
 {
     public const string TestSecret = "X-BURGUER@COCA-2-INTEGRATION-TEST-SECRET-2026-WITH-HS384-SIZE";
-    public const string Issuer = "Restaurante";
+    public const string Issuer = "WebApiCoreSeed";
     public const string Audience = "https://localhost";
 
     public static string CreateToken(params (string Type, string Value)[] claims)
@@ -17,7 +17,7 @@ public static class AuthenticationHelper
         var tokenClaims = new List<Claim>
         {
             new(ClaimTypes.NameIdentifier, Guid.NewGuid().ToString()),
-            new(ClaimTypes.Email, $"teste-{Guid.NewGuid():N}@restaurante.local")
+            new(ClaimTypes.Email, $"teste-{Guid.NewGuid():N}@example.local")
         };
 
         tokenClaims.AddRange(claims.Select(claim => new Claim(claim.Type, claim.Value)));

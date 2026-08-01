@@ -7,10 +7,10 @@ Use uma skill apenas quando a descricao corresponder ao pedido atual. Em caso de
 | Skill | Status | Quando usar | Quando nao usar | Dependencias |
 | --- | --- | --- | --- | --- |
 | `repository-governance-sdd` | pronta | Governanca, SDD, `AGENTS.md`, skills, handoff, decisoes e documentacao de processo. | Codigo de aplicacao ou testes de produto. | `.sdd/`, `AGENTS.md` |
-| `dotnet-service-change` | parcialmente aplicavel | Mudancas na solution .NET atual ou na migracao tecnica, respeitando o estado real. | Governanca pura ou mudancas sem impacto tecnico. | `RestauranteAPI.sln`, projetos reais |
+| `dotnet-service-change` | parcialmente aplicavel | Mudancas na solution .NET atual ou na migracao tecnica, respeitando o estado real. | Governanca pura ou mudancas sem impacto tecnico. | `WebApiCoreSeed.sln`, projetos reais |
 | `dotnet-refactoring-engineer` | parcialmente aplicavel | Refatoracao, revisao e melhoria de codigo .NET/C# com comportamento preservado. | Reescrita ampla ou mudanca de framework sem prompt especifico. | Projetos e testes reais |
 | `integration-tests-dotnet` | planejada | Criar ou revisar testes de integracao quando a Fase 2 introduzir base moderna para isso. | Testes unitarios simples ou antes da infraestrutura de teste existir. | Futuro `WebApplicationFactory` e Testcontainers |
-| `test-anti-patterns` | pronta | Auditar qualidade dos testes atuais ou futuros. | Medir cobertura pura ou escrever testes do zero sem foco em anti-padroes. | Projeto `test/Pedidos.Test` |
+| `test-anti-patterns` | pronta | Auditar qualidade dos testes atuais ou futuros. | Medir cobertura pura ou escrever testes do zero sem foco em anti-padroes. | Projeto `test/WebApiCoreSeed.Tests` |
 
 ## Notas
 
