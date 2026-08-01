@@ -17,11 +17,15 @@
 | D011 | Do not correct application, dependency, migration, configuration, or validation failures in Prompt 02. | Accepted | Prompt 02 is documentation-only and must preserve the unsupported .NET Core 3.1 state. |
 | D012 | Document confirmed limitations explicitly instead of hiding or normalizing them. | Accepted | Later modernization needs to distinguish historical facts from environment blockers and unverified behavior. |
 | D013 | Record that no seed process was identified. | Accepted | Repository search found no seed implementation, `HasData`, automatic migration/initialization, or SQL inserts. |
+| D014 | Finalize Phase 1 with exactly one commit named `chore: finalize legacy preservation`. | Accepted | Prompt 03 requires a single final preservation commit before creating local Git references. |
+| D015 | Create or verify `legacy/netcoreapp3.1` only after the final Phase 1 commit exists. | Accepted | The branch must point exactly to the final Phase 1 commit and must not be moved if it already exists. |
+| D016 | Create or verify annotated tag `v1.0.0-legacy` only after the final Phase 1 commit exists. | Accepted | The tag must resolve exactly to the final Phase 1 commit and must not be moved if it already exists. |
+| D017 | Keep remote publication out of Prompt 03. | Accepted | The phase branch, legacy branch, and legacy tag remain local until a later explicit publication step. |
+| D018 | Start Phase 2 on `phase/2-dotnet-10-migration` only after Phase 1 is integrated. | Accepted | The modernization branch should begin from the integrated preserved baseline, not from an unreviewed local-only state. |
 
 ## Deferred Decisions
 
 | ID | Decision Needed | Owner | Notes |
 | --- | --- | --- | --- |
-| TBD001 | Exact commands to create `v1.0.0-legacy` and `legacy/netcoreapp3.1`. | Prompt 03 | Must use the preserved baseline and must not move existing refs. |
-| TBD002 | Whether to clean or repair local NuGet cache issues. | Later phase or local operator | Prompt 01 only records the issue; it does not modify the environment. |
+| TBD002 | Whether to clean or repair local NuGet cache issues. | Later phase or local operator | Phase 1 only records the issue; it does not modify the environment. |
 | TBD003 | Whether modernization should introduce an explicit seed mechanism. | Later modernization phase | Prompt 02 records that the legacy repository does not expose a seed command. |
