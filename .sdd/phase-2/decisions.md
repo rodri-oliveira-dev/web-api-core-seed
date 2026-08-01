@@ -28,3 +28,7 @@
 | D024 | Use `WebApplication.CreateBuilder` as the only active hosting entry point. | Accepted | Modern ASP.NET Core hosting removes obsolete builders and keeps composition in one place. |
 | D025 | Remove static configuration access and inject `IConfiguration` into registration extensions. | Accepted | Services should not depend on process-wide static configuration state. |
 | D026 | Keep current compatibility packages for rate limiting, Swagger and API Versioning during hosting modernization. | Accepted | Replacing those packages belongs to later Phase 2 issues and would change more behavior than this prompt requires. |
+| D027 | Use native ASP.NET Core Problem Details as the only active error contract. | Accepted | It removes custom duplicated error envelopes and aligns the API with the planned modernization direction. |
+| D028 | Keep `CustomResult` for success responses during Problem Details migration. | Accepted | The prompt changes error contracts only; changing success contracts would broaden the blast radius. |
+| D029 | Keep Domain Notification and map it to Problem Details. | Accepted | The pattern still carries business messages; there is no replacement domain error model yet. |
+| D030 | Use minimal HTTP integration tests with `WebApplicationFactory` and isolated fakes. | Accepted | The task changes HTTP error contracts, while full SQL/Testcontainers strategy belongs to a later phase. |

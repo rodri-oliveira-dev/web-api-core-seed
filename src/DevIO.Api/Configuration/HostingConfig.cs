@@ -1,10 +1,10 @@
 using System;
 using System.IO.Compression;
 using System.Linq;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -16,10 +16,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Restaurante.IO.Api.Configuration.Swagger;
+using Restaurante.IO.Api.Errors;
 using Restaurante.IO.Api.Filters;
 using Restaurante.IO.Api.Middlewares;
-using Restaurante.IO.Api.Resources;
-using Restaurante.IO.Api.Results;
 using Restaurante.IO.Api.Settings;
 using Restaurante.IO.Data.Context;
 using Serilog;
@@ -75,6 +74,25 @@ namespace Restaurante.IO.Api.Configuration
                     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                 });
 
+            services.AddProblemDetails(options =>
+            {
+                options.CustomizeProblemDetails = context =>
+                {
+                    var problemDetails = context.ProblemDetails;
+                    var statusCode = problemDetails.Status ?? context.HttpContext.Response.StatusCode;
+
+                    problemDetails.Status = statusCode;
+                    problemDetails.Type ??= ApiProblemDetails.TypeForStatusCode(statusCode);
+                    problemDetails.Title ??= ApiProblemDetails.TitleForStatusCode(statusCode);
+                    problemDetails.Detail ??= ApiProblemDetails.DetailForStatusCode(statusCode);
+                    problemDetails.Instance ??= context.HttpContext.Request.Path;
+                    ApiProblemDetails.AddTraceId(problemDetails, context.HttpContext);
+                };
+            });
+            services.AddExceptionHandler<FluentValidationExceptionHandler>();
+            services.AddExceptionHandler<PersistenceExceptionHandler>();
+            services.AddExceptionHandler<UnhandledExceptionHandler>();
+
             services.AddIdentityConfiguration(configuration);
             services.AddAutoMapper(_ => { }, typeof(AutomapperConfig).Assembly);
             services.AddSwaggerConfig();
@@ -98,13 +116,13 @@ namespace Restaurante.IO.Api.Configuration
             if (app.Environment.IsDevelopment())
             {
                 app.UseCors("Development");
-                app.UseExceptionHandler("/error-local-development");
             }
             else
             {
                 app.UseCors("Production");
-                app.UseExceptionHandler("/error");
             }
+
+            app.UseExceptionHandler();
 
             app.UseSerilogRequestLogging(options =>
             {
@@ -134,18 +152,26 @@ namespace Restaurante.IO.Api.Configuration
             });
 
             app.UseMiddleware<SerilogMiddleware>();
-            app.UseMiddleware<ErrorHandlingMiddleware>();
             app.UseHsts();
 
             app.UseStatusCodePages(async context =>
             {
-                context.HttpContext.Response.ContentType = "application/json";
-                logger.LogWarning(HttpErrorMessages.RetornaMensagemErro(context.HttpContext.Response.StatusCode));
-                await context.HttpContext.Response.WriteAsync(JsonSerializer.Serialize(new CustomResult(false, new
+                var httpContext = context.HttpContext;
+                var statusCode = httpContext.Response.StatusCode;
+                var problemDetailsService = httpContext.RequestServices.GetRequiredService<IProblemDetailsService>();
+
+                logger.LogWarning(ApiProblemDetails.DetailForStatusCode(statusCode));
+
+                await problemDetailsService.WriteAsync(new ProblemDetailsContext
                 {
-                    statusCode = context.HttpContext.Response.StatusCode,
-                    errorMessage = HttpErrorMessages.RetornaMensagemErro(context.HttpContext.Response.StatusCode)
-                })));
+                    HttpContext = httpContext,
+                    ProblemDetails = ApiProblemDetails.Create(
+                        httpContext,
+                        statusCode,
+                        ApiProblemDetails.TypeForStatusCode(statusCode),
+                        ApiProblemDetails.TitleForStatusCode(statusCode),
+                        ApiProblemDetails.DetailForStatusCode(statusCode))
+                });
             });
 
             app.ConfigureRateLimit();

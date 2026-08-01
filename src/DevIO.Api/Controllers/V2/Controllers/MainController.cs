@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Restaurante.IO.Api.Extensions;
+using Restaurante.IO.Api.Errors;
 using Restaurante.IO.Api.Results;
 using Restaurante.IO.Api.ViewModels;
 using Restaurante.IO.Business.Intefaces;
@@ -79,23 +80,44 @@ namespace Restaurante.IO.Api.Controllers.V2.Controllers
                         return new CustomNoContentResult(new CustomResult(true, "Objeto excluido com sucesso"));
 
                     case ETipoAcao.NaoEncontrado:// HTTP Code 404
-                        return NotFound(new CustomResult(false, "Objeto nâo foi encontrado"));
+                        return ApiProblemDetails.ToObjectResult(ApiProblemDetails.Create(
+                            HttpContext,
+                            StatusCodes.Status404NotFound,
+                            ApiProblemDetails.NotFoundType,
+                            "Recurso nao encontrado.",
+                            "Objeto nao foi encontrado."));
 
                     case ETipoAcao.ModeloInvalido:// HTTP Code 400
-                        return BadRequest(new CustomResult(false, result));
+                        return ApiProblemDetails.ToObjectResult(ApiProblemDetails.Create(
+                            HttpContext,
+                            StatusCodes.Status400BadRequest,
+                            ApiProblemDetails.ValidationType,
+                            "Requisicao invalida.",
+                            "A requisicao possui dados invalidos."));
 
                     default:
                         throw new ArgumentOutOfRangeException(nameof(tipoAcao), tipoAcao, null);
                 }
             }
 
-            return BadRequest(new CustomResult(false, _notificador.ObterNotificacoes().Select(n => n.Mensagem)));
+            return ApiProblemDetails.ToObjectResult(ApiProblemDetails.CreateFromNotifications(HttpContext, _notificador.ObterNotificacoes()));
         }
 
         protected ActionResult CustomResponse(ModelStateDictionary modelState)
         {
-            if (!modelState.IsValid) NotificarErroModelInvalida(modelState);
-            return CustomResponse();
+            return modelState.IsValid
+                ? CustomResponse()
+                : ApiProblemDetails.ToObjectResult(ApiProblemDetails.CreateValidation(HttpContext, modelState));
+        }
+
+        protected ActionResult CustomResponse(ModelStateDictionary modelState, ETipoAcao tipoAcao)
+        {
+            if (tipoAcao == ETipoAcao.NaoEncontrado)
+            {
+                return CustomResponse(tipoAcao: ETipoAcao.NaoEncontrado);
+            }
+
+            return CustomResponse(modelState);
         }
 
         protected void NotificarErroModelInvalida(ModelStateDictionary modelState)
@@ -103,7 +125,7 @@ namespace Restaurante.IO.Api.Controllers.V2.Controllers
             var erros = modelState.Values.SelectMany(e => e.Errors);
             foreach (var erro in erros)
             {
-                var errorMsg = erro.Exception == null ? erro.ErrorMessage : erro.Exception.Message;
+                var errorMsg = string.IsNullOrWhiteSpace(erro.ErrorMessage) ? "Valor informado invalido." : erro.ErrorMessage;
                 NotificarErro(errorMsg);
             }
         }

@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Restaurante.IO.Api.DataContext;
+using Restaurante.IO.Api.Errors;
 using Restaurante.IO.Api.Extensions;
 using Restaurante.IO.Api.Settings;
 
@@ -66,6 +68,52 @@ namespace Restaurante.IO.Api.Configuration
                     ValidateAudience = true,
                     ValidAudience = appSettings.ValidoEm,
                     ValidIssuer = appSettings.Emissor
+                };
+                x.Events = new JwtBearerEvents
+                {
+                    OnChallenge = async context =>
+                    {
+                        if (context.Response.HasStarted)
+                        {
+                            return;
+                        }
+
+                        context.HandleResponse();
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+
+                        var problemDetailsService = context.HttpContext.RequestServices.GetRequiredService<IProblemDetailsService>();
+                        await problemDetailsService.WriteAsync(new ProblemDetailsContext
+                        {
+                            HttpContext = context.HttpContext,
+                            ProblemDetails = ApiProblemDetails.Create(
+                                context.HttpContext,
+                                StatusCodes.Status401Unauthorized,
+                                ApiProblemDetails.AuthenticationType,
+                                "Autenticacao necessaria.",
+                                "A chamada precisa ser efetuada por um usuario autenticado.")
+                        });
+                    },
+                    OnForbidden = async context =>
+                    {
+                        if (context.Response.HasStarted)
+                        {
+                            return;
+                        }
+
+                        context.Response.StatusCode = StatusCodes.Status403Forbidden;
+
+                        var problemDetailsService = context.HttpContext.RequestServices.GetRequiredService<IProblemDetailsService>();
+                        await problemDetailsService.WriteAsync(new ProblemDetailsContext
+                        {
+                            HttpContext = context.HttpContext,
+                            ProblemDetails = ApiProblemDetails.Create(
+                                context.HttpContext,
+                                StatusCodes.Status403Forbidden,
+                                ApiProblemDetails.AuthorizationType,
+                                "Acesso negado.",
+                                "O usuario esta autenticado, mas nao possui permissao para executar essa acao.")
+                        });
+                    }
                 };
             });
 

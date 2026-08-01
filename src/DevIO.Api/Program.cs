@@ -6,7 +6,7 @@ using Serilog;
 
 namespace Restaurante.IO.Api
 {
-    public static class Program
+    public class Program
     {
         public static async System.Threading.Tasks.Task Main(string[] args)
         {
