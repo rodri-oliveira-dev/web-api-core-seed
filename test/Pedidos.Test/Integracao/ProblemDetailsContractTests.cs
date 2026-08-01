@@ -123,16 +123,68 @@ namespace Pedidos.Test.Integracao
         }
 
         [Fact]
-        public async Task SwaggerEHealthCheckDeveResponderNoHostDeTeste()
+        public async Task EndpointProtegidoComTokenSemPermissaoDeveRetornarForbiddenProblemDetails()
+        {
+            using var factory = new RestauranteApiFactory();
+            using var client = factory.CreateApiClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", RestauranteApiFactory.CreateTokenWithoutPermission());
+
+            var response = await client.GetAsync($"/api/v1/Mesas/{Guid.NewGuid()}");
+            var problem = await ReadProblemAsync(response, HttpStatusCode.Forbidden);
+
+            Assert.Equal("urn:problem:authorization", problem.GetProperty("type").GetString());
+            Assert.True(problem.TryGetProperty("traceId", out _));
+        }
+
+        [Fact]
+        public async Task OpenApiScalarEHealthCheckDeveResponderNoHostDeTeste()
         {
             using var factory = new RestauranteApiFactory();
             using var client = factory.CreateApiClient();
 
-            var swagger = await client.GetAsync("/swagger/v1/swagger.json");
+            var openApiV1 = await client.GetAsync("/openapi/v1.json");
+            var openApiV2 = await client.GetAsync("/openapi/v2.json");
+            var scalar = await client.GetAsync("/scalar/");
             var health = await client.GetAsync("/hc");
 
-            Assert.Equal(HttpStatusCode.OK, swagger.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, openApiV1.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, openApiV2.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, scalar.StatusCode);
             Assert.Equal(HttpStatusCode.OK, health.StatusCode);
+        }
+
+        [Fact]
+        public async Task OpenApiDeveDocumentarVersoesJwtProblemDetailsERateLimit()
+        {
+            using var factory = new RestauranteApiFactory();
+            using var client = factory.CreateApiClient();
+
+            var v1 = await ReadJsonAsync(await client.GetAsync("/openapi/v1.json"), HttpStatusCode.OK);
+            var v2 = await ReadJsonAsync(await client.GetAsync("/openapi/v2.json"), HttpStatusCode.OK);
+
+            Assert.Equal("3.0.4", v1.GetProperty("openapi").GetString());
+            Assert.Equal("v1", v1.GetProperty("info").GetProperty("version").GetString());
+            Assert.Equal("v2", v2.GetProperty("info").GetProperty("version").GetString());
+
+            Assert.True(v1.GetProperty("paths").TryGetProperty("/api/v1/Pratos", out var pratosPath));
+            Assert.True(v1.GetProperty("paths").TryGetProperty("/api/v1/Mesas/{id}", out var mesaPath));
+            Assert.True(v2.GetProperty("paths").TryGetProperty("/api/v2/entrar", out _));
+
+            var bearer = v1.GetProperty("components").GetProperty("securitySchemes").GetProperty("Bearer");
+            Assert.Equal("http", bearer.GetProperty("type").GetString());
+            Assert.Equal("bearer", bearer.GetProperty("scheme").GetString());
+            Assert.Equal("JWT", bearer.GetProperty("bearerFormat").GetString());
+
+            var publicGet = pratosPath.GetProperty("get");
+            Assert.False(publicGet.TryGetProperty("security", out _));
+            AssertProblemResponse(publicGet, "429");
+
+            var protectedGet = mesaPath.GetProperty("get");
+            Assert.True(protectedGet.TryGetProperty("security", out var security));
+            Assert.Contains("Bearer", security.GetRawText(), StringComparison.Ordinal);
+            AssertProblemResponse(protectedGet, "401");
+            AssertProblemResponse(protectedGet, "403");
+            AssertProblemResponse(protectedGet, "429");
         }
 
         [Fact]
@@ -226,6 +278,22 @@ namespace Pedidos.Test.Integracao
             using var document = await JsonDocument.ParseAsync(stream);
 
             return document.RootElement.Clone();
+        }
+
+        private static async Task<JsonElement> ReadJsonAsync(HttpResponseMessage response, HttpStatusCode expectedStatusCode)
+        {
+            Assert.Equal(expectedStatusCode, response.StatusCode);
+
+            using var stream = await response.Content.ReadAsStreamAsync();
+            using var document = await JsonDocument.ParseAsync(stream);
+
+            return document.RootElement.Clone();
+        }
+
+        private static void AssertProblemResponse(JsonElement operation, string statusCode)
+        {
+            var response = operation.GetProperty("responses").GetProperty(statusCode);
+            Assert.True(response.GetProperty("content").TryGetProperty("application/problem+json", out _));
         }
 
         private static Action<NativeRateLimitingSettings> CreateRateLimitConfiguration(
@@ -325,6 +393,11 @@ namespace Pedidos.Test.Integracao
 
                     _configureServices?.Invoke(services);
                 });
+            }
+
+            public static string CreateTokenWithoutPermission()
+            {
+                return CreateToken(Array.Empty<(string Type, string Value)>());
             }
 
             private static string CreateToken(IEnumerable<(string Type, string Value)> claims)

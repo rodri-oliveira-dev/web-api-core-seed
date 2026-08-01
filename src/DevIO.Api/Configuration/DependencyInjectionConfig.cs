@@ -5,12 +5,9 @@ using Restaurante.IO.Business.Services;
 using Restaurante.IO.Data.Context;
 using Restaurante.IO.Data.Repository;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Restaurante.IO.Api.Configuration.Swagger;
 using Restaurante.IO.Api.Extensions;
 using Restaurante.IO.Business.Intefaces.Service;
 using Restaurante.IO.Business.Interfaces.Repository;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Restaurante.IO.Api.Configuration
 {
@@ -38,8 +35,6 @@ namespace Restaurante.IO.Api.Configuration
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IUser, AspNetUser>();
-
-            services.AddTransient<IConfigureOptions<SwaggerGenOptions>, ConfigureSwaggerOptions>();
 
             return services;
         }

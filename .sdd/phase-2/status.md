@@ -5,13 +5,16 @@
 | Field | Value |
 | --- | --- |
 | Phase | Phase 2 - Modernization to .NET 10 |
-| Current task | `04 - Native rate limiting` |
+| Current task | `05 - OpenAPI and API versioning` |
 | Current branch | `phase/2-dotnet-10-migration` |
 | Branch base | `phase/1-preserve-legacy` |
 | Base SHA | `2799562943ac03926d69bc716617d091d04ecc82` |
 | Initial branch SHA | `2799562943ac03926d69bc716617d091d04ecc82` |
 | Source repository SHA | `9029163f1a795a1bb18f138dd8fa9179f13f544e` |
-| Related next issue | `#8 - OpenAPI and API versioning` |
+| Related next issue | `#9 - Phase 3 quality and safety` |
+| Phase status | Fase 2: concluida localmente |
+| Phase PR | pendente |
+| Push | pendente |
 
 ## Base Selection
 
@@ -26,7 +29,7 @@ Phase 1 has not been integrated into `main` in this local repository. `git merge
 | 02 - Hosting moderno | concluido |
 | 03 - Problem Details | concluido |
 | 04 - Rate limiting nativo | concluido |
-| 05 - OpenAPI e versionamento | pendente |
+| 05 - OpenAPI e versionamento | concluido |
 
 ## Validations
 
@@ -34,6 +37,7 @@ Final validation results for prompt 01 are recorded in `01-dotnet-10-migration/v
 Final validation results for prompt 02 are recorded in `02-modern-hosting/validation.md`.
 Final validation results for prompt 03 are recorded in `03-problem-details/validation.md`.
 Final validation results for prompt 04 are recorded in `04-native-rate-limiting/validation.md`.
+Final validation results for prompt 05 are recorded in `05-openapi-versioning/validation.md`.
 
 Prompt 01 summary:
 
@@ -75,6 +79,21 @@ Prompt 04 summary:
 - `dotnet restore`, `dotnet build --configuration Release --no-restore`, `dotnet test --configuration Release --no-build`, `dotnet list package` and active-code legacy searches passed.
 - HTTP smoke/regression through `WebApplicationFactory` passed with 11 focused tests; process-based local smoke was blocked by local shell policy before API startup.
 
+Prompt 05 summary:
+
+- `Microsoft.AspNetCore.Mvc.Versioning*` and `Swashbuckle.AspNetCore` were removed from the active API project.
+- API versioning now uses `Asp.Versioning.Mvc`, `Asp.Versioning.Mvc.ApiExplorer` and `Asp.Versioning.OpenApi`.
+- OpenAPI generation now uses `Microsoft.AspNetCore.OpenApi` with versioned documents.
+- Scalar UI is registered at `/scalar/`.
+- Generated documents are available at `/openapi/v1.json` and `/openapi/v2.json`.
+- Committed generated contracts are stored in `docs/openapi/openapi-v1.json` and `docs/openapi/openapi-v2.json`; previous Swagger contracts are stored under `docs/openapi/baseline/`.
+- JWT is documented as HTTP bearer JWT.
+- Problem Details, `401`, `403` and `429` responses are documented where applicable.
+- `dotnet --info`, `dotnet restore`, `dotnet build --configuration Release --no-restore`, `dotnet test --configuration Release --no-build`, `dotnet list package --deprecated`, `dotnet list package --vulnerable`, OpenAPI generation, JSON parse validation and `git diff --check` were executed.
+- Consolidated tests passed: 34 tests.
+- `dotnet list package --deprecated` reports only the existing `xunit` 2.9.3 deprecation in the test project.
+- `dotnet list package --vulnerable` reports no vulnerable packages.
+
 ## Blockers
 
 No build or test blocker remains for the migrated solution.
@@ -86,8 +105,16 @@ Runtime limitations:
 
 ## Next Step
 
-Run Prompt 5 for:
+Phase 2 is complete locally. Prepare Phase 3 on a new branch:
 
 ```text
-#8 - OpenAPI and API versioning
+phase/3-quality-and-safety
 ```
+
+Planned next issues:
+
+- `#9`
+- `#10`
+- `#11`
+- `#12`
+- `#13`

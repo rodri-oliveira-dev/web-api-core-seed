@@ -8,14 +8,13 @@ using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Restaurante.IO.Api.Configuration.Swagger;
+using Restaurante.IO.Api.Configuration.OpenApi;
 using Restaurante.IO.Api.Errors;
 using Restaurante.IO.Api.Filters;
 using Restaurante.IO.Api.Middlewares;
@@ -95,7 +94,6 @@ namespace Restaurante.IO.Api.Configuration
 
             services.AddIdentityConfiguration(configuration);
             services.AddAutoMapper(_ => { }, typeof(AutomapperConfig).Assembly);
-            services.AddSwaggerConfig();
             services.ResolveDependencies();
             services.WebApiConfig();
             services.AddNativeRateLimiting(configuration);
@@ -110,7 +108,6 @@ namespace Restaurante.IO.Api.Configuration
 
         public static WebApplication UseApiPipeline(this WebApplication app)
         {
-            var provider = app.Services.GetRequiredService<IApiVersionDescriptionProvider>();
             var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Restaurante.IO.Api.Pipeline");
 
             if (app.Environment.IsDevelopment())
@@ -177,7 +174,7 @@ namespace Restaurante.IO.Api.Configuration
             app.AjustesSeguranca();
             app.UseResponseCompression();
             app.UseMvcConfiguration();
-            app.UseSwaggerConfig(provider);
+            app.UseOpenApiConfig();
             app.UseHealthChecks("/hc", new HealthCheckOptions
             {
                 Predicate = _ => true,

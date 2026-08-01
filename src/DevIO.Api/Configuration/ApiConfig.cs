@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Asp.Versioning;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
+using Restaurante.IO.Api.Configuration.OpenApi;
 
 namespace Restaurante.IO.Api.Configuration
 {
@@ -12,19 +14,20 @@ namespace Restaurante.IO.Api.Configuration
             {
                 options.AssumeDefaultVersionWhenUnspecified = true;
                 options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.ApiVersionReader = new UrlSegmentApiVersionReader();
                 options.ReportApiVersions = true;
-            });
-
-            services.AddVersionedApiExplorer(options =>
+            })
+            .AddMvc()
+            .AddApiExplorer(options =>
             {
                 options.GroupNameFormat = "'v'VVV";
                 options.SubstituteApiVersionInUrl = true;
-            });
+            })
+            .AddOpenApi(options => options.ConfigureRestauranteOpenApi());
 
             services.Configure<ApiBehaviorOptions>(options =>
             {
                 options.SuppressModelStateInvalidFilter = true;
-
             });
 
             services.AddCors(options =>

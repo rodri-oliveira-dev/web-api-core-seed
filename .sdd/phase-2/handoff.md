@@ -1,82 +1,154 @@
-# Handoff - Phase 2 Task 04
+# Handoff - Phase 2 Final
 
-## Branch
+## Branches
 
 - Current branch: `phase/2-dotnet-10-migration`
-- Prompt 01 commit: `b8593c5 build: migrate solution to .NET 10`
-- Prompt 02 commit: `24f701d refactor: adopt modern ASP.NET Core hosting`
-- Prompt 03 commit: `e56d29a refactor: standardize API errors with problem details`
-- Prompt 04 commit: pending until delivery.
+- Push: pendente
+- PR da fase: pendente
+- Next planned branch: `phase/3-quality-and-safety`
 
-## Current Runtime
+## Phase 2 Commits
+
+- `b8593c5 build: migrate solution to .NET 10`
+- `24f701d refactor: adopt modern ASP.NET Core hosting`
+- `e56d29a refactor: standardize API errors with problem details`
+- `e4be85c refactor: use native ASP.NET Core rate limiting`
+- Prompt 05 delivery commit: `refactor: modernize OpenAPI and API versioning`
+
+## Final Runtime State
 
 - SDK pinned by `global.json`: `10.0.302`
-- Active target framework: `net10.0` in API, Business, Data and test projects.
-- API hosting model: modern `WebApplication`.
-- Error contract: ASP.NET Core Problem Details.
-- Rate limiting: native ASP.NET Core middleware.
+- Active target framework: `net10.0`
+- Active solution: `RestauranteAPI.sln`
+- API project: `src/DevIO.Api/Restaurante.IO.Api.csproj`
+- Hosting model: modern ASP.NET Core `WebApplication`
+- Legacy `Startup` class: absent from active API code
+- Architecture: legacy layered architecture preserved; Phase 4 modularization was not anticipated
 
-## Native Rate Limiting
+## Hosting
 
-- `HostingConfig` registers `AddNativeRateLimiting`.
-- `ApiConfig` calls `UseRateLimiter` after routing, cookie policy and authentication, before authorization.
+- `Program.cs` creates the builder, configures Serilog, registers services and starts the app through `WebApplication`.
+- `HostingConfig` owns service and middleware composition.
+- Static startup configuration access was removed in earlier Phase 2 work.
+- Controllers remain the active HTTP adapters; no Minimal API migration was performed.
+
+## Error Contract
+
+- API errors use ASP.NET Core Problem Details.
+- Problem Details responses include `traceId`.
+- Domain notifications are mapped to Problem Details.
+- Legacy custom error middleware and legacy `ErrorController` were removed in prompt 03.
+
+## Rate Limiting
+
+- Active implementation: native ASP.NET Core rate limiting.
 - Policies:
-  - `public`: 3 requests / 1 second, no queue.
-  - `authenticated`: 3 requests / 1 second, no queue.
-  - `authentication-sensitive`: 2 requests / 1 second, no queue.
-- Endpoint metadata:
-  - V1/V2 auth controllers: `authentication-sensitive`.
-  - V1 `PratosController`: `authenticated`.
-  - V1 `PratosController.ObterLista`: `public`.
-  - V1 `MesasController`: `authenticated`.
-- `/hc` and `/swagger/*` remain exempt.
+  - `public`
+  - `authenticated`
+  - `authentication-sensitive`
+- Rejections return `429 application/problem+json` with `Retry-After` when native metadata is available.
+- `/hc` and OpenAPI/Scalar surfaces remain outside API rate-limit policies.
+- Forwarded IP headers are not trusted until explicit trusted proxy configuration exists.
 
-## Partitioning
+## OpenAPI
 
-- Authenticated requests use validated user identity claims in this order:
-  - `ClaimTypes.NameIdentifier`;
-  - `sub`;
-  - `ClaimTypes.Email`.
-- Anonymous requests use a hashed composite of optional `X-ClientId` and direct connection remote address.
-- Partition inputs are hashed and not logged.
-- Forwarded headers are not trusted until explicit `ForwardedHeadersOptions` with known proxies/networks exists.
-
-## Rejection Contract
-
-`429` responses use:
-
-```text
-Content-Type: application/problem+json
-type: urn:problem:rate-limit
-title: Limite de requisicoes excedido.
-traceId: present
-Retry-After: present when native metadata is available
-```
-
-## Removed
-
-- `AspNetCoreRateLimit` package reference.
-- `IpRateLimiting` settings.
-- Legacy rate-limit stores, processing strategy and `UseIpRateLimiting`.
-
-## Validation State
-
-- `dotnet restore`: passed.
-- `dotnet build --configuration Release --no-restore`: passed, 30 existing analyzer warnings, 0 errors.
-- `dotnet test --configuration Release --no-build`: passed, 32 tests.
-- `dotnet list package`: passed; `AspNetCoreRateLimit` absent.
-- Active-code searches for `AspNetCoreRateLimit`, `IpRateLimit` and `ClientRateLimit`: no findings.
-- HTTP smoke/regression through `WebApplicationFactory`: passed, 11 focused tests.
-- Process-based local smoke was attempted but blocked by local shell policy before API startup.
-
-## Known Risks
-
-- Anonymous partitions can still group callers behind NAT or an unconfigured reverse proxy.
-- Full real `/hc` validation remains dependent on external SQL Server availability.
-- Swagger and legacy API Versioning packages are still pending modernization.
-
-## Next Objective
+- Active generator: `Microsoft.AspNetCore.OpenApi` with `Asp.Versioning.OpenApi`.
+- Active UI: Scalar.
+- Document routes:
+  - `/openapi/v1.json`
+  - `/openapi/v2.json`
+- UI route:
+  - `/scalar/`
+- Generated contracts:
+  - `docs/openapi/openapi-v1.json`
+  - `docs/openapi/openapi-v2.json`
+- Baseline Swagger contracts:
+  - `docs/openapi/baseline/swagger-v1.json`
+  - `docs/openapi/baseline/swagger-v2.json`
+- Generation command:
 
 ```text
-#8 - OpenAPI and API versioning
+dotnet run --project tools/OpenApiGenerator/OpenApiGenerator.csproj --configuration Release --no-build
 ```
+
+## Versioning
+
+- Active package line:
+  - `Asp.Versioning.Mvc` `10.0.1`
+  - `Asp.Versioning.Mvc.ApiExplorer` `10.0.1`
+  - `Asp.Versioning.OpenApi` `10.0.1`
+- Route versioning remains URL-segment based.
+- Active API versions:
+  - `v1`
+  - `v2`
+- Existing controller routes were preserved.
+
+## Authentication
+
+- JWT bearer authentication remains active.
+- OpenAPI documents expose a `Bearer` HTTP bearer JWT security scheme.
+- Protected operations include operation-level security requirements.
+- Scalar UI is configured to persist authentication input.
+
+## Tests
+
+- Current test project: `test/Pedidos.Test/Pedidos.Test.csproj`
+- Current validation count: 34 tests.
+- Covered surfaces include:
+  - Problem Details validation and domain errors
+  - `401` authentication challenge
+  - `403` authorization failure
+  - native rate-limit rejection `429`
+  - OpenAPI V1/V2 documents
+  - Scalar UI
+  - public and protected endpoints
+  - health check in isolated host
+
+## Official Commands
+
+```text
+dotnet --info
+dotnet restore
+dotnet build --configuration Release --no-restore
+dotnet test --configuration Release --no-build
+dotnet list package
+dotnet list package --deprecated
+dotnet list package --vulnerable
+dotnet run --project tools/OpenApiGenerator/OpenApiGenerator.csproj --configuration Release --no-build
+git diff --check
+```
+
+## Contracts Changed
+
+- Documentation route changed from `/swagger/{version}/swagger.json` to `/openapi/{version}.json`.
+- Documentation UI changed from `/swagger` to `/scalar/`.
+- OpenAPI version changed from `3.0.1` to `3.0.4`.
+- JWT scheme changed from API-key-style bearer header documentation to HTTP bearer JWT.
+- Problem Details media documentation was added for error responses.
+- `429` is now documented for rate-limited operations.
+- Runtime API paths were preserved.
+
+## Debts and Risks
+
+- `dotnet list package --deprecated` reports `xunit` 2.9.3 as deprecated in the test project; Phase 3 should evaluate xUnit v3 migration.
+- Native OpenAPI output no longer documents `404` for two `PUT` operations even though runtime behavior is preserved; refine response metadata in a future contract-quality pass.
+- Full real `/hc` validation depends on external SQL Server availability; isolated host tests keep `/hc` registered.
+- HealthChecks UI web `/hc-ui` remains disabled because package line 9 is not runtime-compatible with EF Core 10 in this solution.
+- Existing HealthChecks packages are still on major version 9 because no compatible major 10 line was available during Phase 2.
+- Process-based smoke may be blocked by local shell policy; WebApplicationFactory smoke/regression is the reliable local path.
+
+## Phase 3
+
+Planned next branch:
+
+```text
+phase/3-quality-and-safety
+```
+
+Planned next issues:
+
+- `#9`
+- `#10`
+- `#11`
+- `#12`
+- `#13`

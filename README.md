@@ -35,7 +35,7 @@ To know more about how to setup your enviroment visit the [Microsoft .NET Downlo
 - .NET Core Native DI
 - AutoMapper
 - FluentValidator
-- Swagger UI com JWT support
+- OpenAPI with Scalar UI and JWT support
 - Health Checks
 - Redis
 - Native ASP.NET Core Rate Limiting
