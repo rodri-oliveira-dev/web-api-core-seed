@@ -3,7 +3,7 @@
 | Prompt | Status |
 | --- | --- |
 | 01 - Testes unitarios | concluido |
-| 02 - Testes de integracao | pendente |
+| 02 - Testes de integracao | concluido |
 | 03 - Seguranca | pendente |
 | 04 - OpenTelemetry | pendente |
 | 05 - CI e gates | pendente |
@@ -28,3 +28,15 @@
 - Build/test final: passou
 - Cobertura geral: 29,15% de linhas e 17,66% de branches
 - Push: nao realizado
+
+## Resultado do prompt 02
+
+- Projeto criado: `test/WebApiCoreSeed.IntegrationTests`.
+- Testes de integracao adicionados: 18.
+- Containers usados: SQL Server `mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04` e Redis `redis:7.4.2-alpine`.
+- API inicializada com `WebApplicationFactory<Program>` em ambiente `Testing`.
+- Migrations aplicadas automaticamente para `ApplicationDbContext` e `MeuDbContext`.
+- Isolamento: collection xUnit compartilhada, sem paralelismo interno, reset SQL/Redis antes de cada teste.
+- Build/test final: passou.
+- Docker: disponivel.
+- Push: nao realizado.

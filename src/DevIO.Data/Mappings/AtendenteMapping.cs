@@ -23,6 +23,9 @@ namespace Restaurante.IO.Data.Mappings
                 .HasColumnType("int")
                 .HasConversion(converter);
 
+            builder.Ignore(p => p.Email);
+            builder.Ignore(p => p.Telefone);
+
             builder.ToTable("Atendentes");
         }
     }
