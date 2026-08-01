@@ -77,16 +77,20 @@ namespace WebApiCoreSeed.Api.Configuration.OpenApi
             OpenApiOperationTransformerContext context,
             CancellationToken cancellationToken)
         {
+            operation.Responses ??= new OpenApiResponses();
             operation.Responses.TryAdd(StatusCodes.Status400BadRequest.ToString(CultureInfo.InvariantCulture), CreateProblemDetailsResponse("Requisicao invalida."));
             operation.Responses.TryAdd(StatusCodes.Status429TooManyRequests.ToString(CultureInfo.InvariantCulture), CreateProblemDetailsResponse("Limite de requisicoes excedido."));
 
             if (RequiresAuthorization(context))
             {
-                operation.Security ??= new List<OpenApiSecurityRequirement>();
-                operation.Security.Add(new OpenApiSecurityRequirement
+                if (context.Document is not null)
                 {
-                    [new OpenApiSecuritySchemeReference(BearerScheme, context.Document)] = new List<string>()
-                });
+                    operation.Security ??= new List<OpenApiSecurityRequirement>();
+                    operation.Security.Add(new OpenApiSecurityRequirement
+                    {
+                        [new OpenApiSecuritySchemeReference(BearerScheme, context.Document)] = new List<string>()
+                    });
+                }
 
                 operation.Responses.TryAdd(StatusCodes.Status401Unauthorized.ToString(CultureInfo.InvariantCulture), CreateProblemDetailsResponse("Autenticacao necessaria."));
                 operation.Responses.TryAdd(StatusCodes.Status403Forbidden.ToString(CultureInfo.InvariantCulture), CreateProblemDetailsResponse("Acesso negado."));
@@ -124,7 +128,7 @@ namespace WebApiCoreSeed.Api.Configuration.OpenApi
             };
         }
 
-        private static Dictionary<string, OpenApiMediaType> CreateProblemDetailsContent(OpenApiDocument document)
+        private static Dictionary<string, OpenApiMediaType> CreateProblemDetailsContent(OpenApiDocument? document)
         {
             return new Dictionary<string, OpenApiMediaType>
             {

@@ -141,7 +141,7 @@ namespace WebApiCoreSeed.UnitTests.Integracao
                 "web-api-core-seed",
                 $"observability-{Guid.NewGuid():N}.log");
 
-            public ObservabilityApiFactory(IReadOnlyDictionary<string, string> configurationOverrides = null)
+            public ObservabilityApiFactory(IReadOnlyDictionary<string, string>? configurationOverrides = null)
             {
                 _configurationOverrides = configurationOverrides ?? new Dictionary<string, string>();
             }
@@ -182,7 +182,7 @@ namespace WebApiCoreSeed.UnitTests.Integracao
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(_serilogFilePath)!);
 
-                    var values = new Dictionary<string, string>
+                    var values = new Dictionary<string, string?>
                     {
                         ["ConnectionStrings:DefaultConnection"] = $"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog={_databaseName};Integrated Security=True;",
                         ["AppSettings:Secret"] = "X-BURGUER@COCA-2-OBSERVABILITY-TEST-SECRET-2026",
@@ -232,7 +232,7 @@ namespace WebApiCoreSeed.UnitTests.Integracao
 
             public Task RemoverPorId(Guid id, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
-            public Task<Prato> ObterPorId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult<Prato>(null);
+            public Task<Prato?> ObterPorId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult<Prato?>(null);
 
             public Task<bool> ExisteComId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult(false);
 

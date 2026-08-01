@@ -56,7 +56,7 @@ namespace WebApiCoreSeed.Api.Controllers.V2.Controllers
             return !_notificador.TemNotificacao();
         }
 
-        protected ActionResult CustomResponse(object result = null, ETipoAcao tipoAcao = ETipoAcao.Selecionar)
+        protected ActionResult CustomResponse(object? result = null, ETipoAcao tipoAcao = ETipoAcao.Selecionar)
         {
             if (OperacaoValida())
             {
@@ -96,7 +96,7 @@ namespace WebApiCoreSeed.Api.Controllers.V2.Controllers
                             "A requisicao possui dados invalidos."));
 
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(tipoAcao), tipoAcao, null);
+                        throw new ArgumentOutOfRangeException(nameof(tipoAcao), tipoAcao, string.Empty);
                 }
             }
 

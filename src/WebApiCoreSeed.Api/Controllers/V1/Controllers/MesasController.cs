@@ -38,15 +38,15 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         }
 
         /// <summary>
-        /// MÈtodo responsavel pela obtenÁ„o da Mesa
+        /// M√©todo responsavel pela obten√ß√£o da Mesa
         /// </summary>
-        /// <param name="id">ID de identificaÁ„o do objeto a ser pesquisado</param>
-        /// <param name="cancellationToken">Token de cancelamento da requisiÁ„o.</param>
+        /// <param name="id">ID de identifica√ß√£o do objeto a ser pesquisado</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisi√ß√£o.</param>
         /// <returns></returns>
         /// <response code="200">Retorna o objeto referente a ID informada</response>
         /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
-        /// <response code="403">O usu·rio esta autenticado, mas o n„o possui permiss„o para executar essa aÁ„o.</response>
-        /// <response code="404">Caso o objeto n„o seja encontrada pela ID retorna null</response>
+        /// <response code="403">O usu√°rio esta autenticado, mas o n√£o possui permiss√£o para executar essa a√ß√£o.</response>
+        /// <response code="404">Caso o objeto n√£o seja encontrada pela ID retorna null</response>
         [HttpGet("{id:guid}")]
         [ClaimsAuthorize("Mesas")]
         [ProducesResponseType(typeof(MesaViewModel), StatusCodes.Status200OK)]
@@ -64,12 +64,12 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// Cadastra o novo Mesa no sistema.
         /// </summary>
         /// <param name="mesaViewModel">Mesa a ser cadastrado</param>
-        /// <param name="cancellationToken">Token de cancelamento da requisiÁ„o.</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisi√ß√£o.</param>
         /// <returns></returns>
         /// <response code="201">Retorna o objeto referente a ID informada</response>
-        /// <response code="400">N„o foi possivel executar a aÁ„o solicitada</response>
+        /// <response code="400">N√£o foi possivel executar a a√ß√£o solicitada</response>
         /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
-        /// <response code="403">O usu·rio esta autenticado, mas o n„o possui permiss„o para executar essa aÁ„o.</response>
+        /// <response code="403">O usu√°rio esta autenticado, mas o n√£o possui permiss√£o para executar essa a√ß√£o.</response>
         [HttpPost]
         [ClaimsAuthorize("Mesas")]
         [ProducesResponseType(typeof(MesaViewModel), StatusCodes.Status201Created)]
@@ -86,15 +86,15 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// <summary>
         /// Atualiza o Mesa no sistema.
         /// </summary>
-        /// <param name="id">ID de identificaÁ„o do Mesa a ser atualiado</param>
+        /// <param name="id">ID de identifica√ß√£o do Mesa a ser atualiado</param>
         /// <param name="mesaViewModel">Mesa a ser atualizado</param>
-        /// <param name="cancellationToken">Token de cancelamento da requisiÁ„o.</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisi√ß√£o.</param>
         /// <returns></returns>
         /// <response code="204">Objeto atualizado com sucesso</response>
-        /// <response code="400">N„o foi possivel executar a aÁ„o solicitada</response>
+        /// <response code="400">N√£o foi possivel executar a a√ß√£o solicitada</response>
         /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
-        /// <response code="403">O usu·rio esta autenticado, mas o n„o possui permiss„o para executar essa aÁ„o.</response>
-        /// <response code="404">O objeto n„o foi encontrado.</response>
+        /// <response code="403">O usu√°rio esta autenticado, mas o n√£o possui permiss√£o para executar essa a√ß√£o.</response>
+        /// <response code="404">O objeto n√£o foi encontrado.</response>
         [HttpPut("{id:guid}")]
         [ClaimsAuthorize("Mesas")]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status204NoContent)]
@@ -103,7 +103,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         {
             if (id != mesaViewModel.Id)
             {
-                NotificarErro("Os ids informados n„o s„o iguais!");
+                NotificarErro("Os ids informados n√£o s√£o iguais!");
                 return CustomResponse(mesaViewModel, ETipoAcao.ModeloInvalido);
             }
 
@@ -125,14 +125,14 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// <summary>
         /// Exclui o Mesa do sistema.
         /// </summary>
-        /// <param name="id">ID de identificaÁ„o do Mesa a ser atualiado</param>
-        /// <param name="cancellationToken">Token de cancelamento da requisiÁ„o.</param>
+        /// <param name="id">ID de identifica√ß√£o do Mesa a ser atualiado</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisi√ß√£o.</param>
         /// <returns></returns>
         /// <response code="204">Objeto excluido com sucesso</response>
-        /// <response code="400">N„o foi possivel executar a aÁ„o solicitada</response>
+        /// <response code="400">N√£o foi possivel executar a a√ß√£o solicitada</response>
         /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
-        /// <response code="403">O usu·rio esta autenticado, mas o n„o possui permiss„o para executar essa aÁ„o.</response>
-        /// <response code="404">O objeto n„o foi encontrado.</response>
+        /// <response code="403">O usu√°rio esta autenticado, mas o n√£o possui permiss√£o para executar essa a√ß√£o.</response>
+        /// <response code="404">O objeto n√£o foi encontrado.</response>
         [HttpDelete("{id:guid}")]
         [ClaimsAuthorize("Mesas")]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status204NoContent)]
@@ -142,14 +142,14 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         {
             var mesa = await ObterMesa(id, cancellationToken);
 
-            if (mesa == null) return CustomResponse(null, ETipoAcao.NaoEncontrado);
+            if (mesa == null) return CustomResponse(tipoAcao: ETipoAcao.NaoEncontrado);
 
             await _mesaService.Remover(id, cancellationToken);
 
             return CustomResponse(mesa, ETipoAcao.Excluido);
         }
 
-        private async Task<MesaViewModel> ObterMesa(Guid id, CancellationToken cancellationToken)
+        private async Task<MesaViewModel?> ObterMesa(Guid id, CancellationToken cancellationToken)
         {
             return _mapper.Map<MesaViewModel>(await _mesaService.ObterPorId(id, cancellationToken));
         }

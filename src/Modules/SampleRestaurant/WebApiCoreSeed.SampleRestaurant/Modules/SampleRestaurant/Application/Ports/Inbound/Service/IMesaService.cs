@@ -10,6 +10,6 @@ namespace WebApiCoreSeed.SampleRestaurant.Intefaces.Service
         Task<bool> Adicionar(Mesa mesa, CancellationToken cancellationToken = default);
         Task<bool> Atualizar(Mesa mesa, CancellationToken cancellationToken = default);
         Task<bool> Remover(Guid id, CancellationToken cancellationToken = default);
-        Task<Mesa> ObterPorId(Guid id, CancellationToken cancellationToken = default);
+        Task<Mesa?> ObterPorId(Guid id, CancellationToken cancellationToken = default);
     }
 }

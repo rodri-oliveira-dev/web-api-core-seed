@@ -52,7 +52,8 @@ namespace WebApiCoreSeed.Api.Configuration
             var appSettingsSection = configuration.GetSection("AppSettings");
             services.Configure<AppSettings>(appSettingsSection);
 
-            var appSettings = appSettingsSection.Get<AppSettings>();
+            var appSettings = appSettingsSection.Get<AppSettings>()
+                ?? throw new InvalidOperationException("Configuration section 'AppSettings' is required.");
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
 
             services.AddAuthentication(x =>

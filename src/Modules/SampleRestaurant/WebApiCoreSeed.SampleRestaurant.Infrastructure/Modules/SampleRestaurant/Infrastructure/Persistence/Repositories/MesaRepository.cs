@@ -37,7 +37,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Repository
             return Task.CompletedTask;
         }
 
-        public async Task<Mesa> ObterPorId(Guid id, CancellationToken cancellationToken = default)
+        public async Task<Mesa?> ObterPorId(Guid id, CancellationToken cancellationToken = default)
         {
             return await _context.Mesas.FindAsync(new object[] { id }, cancellationToken);
         }

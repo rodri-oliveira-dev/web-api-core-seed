@@ -8,9 +8,9 @@ namespace WebApiCoreSeed.SampleRestaurant.Models
         public Guid PedidoId { get; set; }
         public Guid PratoId { get; set; }
         public EStatusProducao StatusProducao { get; set; }
-        public string Observacao { get; set; }
+        public string? Observacao { get; set; }
 
-        public virtual Pedido Pedido { get; set; }
-        public virtual Prato Prato { get; set; }
+        public virtual Pedido Pedido { get; set; } = null!;
+        public virtual Prato Prato { get; set; } = null!;
     }
 }

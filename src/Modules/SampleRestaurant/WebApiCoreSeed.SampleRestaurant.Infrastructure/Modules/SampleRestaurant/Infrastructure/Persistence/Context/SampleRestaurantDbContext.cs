@@ -11,12 +11,12 @@ namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Context
     {
         public SampleRestaurantDbContext(DbContextOptions<SampleRestaurantDbContext> options) : base(options) { }
 
-        public virtual DbSet<Atendente> Atendentes { get; set; }
-        public virtual DbSet<Mesa> Mesas { get; set; }
-        public virtual DbSet<PedidoPrato> PedidoPrato { get; set; }
-        public virtual DbSet<Pedido> Pedidos { get; set; }
-        public virtual DbSet<Prato> Pratos { get; set; }
-        public virtual DbSet<LogginEntity> Loggins { get; set; }
+        public virtual DbSet<Atendente> Atendentes { get; set; } = null!;
+        public virtual DbSet<Mesa> Mesas { get; set; } = null!;
+        public virtual DbSet<PedidoPrato> PedidoPrato { get; set; } = null!;
+        public virtual DbSet<Pedido> Pedidos { get; set; } = null!;
+        public virtual DbSet<Prato> Pratos { get; set; } = null!;
+        public virtual DbSet<LogginEntity> Loggins { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

@@ -13,7 +13,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Intefaces.Service
         Task<bool> Adicionar(Prato prato, CancellationToken cancellationToken = default);
         Task<bool> Atualizar(Prato prato, CancellationToken cancellationToken = default);
         Task<bool> Remover(Guid id, CancellationToken cancellationToken = default);
-        Task<Prato> ObterPorId(Guid id, CancellationToken cancellationToken = default);
+        Task<Prato?> ObterPorId(Guid id, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<PratoListItem>> Paginacao(PaginationParameter paginationParameter, CancellationToken cancellationToken = default);
         Task<int> TotalRegistros(CancellationToken cancellationToken = default);
     }

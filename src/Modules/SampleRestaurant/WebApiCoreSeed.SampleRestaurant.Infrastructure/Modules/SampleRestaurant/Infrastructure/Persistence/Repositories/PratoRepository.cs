@@ -42,7 +42,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Repository
             return Task.CompletedTask;
         }
 
-        public async Task<Prato> ObterPorId(Guid id, CancellationToken cancellationToken = default)
+        public async Task<Prato?> ObterPorId(Guid id, CancellationToken cancellationToken = default)
         {
             return await _context.Pratos.FindAsync(new object[] { id }, cancellationToken);
         }

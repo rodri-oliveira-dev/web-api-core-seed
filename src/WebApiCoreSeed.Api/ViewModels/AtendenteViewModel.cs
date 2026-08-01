@@ -11,11 +11,11 @@ namespace WebApiCoreSeed.Api.ViewModels
         [NotEmpty]
         public Guid Id { get; set; }
 
-        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        [Required(ErrorMessage = "O campo {0} Ã© obrigatÃ³rio")]
         [StringLength(100, ErrorMessage = "O campo {0} precisa ter entre {2} e {1} caracteres", MinimumLength = 2)]
-        public string Nome { get; set; }
+        public string Nome { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        [Required(ErrorMessage = "O campo {0} Ã© obrigatÃ³rio")]
         public ETipoAtendente TipoAtendente { get; set; }
 
     }

@@ -54,7 +54,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
             return true;
         }
 
-        public async Task<Mesa> ObterPorId(Guid id, CancellationToken cancellationToken = default)
+        public async Task<Mesa?> ObterPorId(Guid id, CancellationToken cancellationToken = default)
         {
             return await _fornecedorRepository.ObterPorId(id, cancellationToken);
         }

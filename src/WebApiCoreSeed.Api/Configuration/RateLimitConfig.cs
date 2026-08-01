@@ -25,7 +25,7 @@ namespace WebApiCoreSeed.Api.Configuration
     public static class RateLimitConfig
     {
         private const string ClientIdHeader = "X-ClientId";
-        private static readonly Action<ILogger, string, string, Exception> RateLimitRejected =
+        private static readonly Action<ILogger, string, string, Exception?> RateLimitRejected =
             LoggerMessage.Define<string, string>(
                 LogLevel.Warning,
                 new EventId(1, nameof(RateLimitRejected)),
@@ -53,8 +53,8 @@ namespace WebApiCoreSeed.Api.Configuration
                     httpContext.Response.StatusCode = StatusCodes.Status429TooManyRequests;
                     RateLimitRejected(
                         logger,
-                        httpContext.GetEndpoint()?.DisplayName,
-                        httpContext.Request.Path,
+                        httpContext.GetEndpoint()?.DisplayName ?? "unknown",
+                        httpContext.Request.Path.ToString(),
                         null);
 
                     var problemDetailsService = httpContext.RequestServices.GetRequiredService<IProblemDetailsService>();
@@ -144,7 +144,7 @@ namespace WebApiCoreSeed.Api.Configuration
             return $"{policyName}:anonymous:{Hash(anonymousKey)}";
         }
 
-        private static string GetAuthenticatedUserId(HttpContext httpContext)
+        private static string? GetAuthenticatedUserId(HttpContext httpContext)
         {
             if (httpContext.User?.Identity?.IsAuthenticated != true)
             {

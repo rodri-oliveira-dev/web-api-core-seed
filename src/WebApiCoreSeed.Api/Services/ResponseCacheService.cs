@@ -17,7 +17,7 @@ namespace WebApiCoreSeed.Api.Services
             _distributedCache = distributedCache;
         }
 
-        public async Task CacheResponseAsync(string cacheKey, object response, TimeSpan timeTimeLive, CancellationToken cancellationToken = default)
+        public async Task CacheResponseAsync(string cacheKey, object? response, TimeSpan timeTimeLive, CancellationToken cancellationToken = default)
         {
             if (response == null)
             {
@@ -35,7 +35,7 @@ namespace WebApiCoreSeed.Api.Services
             }, cancellationToken);
         }
 
-        public async Task<string> GetCachedResponseAsync(string cacheKey, CancellationToken cancellationToken = default)
+        public async Task<string?> GetCachedResponseAsync(string cacheKey, CancellationToken cancellationToken = default)
         {
             var cachedResponse = await _distributedCache.GetStringAsync(cacheKey, cancellationToken);
             return string.IsNullOrEmpty(cachedResponse) ? null : cachedResponse;

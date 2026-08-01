@@ -4,12 +4,12 @@ namespace WebApiCoreSeed.Api.ViewModels.User
 {
     public class LoginUserViewModel
     {
-        [Required(ErrorMessage = "O campo {0} È obrigatÛrio")]
-        [EmailAddress(ErrorMessage = "O campo {0} est· em formato inv·lido")]
-        public string Email { get; set; }
+        [Required(ErrorMessage = "O campo {0} √© obrigat√≥rio")]
+        [EmailAddress(ErrorMessage = "O campo {0} est√° em formato inv√°lido")]
+        public string Email { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo {0} È obrigatÛrio")]
+        [Required(ErrorMessage = "O campo {0} √© obrigat√≥rio")]
         [StringLength(100, ErrorMessage = "O campo {0} precisa ter entre {2} e {1} caracteres", MinimumLength = 6)]
-        public string Password { get; set; }
+        public string Password { get; set; } = string.Empty;
     }
 }

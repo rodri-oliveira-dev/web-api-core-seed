@@ -3,7 +3,7 @@ namespace WebApiCoreSeed.Api.Results
     public class CustomResult
     {
 
-        public CustomResult(bool success, object data)
+        public CustomResult(bool success, object? data)
         {
             this.success = success;
             this.data = data;
@@ -13,7 +13,7 @@ namespace WebApiCoreSeed.Api.Results
         /// <summary>
         /// Objeto de retorno da chamada
         /// </summary>
-        public object data { get; }
+        public object? data { get; }
 
     }
 }

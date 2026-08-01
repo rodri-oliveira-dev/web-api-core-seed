@@ -163,7 +163,7 @@ namespace WebApiCoreSeed.Api.Configuration
             Environment.SetEnvironmentVariable(key, value);
         }
 
-        private static string FirstNonEmpty(params string[] values)
+        private static string FirstNonEmpty(params string?[] values)
         {
             foreach (var value in values)
             {

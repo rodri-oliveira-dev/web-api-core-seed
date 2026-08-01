@@ -11,11 +11,11 @@ namespace WebApiCoreSeed.SampleRestaurant.Models
             Pedidos = new HashSet<Pedido>();
         }
 
-        public string Nome { get; set; }
+        public string Nome { get; set; } = string.Empty;
 
-        public string Email { get; set; }
+        public string Email { get; set; } = string.Empty;
 
-        public Telefone Telefone { get; set; }
+        public Telefone Telefone { get; set; } = null!;
 
         public ETipoAtendente TipoAtendente { get; set; }
 

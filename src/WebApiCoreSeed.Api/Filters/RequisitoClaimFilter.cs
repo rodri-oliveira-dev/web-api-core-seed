@@ -18,7 +18,7 @@ namespace WebApiCoreSeed.Api.Filters
 
         public void OnAuthorization(AuthorizationFilterContext context)
         {
-            if (!context.HttpContext.User.Identity.IsAuthenticated)
+            if (context.HttpContext.User.Identity?.IsAuthenticated != true)
             {
                 context.Result = new ProblemDetailsResult(ApiProblemDetails.Create(
                     context.HttpContext,

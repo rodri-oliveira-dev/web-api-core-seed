@@ -1,5 +1,36 @@
 # Handoff
 
+## Estado entregue pelo Prompt 4
+
+- `.editorconfig` modernizado com `root = true`, convencoes portaveis, secoes por extensao e regras C# explicitas como sugestao.
+- `Directory.Build.props` centraliza:
+  - `TargetFramework=net10.0`
+  - `Nullable=enable`
+  - `ImplicitUsings=enable`
+  - `AnalysisLevel=latest-recommended`
+  - `EnforceCodeStyleInBuild=true`
+  - `Deterministic=true`
+  - `GenerateDocumentationFile=true`
+- Propriedades comuns removidas dos `.csproj`; `IsPackable=false` permanece somente em testes/tooling.
+- Supressao local `NoWarn` de `CS1591` removida da API; decisao mantida somente em `.editorconfig`.
+- Nullable habilitado sem warnings `CS*` no build final.
+- `Directory.Build.targets` nao foi criado, por ausencia de target tardio necessario.
+- Validacoes:
+  - `dotnet restore WebApiCoreSeed.sln` passou;
+  - `dotnet build WebApiCoreSeed.sln --configuration Release --no-restore --no-incremental` passou com 30 warnings `CA*`;
+  - `dotnet test WebApiCoreSeed.sln --configuration Release --no-build` passou com 95 testes;
+  - `dotnet format WebApiCoreSeed.sln --verify-no-changes` falhou por divida historica de EOL/charset/whitespace, registrada em `04-build-and-code-style/validation.md`.
+
+## Proximo prompt
+
+Prompt 5 deve migrar a solution para SLNX sem misturar a correcao ampla de formatacao descoberta aqui. Antes de migrar, validar que o novo formato preserva todos os projetos ativos, referencias e comandos de restore/build/test.
+
+## Riscos para acompanhar
+
+- Nao rodar formatacao global automatica junto da migracao SLNX; a divida de `dotnet format` e grande e merece prompt proprio.
+- Nullable esta habilitado globalmente; novas APIs devem usar contratos nulos explicitos em vez de `NoWarn`.
+- Migrations EF devem permanecer sem pending model changes; propriedades opcionais historicas foram preservadas para evitar migration artificial.
+
 ## Estado entregue pelo Prompt 3
 
 - Central Package Management hierarquico adotado:

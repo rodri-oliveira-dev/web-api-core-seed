@@ -7,7 +7,7 @@ namespace WebApiCoreSeed.Api.Attributes
 {
     public class ClaimsAuthorizeAttribute : TypeFilterAttribute
     {
-        public ClaimsAuthorizeAttribute(string claimName, [CallerMemberName]string claimValue = null) : base(typeof(RequisitoClaimFilter))
+        public ClaimsAuthorizeAttribute(string claimName, [CallerMemberName] string claimValue = "") : base(typeof(RequisitoClaimFilter))
         {
             Arguments = new object[] { new System.Security.Claims.Claim(claimName, claimValue) };
         }

@@ -61,7 +61,9 @@ namespace WebApiCoreSeed.UnitTests.Integracao
             var problem = await ReadProblemAsync(response, HttpStatusCode.NotFound);
 
             Assert.Equal("urn:problem:not-found", problem.GetProperty("type").GetString());
-            Assert.Equal("/api/v1/Pratos/" + response.RequestMessage.RequestUri.Segments[^1], problem.GetProperty("instance").GetString());
+            var requestUri = response.RequestMessage?.RequestUri
+                ?? throw new InvalidOperationException("Expected response request URI.");
+            Assert.Equal("/api/v1/Pratos/" + requestUri.Segments[^1], problem.GetProperty("instance").GetString());
             Assert.True(problem.TryGetProperty("traceId", out _));
         }
 
@@ -343,13 +345,13 @@ namespace WebApiCoreSeed.UnitTests.Integracao
         private sealed class WebApiCoreSeedApiFactory : WebApplicationFactory<Program>
         {
             private const string TestSecret = "X-BURGUER@COCA-2-PROBLEM-DETAILS-TEST-SECRET-2026";
-            private readonly Action<IServiceCollection> _configureServices;
-            private readonly Action<NativeRateLimitingSettings> _configureRateLimits;
+            private readonly Action<IServiceCollection>? _configureServices;
+            private readonly Action<NativeRateLimitingSettings>? _configureRateLimits;
             private readonly string _databaseName = Guid.NewGuid().ToString();
 
             public WebApiCoreSeedApiFactory(
-                Action<IServiceCollection> configureServices = null,
-                Action<NativeRateLimitingSettings> configureRateLimits = null)
+                Action<IServiceCollection>? configureServices = null,
+                Action<NativeRateLimitingSettings>? configureRateLimits = null)
             {
                 _configureServices = configureServices;
                 _configureRateLimits = configureRateLimits;
@@ -376,7 +378,7 @@ namespace WebApiCoreSeed.UnitTests.Integracao
                 builder.UseEnvironment("Testing");
                 builder.ConfigureAppConfiguration((_, configuration) =>
                 {
-                    configuration.AddInMemoryCollection(new Dictionary<string, string>
+                    configuration.AddInMemoryCollection(new Dictionary<string, string?>
                     {
                         ["ConnectionStrings:DefaultConnection"] = $"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog={_databaseName};Integrated Security=True;",
                         ["AppSettings:Secret"] = TestSecret,
@@ -454,7 +456,7 @@ namespace WebApiCoreSeed.UnitTests.Integracao
 
             public Task RemoverPorId(Guid id, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
-            public Task<Prato> ObterPorId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult<Prato>(null);
+            public Task<Prato?> ObterPorId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult<Prato?>(null);
 
             public Task<bool> ExisteComId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult(false);
 
@@ -475,7 +477,7 @@ namespace WebApiCoreSeed.UnitTests.Integracao
 
             public Task RemoverPorId(Guid id, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
-            public Task<Mesa> ObterPorId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult<Mesa>(null);
+            public Task<Mesa?> ObterPorId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult<Mesa?>(null);
 
             public void Dispose()
             {
@@ -490,7 +492,7 @@ namespace WebApiCoreSeed.UnitTests.Integracao
 
             public Task RemoverPorId(Guid id, CancellationToken cancellationToken = default) => Task.FromException(CreateException());
 
-            public Task<Prato> ObterPorId(Guid id, CancellationToken cancellationToken = default) => Task.FromException<Prato>(CreateException());
+            public Task<Prato?> ObterPorId(Guid id, CancellationToken cancellationToken = default) => Task.FromException<Prato?>(CreateException());
 
             public Task<bool> ExisteComId(Guid id, CancellationToken cancellationToken = default) => Task.FromException<bool>(CreateException());
 
@@ -523,7 +525,7 @@ namespace WebApiCoreSeed.UnitTests.Integracao
 
             public Task RemoverPorId(Guid id, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
-            public Task<Prato> ObterPorId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult<Prato>(null);
+            public Task<Prato?> ObterPorId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult<Prato?>(null);
 
             public Task<bool> ExisteComId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult(false);
 

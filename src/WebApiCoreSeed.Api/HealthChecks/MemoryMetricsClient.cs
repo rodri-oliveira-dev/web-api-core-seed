@@ -37,7 +37,7 @@ namespace WebApiCoreSeed.Api.HealthChecks
 
             using (var process = Process.Start(info))
             {
-                output = process?.StandardOutput.ReadToEnd();
+                output = process?.StandardOutput.ReadToEnd() ?? string.Empty;
             }
 
             if (output != null)
@@ -63,7 +63,9 @@ namespace WebApiCoreSeed.Api.HealthChecks
 
             var info = new ProcessStartInfo("free -m")
             {
-                FileName = "/bin/bash", Arguments = "-c \"free -m\"", RedirectStandardOutput = true
+                FileName = "/bin/bash",
+                Arguments = "-c \"free -m\"",
+                RedirectStandardOutput = true
             };
 
             using (var process = Process.Start(info))
@@ -75,7 +77,7 @@ namespace WebApiCoreSeed.Api.HealthChecks
             var lines = output.Split("\n");
             var memory = lines[1].Split(" ", StringSplitOptions.RemoveEmptyEntries);
 
-            var metrics = new MemoryMetrics {Total = double.Parse(memory[1]), Free = double.Parse(memory[3])};
+            var metrics = new MemoryMetrics { Total = double.Parse(memory[1]), Free = double.Parse(memory[3]) };
 
             return metrics;
         }

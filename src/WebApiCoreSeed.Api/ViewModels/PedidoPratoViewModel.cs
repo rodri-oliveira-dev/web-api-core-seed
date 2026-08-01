@@ -5,7 +5,7 @@ using WebApiCoreSeed.SampleRestaurant.Models.Enums;
 
 namespace WebApiCoreSeed.Api.ViewModels
 {
-    public class PedidoPratoViewModel: MainViewModel
+    public class PedidoPratoViewModel : MainViewModel
     {
         [NotEmpty]
         public Guid PedidoId { get; set; }
@@ -13,11 +13,11 @@ namespace WebApiCoreSeed.Api.ViewModels
         [NotEmpty]
         public Guid PratoId { get; set; }
 
-        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        [Required(ErrorMessage = "O campo {0} Ã© obrigatÃ³rio")]
         [StringLength(1000, ErrorMessage = "O campo {0} precisa ter entre no maximo {1} caracteres")]
-        public string Observacao { get; set; }
+        public string Observacao { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        [Required(ErrorMessage = "O campo {0} Ã© obrigatÃ³rio")]
         public EStatusProducao StatusProducao { get; set; }
 
     }

@@ -15,31 +15,32 @@ namespace WebApiCoreSeed.Api.Extensions
             _accessor = accessor;
         }
 
-        public string Name => _accessor.HttpContext.User.Identity.Name;
+        public string Name => _accessor.HttpContext?.User.Identity?.Name ?? string.Empty;
 
         public Guid GetUserId()
         {
-            return IsAuthenticated() ? Guid.Parse(_accessor.HttpContext.User.GetUserId()) : Guid.Empty;
+            var userId = _accessor.HttpContext?.User.GetUserId();
+            return IsAuthenticated() && Guid.TryParse(userId, out var parsedUserId) ? parsedUserId : Guid.Empty;
         }
 
         public string GetUserEmail()
         {
-            return IsAuthenticated() ? _accessor.HttpContext.User.GetUserEmail() : "";
+            return IsAuthenticated() ? _accessor.HttpContext?.User.GetUserEmail() ?? string.Empty : string.Empty;
         }
 
         public bool IsAuthenticated()
         {
-            return _accessor.HttpContext.User.Identity.IsAuthenticated;
+            return _accessor.HttpContext?.User.Identity?.IsAuthenticated == true;
         }
 
         public bool IsInRole(string role)
         {
-            return _accessor.HttpContext.User.IsInRole(role);
+            return _accessor.HttpContext?.User.IsInRole(role) == true;
         }
 
         public IEnumerable<Claim> GetClaimsIdentity()
         {
-            return _accessor.HttpContext.User.Claims;
+            return _accessor.HttpContext?.User.Claims ?? Array.Empty<Claim>();
         }
     }
 }

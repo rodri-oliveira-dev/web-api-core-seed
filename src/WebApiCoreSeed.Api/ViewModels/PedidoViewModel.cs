@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace WebApiCoreSeed.Api.ViewModels
 {
-    public class PedidoViewModel: MainViewModel
+    public class PedidoViewModel : MainViewModel
     {
         [NotEmpty]
         public Guid AtendenteId { get; set; }
@@ -12,9 +12,9 @@ namespace WebApiCoreSeed.Api.ViewModels
         [NotEmpty]
         public Guid MesaId { get; set; }
 
-        [Required(ErrorMessage = "O campo {0} é obrigatório")]
+        [Required(ErrorMessage = "O campo {0} Ã© obrigatÃ³rio")]
         [StringLength(50, ErrorMessage = "O campo {0} precisa ter entre no maximo {1} caracteres")]
-        public string Numero { get; set; }
+        public string Numero { get; set; } = string.Empty;
 
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:HH:mm}")]
         public DateTime DataHoraCadastro { get; set; }

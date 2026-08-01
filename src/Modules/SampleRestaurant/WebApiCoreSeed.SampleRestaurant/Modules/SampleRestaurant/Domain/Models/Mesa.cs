@@ -10,7 +10,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Models
             Pedidos = new HashSet<Pedido>();
         }
 
-        public string Numero { get; set; }
+        public string Numero { get; set; } = string.Empty;
         public int Lugares { get; set; }
         public bool Ativo { get; set; }
         public ELocalizacaoMesa LocalizacaoMesa { get; set; }

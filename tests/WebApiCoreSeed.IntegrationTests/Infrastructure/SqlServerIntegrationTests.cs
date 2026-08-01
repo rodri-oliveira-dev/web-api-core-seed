@@ -100,6 +100,7 @@ public sealed class SqlServerIntegrationTests
             var repository = scope.ServiceProvider.GetRequiredService<IPratoRepository>();
             var unitOfWork = scope.ServiceProvider.GetRequiredService<ISampleRestaurantUnitOfWork>();
             var persisted = await repository.ObterPorId(prato.Id);
+            Assert.NotNull(persisted);
             persisted.Titulo = "UoW depois";
 
             await repository.Atualizar(persisted);

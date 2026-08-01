@@ -13,7 +13,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Interfaces.Repository
         Task Adicionar(Prato prato, CancellationToken cancellationToken = default);
         Task Atualizar(Prato prato, CancellationToken cancellationToken = default);
         Task RemoverPorId(Guid id, CancellationToken cancellationToken = default);
-        Task<Prato> ObterPorId(Guid id, CancellationToken cancellationToken = default);
+        Task<Prato?> ObterPorId(Guid id, CancellationToken cancellationToken = default);
         Task<bool> ExisteComId(Guid id, CancellationToken cancellationToken = default);
         Task<IReadOnlyList<PratoListItem>> ListarPagina(PaginationParameter paginationParameter, CancellationToken cancellationToken = default);
         Task<int> Contar(CancellationToken cancellationToken = default);

@@ -4,9 +4,9 @@ namespace WebApiCoreSeed.Api.Settings
     {
         public bool Enabled { get; set; }
 
-        public string ConnectionString { get; set; }
+        public string ConnectionString { get; set; } = string.Empty;
 
-        public string InstanceName { get; set; }
+        public string InstanceName { get; set; } = string.Empty;
 
         public int DefaultSeconds { get; set; }
     }

@@ -90,7 +90,8 @@ namespace WebApiCoreSeed.Api.Configuration
             IConfiguration configuration,
             IHostEnvironment environment)
         {
-            var defaultConnection = configuration.GetConnectionString("DefaultConnection");
+            var defaultConnection = configuration.GetConnectionString("DefaultConnection")
+                ?? throw new InvalidOperationException("Connection string 'DefaultConnection' is required.");
 
             services.AddDbContext<SampleRestaurantDbContext>(options =>
             {

@@ -55,23 +55,24 @@ namespace WebApiCoreSeed.Api.Controllers.V2.Controllers
             }
             if (result.IsLockedOut)
             {
-                NotificarErro("Usu·rio temporariamente bloqueado por tentativas inv·lidas");
+                NotificarErro("Usu√°rio temporariamente bloqueado por tentativas inv√°lidas");
                 return CustomResponse(loginUser);
             }
 
-            NotificarErro("Usu·rio ou Senha incorretos");
+            NotificarErro("Usu√°rio ou Senha incorretos");
             return CustomResponse(loginUser);
         }
 
         private async Task<LoginResponseViewModel> GerarJwt(string email)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(email)
+                ?? throw new InvalidOperationException($"User with email '{email}' was not found.");
             var claims = await _userManager.GetClaimsAsync(user);
             var userRoles = await _userManager.GetRolesAsync(user);
             var culture = new System.Globalization.CultureInfo("pt-BR");
 
             claims.Add(new Claim(JwtRegisteredClaimNames.Sub, user.Id));
-            claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email));
+            claims.Add(new Claim(JwtRegisteredClaimNames.Email, user.Email ?? email));
             claims.Add(new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()));
             claims.Add(new Claim(JwtRegisteredClaimNames.Nbf, ToUnixEpochDate(DateTime.UtcNow).ToString(culture)));
             claims.Add(new Claim(JwtRegisteredClaimNames.Iat, ToUnixEpochDate(DateTime.UtcNow).ToString(culture), ClaimValueTypes.Integer64));
@@ -103,7 +104,7 @@ namespace WebApiCoreSeed.Api.Controllers.V2.Controllers
                 UserToken = new UserTokenViewModel
                 {
                     Id = user.Id,
-                    Email = user.Email,
+                    Email = user.Email ?? email,
                     Claims = claims.Select(c => new ClaimViewModel { Type = c.Type, Value = c.Value })
                 }
             };

@@ -27,7 +27,7 @@ namespace WebApiCoreSeed.UnitTests.Arquitetura
             };
 
             var references = typeof(Entity).Assembly.GetReferencedAssemblies()
-                .Select(reference => reference.Name)
+                .Select(reference => reference.Name ?? string.Empty)
                 .Where(name => forbiddenPrefixes.Any(prefix => name.StartsWith(prefix, StringComparison.Ordinal)))
                 .ToArray();
 

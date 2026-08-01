@@ -26,7 +26,7 @@ namespace WebApiCoreSeed.Api.Errors
         public const string TraceIdExtension = "traceId";
         public const string ErrorsExtension = "errors";
 
-        public static ProblemDetails Create(HttpContext httpContext, int statusCode, string type, string title, string detail = null)
+        public static ProblemDetails Create(HttpContext httpContext, int statusCode, string type, string title, string? detail = null)
         {
             var problemDetails = new ProblemDetails
             {
@@ -44,15 +44,20 @@ namespace WebApiCoreSeed.Api.Errors
 
         public static ValidationProblemDetails CreateValidation(HttpContext httpContext, ModelStateDictionary modelState)
         {
-            var errors = modelState
-                .Where(entry => entry.Value.Errors.Count > 0)
-                .ToDictionary(
-                    entry => entry.Key,
-                    entry => entry.Value.Errors
-                        .Select(error => string.IsNullOrWhiteSpace(error.ErrorMessage)
-                            ? "Valor informado invalido."
-                            : error.ErrorMessage)
-                        .ToArray());
+            var errors = new Dictionary<string, string[]>();
+            foreach (var entry in modelState)
+            {
+                if (entry.Value is not { Errors.Count: > 0 } value)
+                {
+                    continue;
+                }
+
+                errors[entry.Key] = value.Errors
+                    .Select(error => string.IsNullOrWhiteSpace(error.ErrorMessage)
+                        ? "Valor informado invalido."
+                        : error.ErrorMessage)
+                    .ToArray();
+            }
 
             return CreateValidation(httpContext, errors);
         }

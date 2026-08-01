@@ -49,16 +49,16 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         }
 
         /// <summary>
-        /// MÈtodo responsavel pela obtenÁ„o de lista de Pratos
+        /// M√©todo responsavel pela obten√ß√£o de lista de Pratos
         /// </summary>
-        /// <param name="paginationParameter">Parametros de paginaÁ„o da lista</param>
-        /// <param name="cancellationToken">Token de cancelamento da requisiÁ„o.</param>
+        /// <param name="paginationParameter">Parametros de pagina√ß√£o da lista</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisi√ß√£o.</param>
         /// <returns></returns>
         /// <response code="200">Retorna o objeto referente a ID informada</response>
         /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
-        /// <response code="403">O usu·rio esta autenticado, mas o n„o possui permiss„o para executar essa aÁ„o.</response>
-        /// <response code="404">Caso a lista de objeto n„o seja encontrada</response>
-        /// <response code="429">Excedeu a cota de requisiÁıes</response>
+        /// <response code="403">O usu√°rio esta autenticado, mas o n√£o possui permiss√£o para executar essa a√ß√£o.</response>
+        /// <response code="404">Caso a lista de objeto n√£o seja encontrada</response>
+        /// <response code="429">Excedeu a cota de requisi√ß√µes</response>
         [AllowAnonymous]
         [EnableRateLimiting(NativeRateLimitPolicies.Public)]
         [HttpGet]
@@ -86,16 +86,16 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         }
 
         /// <summary>
-        /// MÈtodo responsavel pela obtenÁ„o do Prato
+        /// M√©todo responsavel pela obten√ß√£o do Prato
         /// </summary>
-        /// <param name="id">ID de identificaÁ„o do objeto a ser pesquisado</param>
-        /// <param name="cancellationToken">Token de cancelamento da requisiÁ„o.</param>
+        /// <param name="id">ID de identifica√ß√£o do objeto a ser pesquisado</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisi√ß√£o.</param>
         /// <returns></returns>
         /// <response code="200">Retorna o objeto referente a ID informada</response>
         /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
-        /// <response code="403">O usu·rio esta autenticado, mas o n„o possui permiss„o para executar essa aÁ„o.</response>
-        /// <response code="404">Caso o objeto n„o seja encontrada pela ID retorna null</response>
-        /// <response code="429">Excedeu a cota de requisiÁıes</response>
+        /// <response code="403">O usu√°rio esta autenticado, mas o n√£o possui permiss√£o para executar essa a√ß√£o.</response>
+        /// <response code="404">Caso o objeto n√£o seja encontrada pela ID retorna null</response>
+        /// <response code="429">Excedeu a cota de requisi√ß√µes</response>
         [HttpGet("{id:guid}")]
         [ClaimsAuthorize("Pratos")]
         [ProducesResponseType(typeof(PratoViewModel), StatusCodes.Status200OK)]
@@ -113,13 +113,13 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// Cadastra o novo prato no sistema.
         /// </summary>
         /// <param name="pratoViewModel">Prato a ser cadastrado</param>
-        /// <param name="cancellationToken">Token de cancelamento da requisiÁ„o.</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisi√ß√£o.</param>
         /// <returns></returns>
         /// <response code="201">Retorna o objeto referente a ID informada</response>
-        /// <response code="400">N„o foi possivel executar a aÁ„o solicitada</response>
+        /// <response code="400">N√£o foi possivel executar a a√ß√£o solicitada</response>
         /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
-        /// <response code="403">O usu·rio esta autenticado, mas o n„o possui permiss„o para executar essa aÁ„o.</response>
-        /// <response code="429">Excedeu a cota de requisiÁıes</response>
+        /// <response code="403">O usu√°rio esta autenticado, mas o n√£o possui permiss√£o para executar essa a√ß√£o.</response>
+        /// <response code="429">Excedeu a cota de requisi√ß√µes</response>
         [HttpPost]
         [ClaimsAuthorize("Pratos")]
         [ProducesResponseType(typeof(PratoViewModel), StatusCodes.Status201Created)]
@@ -143,16 +143,16 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// <summary>
         /// Atualiza o prato no sistema.
         /// </summary>
-        /// <param name="id">ID de identificaÁ„o do prato a ser atualiado</param>
+        /// <param name="id">ID de identifica√ß√£o do prato a ser atualiado</param>
         /// <param name="pratoViewModel">Prato a ser atualizado</param>
-        /// <param name="cancellationToken">Token de cancelamento da requisiÁ„o.</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisi√ß√£o.</param>
         /// <returns></returns>
         /// <response code="204">Objeto atualizado com sucesso</response>
-        /// <response code="400">N„o foi possivel executar a aÁ„o solicitada</response>
+        /// <response code="400">N√£o foi possivel executar a a√ß√£o solicitada</response>
         /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
-        /// <response code="403">O usu·rio esta autenticado, mas o n„o possui permiss„o para executar essa aÁ„o.</response>
-        /// <response code="404">O objeto n„o foi encontrado.</response>
-        /// <response code="429">Excedeu a cota de requisiÁıes</response>
+        /// <response code="403">O usu√°rio esta autenticado, mas o n√£o possui permiss√£o para executar essa a√ß√£o.</response>
+        /// <response code="404">O objeto n√£o foi encontrado.</response>
+        /// <response code="429">Excedeu a cota de requisi√ß√µes</response>
         [HttpPut("{id:guid}")]
         [ClaimsAuthorize("Pratos")]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status204NoContent)]
@@ -161,7 +161,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         {
             if (id != pratoViewModel.Id)
             {
-                NotificarErro("Os ids informados n„o s„o iguais!");
+                NotificarErro("Os ids informados n√£o s√£o iguais!");
                 return CustomResponse(pratoViewModel, ETipoAcao.ModeloInvalido);
             }
 
@@ -196,15 +196,15 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// <summary>
         /// Exclui o prato do sistema.
         /// </summary>
-        /// <param name="id">ID de identificaÁ„o do prato a ser atualiado</param>
-        /// <param name="cancellationToken">Token de cancelamento da requisiÁ„o.</param>
+        /// <param name="id">ID de identifica√ß√£o do prato a ser atualiado</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisi√ß√£o.</param>
         /// <returns></returns>
         /// <response code="204">Objeto excluido com sucesso</response>
-        /// <response code="400">N„o foi possivel executar a aÁ„o solicitada</response>
+        /// <response code="400">N√£o foi possivel executar a a√ß√£o solicitada</response>
         /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
-        /// <response code="403">O usu·rio esta autenticado, mas o n„o possui permiss„o para executar essa aÁ„o.</response>
-        /// <response code="404">O objeto n„o foi encontrado.</response>
-        /// <response code="429">Excedeu a cota de requisiÁıes</response>
+        /// <response code="403">O usu√°rio esta autenticado, mas o n√£o possui permiss√£o para executar essa a√ß√£o.</response>
+        /// <response code="404">O objeto n√£o foi encontrado.</response>
+        /// <response code="429">Excedeu a cota de requisi√ß√µes</response>
         [HttpDelete("{id:guid}")]
         [ClaimsAuthorize("Pratos")]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status204NoContent)]
@@ -214,24 +214,24 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         {
             var prato = await ObterPrato(id, cancellationToken);
 
-            if (prato == null) return CustomResponse(null, ETipoAcao.NaoEncontrado);
+            if (prato == null) return CustomResponse(tipoAcao: ETipoAcao.NaoEncontrado);
 
             await _pratoService.Remover(id, cancellationToken);
 
             return CustomResponse(prato, ETipoAcao.Excluido);
         }
 
-        private bool UploadArquivo(string arquivo, string imgNome)
+        private bool UploadArquivo(string? arquivo, string imgNome)
         {
             if (string.IsNullOrEmpty(arquivo))
             {
-                NotificarErro("ForneÁa uma imagem para este Prato!");
+                NotificarErro("Forne√ßa uma imagem para este Prato!");
                 return false;
             }
 
             if (!arquivo.IsBase64String())
             {
-                NotificarErro("ForneÁa uma imagem no formato Base64 para este Prato!");
+                NotificarErro("Forne√ßa uma imagem no formato Base64 para este Prato!");
                 return false;
             }
 
@@ -241,7 +241,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
 
             if (System.IO.File.Exists(filePath))
             {
-                NotificarErro("J· existe um arquivo com este nome!");
+                NotificarErro("J√° existe um arquivo com este nome!");
                 return false;
             }
 
@@ -250,7 +250,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
             return true;
         }
 
-        private async Task<PratoViewModel> ObterPrato(Guid id, CancellationToken cancellationToken)
+        private async Task<PratoViewModel?> ObterPrato(Guid id, CancellationToken cancellationToken)
         {
             return _mapper.Map<PratoViewModel>(await _pratoService.ObterPorId(id, cancellationToken));
         }

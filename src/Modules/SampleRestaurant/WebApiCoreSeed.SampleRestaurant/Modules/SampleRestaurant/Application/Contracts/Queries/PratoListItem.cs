@@ -7,11 +7,11 @@ namespace WebApiCoreSeed.SampleRestaurant.Application.Contracts.Queries
     {
         public Guid Id { get; set; }
 
-        public string Titulo { get; set; }
+        public string Titulo { get; set; } = string.Empty;
 
-        public string Descricao { get; set; }
+        public string Descricao { get; set; } = string.Empty;
 
-        public string Foto { get; set; }
+        public string Foto { get; set; } = string.Empty;
 
         public double Preco { get; set; }
 

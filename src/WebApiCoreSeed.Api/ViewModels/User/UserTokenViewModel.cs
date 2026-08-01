@@ -4,8 +4,8 @@ namespace WebApiCoreSeed.Api.ViewModels.User
 {
     public class UserTokenViewModel
     {
-        public string Id { get; set; }
-        public string Email { get; set; }
-        public IEnumerable<ClaimViewModel> Claims { get; set; }
+        public string Id { get; set; } = string.Empty;
+        public string Email { get; set; } = string.Empty;
+        public IEnumerable<ClaimViewModel> Claims { get; set; } = new List<ClaimViewModel>();
     }
 }
