@@ -455,3 +455,133 @@ Could not start process src\DevIO.Api\bin\Debug\netcoreapp3.1\Restaurante.IO.Api
 - Error found: none.
 - Interpretation: only the required SDD artifacts are in scope.
 - Impact for preservation: source code, project files, solution, dependencies, migrations, configuration, tests, README, and workflows were not modified.
+
+## Prompt 02 Documentation Baseline
+
+Prompt 02 re-confirmed the baseline before documentation edits.
+
+### Preconditions
+
+| Check | Result |
+| --- | --- |
+| `AGENTS.md` | Not found. |
+| `.agents/` | Not found. |
+| `.sdd/phase-1/` | All files read in full before edits. |
+| `README.md` | Read before edits. |
+| `global.json` | Not found. |
+| Current branch | `phase/1-preserve-legacy`. |
+| Prompt 01 commit | Present as `67f6fce docs: record legacy project baseline`. |
+| Working tree before edits | Clean. |
+| Prompt 01 status | `.sdd/phase-1/status.md` marked Prompt 01 as `Completed`. |
+
+### Confirmed Paths For Documentation
+
+| Item | Confirmed path |
+| --- | --- |
+| Solution | `RestauranteAPI.sln` |
+| API project | `src/DevIO.Api/Restaurante.IO.Api.csproj` |
+| Business project | `src/DevIO.Business/Restaurante.IO.Business.csproj` |
+| Data project | `src/DevIO.Data/Restaurante.IO.Data.csproj` |
+| Test project | `test/Pedidos.Test/Pedidos.Test.csproj` |
+| API entry point | `src/DevIO.Api/Program.cs` |
+| API startup | `src/DevIO.Api/Startup.cs` |
+| Domain DbContext | `src/DevIO.Data/Context/MeuDbContext.cs` |
+| Identity DbContext | `src/DevIO.Api/DataContext/ApplicationContext.cs` |
+| Domain migrations | `src/DevIO.Data/Migrations/` |
+| Identity migrations | `src/DevIO.Api/Migrations/` |
+| SQL script | `sql/restaurante.sql` |
+| VS Code launch config | `.vscode/launch.json` |
+| VS Code tasks | `.vscode/tasks.json` |
+| API settings | `src/DevIO.Api/appsettings.json` |
+| Development settings | `src/DevIO.Api/appsettings.Development.json` |
+| Dockerfiles | `docker/SqlServer.dockerfile_`, `docker/redis.dockerfile`, `docker/datalust-seq.dockerfile` |
+
+### Confirmed Runtime And Configuration Facts
+
+- All projects target `netcoreapp3.1`.
+- The API project uses `Microsoft.NET.Sdk.Web`.
+- The test project is `Pedidos.Test` and references `Restaurante.IO.Business`.
+- The connection string name is `ConnectionStrings:DefaultConnection`.
+- `Program.cs` loads `appsettings.json`, optional environment-specific appsettings, and environment variables.
+- The VS Code launch profile sets `ASPNETCORE_ENVIRONMENT=Development`.
+- No `Properties/launchSettings.json` file was identified.
+- No explicit `UseUrls` or `applicationUrl` value was identified.
+- `HealthChecks-UI` references `https://localhost:44340/hc`.
+- SQL Server is required by both `MeuDbContext` and `ApplicationDbContext`.
+- Redis is enabled through `RedisCacheSettings`.
+- Seq is enabled through `DatasulSeqSettings`.
+- The Redis Dockerfile exposes `6379`, while API settings point to `localhost:7001`.
+- The SQL script creates database `restaurante`, while API settings point to catalog `PedidosApi`.
+
+### Confirmed Migration Commands For Documentation
+
+Domain/data migration creation:
+
+```powershell
+dotnet ef migrations add <MigrationName> --project src/DevIO.Data/Restaurante.IO.Data.csproj --startup-project src/DevIO.Api/Restaurante.IO.Api.csproj --context MeuDbContext --output-dir Migrations
+```
+
+Identity/API migration creation:
+
+```powershell
+dotnet ef migrations add <MigrationName> --project src/DevIO.Api/Restaurante.IO.Api.csproj --startup-project src/DevIO.Api/Restaurante.IO.Api.csproj --context ApplicationDbContext --output-dir Migrations
+```
+
+Domain/data migration application:
+
+```powershell
+dotnet ef database update --project src/DevIO.Data/Restaurante.IO.Data.csproj --startup-project src/DevIO.Api/Restaurante.IO.Api.csproj --context MeuDbContext
+```
+
+Identity/API migration application:
+
+```powershell
+dotnet ef database update --project src/DevIO.Api/Restaurante.IO.Api.csproj --startup-project src/DevIO.Api/Restaurante.IO.Api.csproj --context ApplicationDbContext
+```
+
+These commands were documented from the real project and DbContext layout. They were not executed because Prompt 02 must not create migrations, and restore/build remain blocked in this environment.
+
+### Prompt 02 Seed Discovery
+
+Repository search did not identify:
+
+- `Seed`
+- `HasData`
+- `EnsureCreated`
+- automatic `Migrate()`
+- a database initializer
+- SQL `INSERT` statements in `sql/restaurante.sql`
+
+Conclusion: no seed command or seed implementation was identified for the legacy version.
+
+### Prompt 02 Validation Results
+
+Path and local link validation:
+
+- All documented solution, project, DbContext, migration, SQL, Docker, VS Code, appsettings, README, `LEGACY.md`, and SDD paths exist.
+- `README.md` links to existing `LEGACY.md`.
+- No broken local documentation link was identified in the changed documentation files.
+
+`dotnet restore`:
+
+- Exit code: `1`.
+- Result: failed.
+- Error found: invalid local NuGet metadata for `microsoft.netcore.targets/1.1.0`.
+- Warning found: `netcoreapp3.1` is out of support.
+- Interpretation: restore remains blocked by local environment/cache state.
+
+`dotnet build --no-restore`:
+
+- Exit code: `1`.
+- Result: failed.
+- Error found: missing `project.assets.json` for `src/DevIO.Api/Restaurante.IO.Api.csproj`, `src/DevIO.Data/Restaurante.IO.Data.csproj`, and `test/Pedidos.Test/Pedidos.Test.csproj`.
+- Warning found: `netcoreapp3.1` is out of support.
+- Interpretation: build remains blocked because restore did not complete.
+
+`dotnet test --no-build`:
+
+- Exit code: `0`.
+- Result: no output.
+- Interpretation: inconclusive, because build output was not available.
+
+Prompt 02 intentionally did not repair these failures because this delivery is documentation-only.

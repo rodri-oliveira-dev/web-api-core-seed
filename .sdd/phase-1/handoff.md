@@ -1,93 +1,121 @@
-# Handoff - Phase 1 Prompt 01
+# Handoff - Phase 1 Prompt 02
 
 ## Completed
 
-- Started Phase 1 using SDD order.
-- Confirmed clean worktree before edits.
-- Captured the legacy base commit as `legacy_source_sha`.
-- Created phase branch `phase/1-preserve-legacy` from `main`.
-- Created the shared Phase 1 folder and SDD files.
-- Recorded repository, solution, project, dependency, runtime, database, migration, external dependency, and sensitive configuration baseline.
+- Confirmed required preconditions before edits.
+- Preserved the historical README content and added a visible .NET Core 3.1 legacy notice at the top.
+- Created `LEGACY.md` with dedicated runtime, usage, migrations, seed, limitations, troubleshooting, security, and .NET 10 planning notes.
+- Updated SDD artifacts for Prompt 02.
+- Kept the change documentation-only.
+- Did not create the planned legacy tag or branch.
+- Did not push.
 
-## Files Created
+## Documentation Created Or Updated
 
-- `.sdd/phase-1/README.md`
+- `README.md`
+- `LEGACY.md`
 - `.sdd/phase-1/status.md`
 - `.sdd/phase-1/decisions.md`
 - `.sdd/phase-1/baseline.md`
 - `.sdd/phase-1/handoff.md`
 
-## Legacy Commit Base
+## Commands Documented
 
-`legacy_source_sha`: `6ce03d7f011c6809fbcbad47aa26d490f53ddf3d`
+Restore:
 
-Source branch before Prompt 01: `main`
+```powershell
+dotnet restore RestauranteAPI.sln
+```
 
-Phase branch: `phase/1-preserve-legacy`
+Build:
 
-Latest legacy commit date: `2020-09-01 08:34:26 -0300`
+```powershell
+dotnet build RestauranteAPI.sln --no-restore
+```
 
-## Validations Performed
+Run API:
 
-- `git status --short`
-- `git branch --show-current`
-- `git log -5 --oneline`
-- `git rev-parse HEAD`
-- `dotnet --info`
-- `dotnet --list-sdks`
-- Repository file inventory with `rg --files`
-- Relevant text search for database, Redis, Seq, migrations, and seed references
-- `dotnet list RestauranteAPI.sln package` attempted and failed due local NuGet metadata issue
+```powershell
+dotnet run --project src/DevIO.Api/Restaurante.IO.Api.csproj
+```
 
-Additional validation completed in this delivery:
+Run tests:
 
-- `dotnet restore`
-- `dotnet build --no-restore`
-- `dotnet test --no-build`
-- API run command check with `dotnet run --project src\DevIO.Api\Restaurante.IO.Api.csproj --no-build`
-- `git diff --check`
-- `git diff`
+```powershell
+dotnet test test/Pedidos.Test/Pedidos.Test.csproj
+dotnet test test/Pedidos.Test/Pedidos.Test.csproj --no-build
+```
 
-## Problems Found
+Create domain/data migration:
 
-- No `global.json` exists, although README references it.
-- .NET Core 3.1 SDK/runtime is not installed in this environment.
-- Active SDK is .NET `10.0.302`.
-- Local NuGet metadata file is invalid for `microsoft.netcore.targets/1.1.0`.
-- `dotnet restore` failed because of the invalid NuGet metadata file.
-- `dotnet build --no-restore` failed because `project.assets.json` files were missing after restore failed.
-- `dotnet test --no-build` returned exit code `0` with no output; treat as inconclusive, not as a confirmed passing test run.
-- API run command was identified but could not start with `--no-build` because the executable was missing.
-- `appsettings.json` and `docker/SqlServer.dockerfile_` contain sensitive or environment-specific values.
-- SQL script creates database `restaurante`, while application connection string points to catalog `PedidosApi`.
-- No seed command or seed implementation was found by text search.
+```powershell
+dotnet ef migrations add <MigrationName> --project src/DevIO.Data/Restaurante.IO.Data.csproj --startup-project src/DevIO.Api/Restaurante.IO.Api.csproj --context MeuDbContext --output-dir Migrations
+```
 
-## Decisions Taken
+Create Identity/API migration:
 
-- Preserve the legacy state without functional changes.
-- Do not modernize in Phase 1.
-- Planned tag remains `v1.0.0-legacy`, to be created only in Prompt 03.
-- Planned legacy branch remains `legacy/netcoreapp3.1`, to be created only in Prompt 03.
-- Phase branch is `phase/1-preserve-legacy`.
-- No prompt in Phase 1 should push.
-- Existing Git references must never be moved with `--force`.
+```powershell
+dotnet ef migrations add <MigrationName> --project src/DevIO.Api/Restaurante.IO.Api.csproj --startup-project src/DevIO.Api/Restaurante.IO.Api.csproj --context ApplicationDbContext --output-dir Migrations
+```
 
-## Prompt 02 Should Do
+Apply domain/data migration:
 
-- Read all files in `.sdd/phase-1/` in full before acting.
-- Continue documenting the legacy version from the recorded baseline.
-- Keep all shared context inside `.sdd/phase-1/`.
-- Preserve source code, project files, dependencies, migrations, application configuration, tests, README, and workflows unchanged unless Prompt 02 explicitly says otherwise.
-- Treat `6ce03d7f011c6809fbcbad47aa26d490f53ddf3d` as `legacy_source_sha`.
+```powershell
+dotnet ef database update --project src/DevIO.Data/Restaurante.IO.Data.csproj --startup-project src/DevIO.Api/Restaurante.IO.Api.csproj --context MeuDbContext
+```
 
-## Prompt 02 Must Not Do
+Apply Identity/API migration:
 
-- Do not modernize to .NET 10.
-- Do not install SDKs or tools automatically.
-- Do not alter `global.json` or create one unless explicitly required by a later prompt.
-- Do not update target frameworks or NuGet packages.
-- Do not fix code, tests, migrations, appsettings, Dockerfiles, or workflows.
-- Do not create `v1.0.0-legacy`.
-- Do not create `legacy/netcoreapp3.1`.
-- Do not push.
-- Do not move existing Git refs with `--force`.
+```powershell
+dotnet ef database update --project src/DevIO.Api/Restaurante.IO.Api.csproj --startup-project src/DevIO.Api/Restaurante.IO.Api.csproj --context ApplicationDbContext
+```
+
+## Seed Behavior
+
+No seed process was identified.
+
+Searches did not find `Seed`, `HasData`, `EnsureCreated`, automatic `Migrate()`, database initializer patterns, or SQL `INSERT` statements in `sql/restaurante.sql`. `LEGACY.md` records that there is no documented seed command for the legacy version.
+
+## Limitations Identified
+
+- .NET Core 3.1 is out of support since December 13, 2022.
+- No `global.json` exists even though the historical README references it.
+- Current validation machine does not have .NET Core 3.1 SDK/runtime installed.
+- Local NuGet metadata for `microsoft.netcore.targets/1.1.0` is invalid and blocks restore.
+- Build cannot complete after restore failure because asset files are missing.
+- Test validation is inconclusive because build output is unavailable.
+- API startup was not verified because build output is unavailable.
+- No `launchSettings.json` was identified.
+- `HealthChecks-UI` references `https://localhost:44340/hc`, but the runtime port was not verified.
+- `sql/restaurante.sql` creates database `restaurante`, while `ConnectionStrings:DefaultConnection` points to catalog `PedidosApi`.
+- Redis Dockerfile exposes `6379`, while `RedisCacheSettings:ConnectionString` points to `localhost:7001`.
+- SQL Server, Redis, and Seq values are local/environment-specific.
+- Legacy configuration contains secrets and credentials that must not be reused for new work.
+
+## Validation State
+
+- `dotnet restore`: blocked by invalid local NuGet metadata and unsupported-target warning.
+- `dotnet build --no-restore`: blocked because restore assets are missing.
+- `dotnet test --no-build`: inconclusive; returned exit code `0` with no output.
+- Path and local documentation link validation: passed.
+- `git diff --check`: passed.
+- Scope review: only allowed documentation files were changed.
+
+## Prompt 03 Should Verify
+
+- Current branch is still `phase/1-preserve-legacy`.
+- Working tree is clean before creating Git references.
+- Prompt 01 and Prompt 02 commits are present.
+- `.sdd/phase-1/status.md` marks Prompt 01 and Prompt 02 as completed.
+- `README.md` and `LEGACY.md` accurately describe the preserved legacy state.
+- No functional files were altered during Prompt 02.
+- Existing refs named `v1.0.0-legacy` or `legacy/netcoreapp3.1` do not already exist before creation.
+
+## Git References Still Needed
+
+Create only in Prompt 03:
+
+- tag `v1.0.0-legacy`
+- branch `legacy/netcoreapp3.1`
+
+Do not push unless a later prompt explicitly changes the Phase 1 rule.

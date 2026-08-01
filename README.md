@@ -1,3 +1,14 @@
+Legacy preservation notice
+==========================
+
+> **Attention:** this repository currently preserves a legacy ASP.NET Core Web API built for .NET Core 3.1. .NET Core 3.1 reached end of support on December 13, 2022.
+
+This code should not be used as the base for new projects. It is being preserved as historical reference only, so later modernization work can compare against the original behavior without changing the legacy baseline. A modernization to .NET 10 is planned for a later phase.
+
+At the end of Phase 1, the preserved legacy version will be identified by the tag `v1.0.0-legacy` and by the branch `legacy/netcoreapp3.1`. These Git references are planned but are not created yet in this delivery.
+
+See [LEGACY.md](LEGACY.md) for the documented legacy requirements, commands, migrations, seed status, limitations, and validation notes.
+
 What is the Project?
 =====================
 The objective of this project was to implement the most commonly used technologies, and to share as a base project for WEB API in NET Core 3.1
