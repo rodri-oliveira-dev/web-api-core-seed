@@ -1,5 +1,41 @@
 # Handoff
 
+## Estado entregue pelo Prompt 3
+
+- Central Package Management hierarquico adotado:
+  - `Directory.Packages.props`
+  - `src/Directory.Packages.props`
+  - `tests/Directory.Packages.props`
+  - `tools/Directory.Packages.props`
+- Arquivos filhos importam explicitamente o arquivo raiz.
+- `ManagePackageVersionsCentrally`, `RestorePackagesWithLockFile` e `RestoreUseStaticGraphEvaluation` foram habilitados na raiz.
+- `PackageReference` em `.csproj` nao possui mais `Version`; `PrivateAssets` e `IncludeAssets` foram preservados nos projetos.
+- `packages.lock.json` foi gerado e deve ser mantido por projeto ativo.
+- Divergencias de teste resolvidas:
+  - `coverlet.collector` -> `10.0.1`
+  - `Microsoft.NET.Test.Sdk` -> `18.8.1`
+  - `xunit.runner.visualstudio` -> `3.1.5`
+- Validacoes executadas com sucesso:
+  - `dotnet restore WebApiCoreSeed.sln --force-evaluate`
+  - `dotnet build WebApiCoreSeed.sln --configuration Release --no-restore`
+  - `dotnet test WebApiCoreSeed.sln --configuration Release --no-build`
+  - `dotnet list WebApiCoreSeed.sln package --include-transitive`
+- Saude de pacotes:
+  - nenhum pacote vulneravel reportado;
+  - `xunit` `2.9.3` segue deprecated como `Legacy`;
+  - `OpenTelemetry.Instrumentation.EntityFrameworkCore` `1.17.0-beta.1` segue reportado como `Nao encontrado nas fontes` pelo outdated.
+
+## Proximo prompt
+
+Prompt 4 deve padronizar build e estilo considerando que CPM e lock files agora fazem parte do contrato de restore. Antes de alterar CI/build, validar se `RestoreLockedMode` deve ser habilitado para ambientes de integracao continua e se warnings de analisadores existentes devem permanecer informativos ou virar erro.
+
+## Riscos para acompanhar
+
+- Nao remover `packages.lock.json` sem decisao explicita, pois agora fazem parte da reproducibilidade do restore.
+- Nao voltar a declarar `Version` em `PackageReference`; novas versoes devem entrar no `Directory.Packages.props` do escopo correto.
+- `tools/Directory.Packages.props` esta vazio por desenho porque o tooling atual usa apenas pacotes compartilhados na raiz.
+- Migracao para `xunit.v3` permanece pendente e deve ser tratada separadamente.
+
 ## Estado entregue pelo Prompt 2
 
 - Layout produtivo normalizado:
