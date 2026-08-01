@@ -5,13 +5,13 @@
 | Field | Value |
 | --- | --- |
 | Phase | Phase 2 - Modernization to .NET 10 |
-| Current task | `00 - Bootstrap de governanca e ferramentas` |
+| Current task | `01 - Migração .NET 10` |
 | Current branch | `phase/2-dotnet-10-migration` |
 | Branch base | `phase/1-preserve-legacy` |
 | Base SHA | `2799562943ac03926d69bc716617d091d04ecc82` |
 | Initial branch SHA | `2799562943ac03926d69bc716617d091d04ecc82` |
 | Source repository SHA | `9029163f1a795a1bb18f138dd8fa9179f13f544e` |
-| Related next issue | `#4 - Migrate the solution to .NET 10` |
+| Related next issue | `#5 - Modernize hosting model` |
 
 ## Base Selection
 
@@ -48,28 +48,43 @@ Phase 1 has not been integrated into `main` in this local repository. `git merge
 - Any Sonar-related automation or settings.
 - Skills tied to GCP, Cloud Run, Cloud SQL PostgreSQL, Terraform, Nginx, Kafka, or source-specific business services.
 
+## Prompt Status
+
+| Prompt | Status |
+| --- | --- |
+| 00 - Bootstrap | concluído |
+| 01 - Migração .NET 10 | concluído |
+| 02 - Hosting moderno | pendente |
+| 03 - Problem Details | pendente |
+| 04 - Rate limiting nativo | pendente |
+| 05 - OpenAPI e versionamento | pendente |
+
 ## Validations
 
-Final validation results are recorded in `bootstrap-tooling/validation.md`.
+Final validation results for prompt 01 are recorded in `01-dotnet-10-migration/validation.md`.
 
 Summary:
 
-- JSON parsing passed.
-- YAML parsing passed with PyYAML; `actionlint` was unavailable.
-- PowerShell parser validation passed through Windows PowerShell; `pwsh` was unavailable.
-- `sh -n` validation was blocked because `sh` is unavailable.
-- Active-artifact contamination checks passed.
-- Baseline .NET restore/build remained blocked by the legacy environment/cache limitation recorded in Phase 1.
-- `dotnet test --no-build` remained inconclusive.
+- `dotnet restore` passed with SDK `10.0.302`.
+- `dotnet build --configuration Release --no-restore` passed.
+- `dotnet test --configuration Release --no-build` passed: 21 tests.
+- `dotnet list package --vulnerable` reported no vulnerable packages.
+- Smoke test started the API, confirmed Swagger `200` and `/error/404` returning `404`.
+- `/hc` executed the SQL health check but did not return before timeout because local SQL Server was unavailable; Redis and Seq were disabled for the smoke attempt.
 
 ## Blockers
 
-Known environment limitation from Phase 1 remains active: .NET Core 3.1 restore/build is blocked by unsupported runtime/tooling context and invalid local NuGet metadata for `microsoft.netcore.targets/1.1.0`.
+No build or test blocker remains for the migrated solution.
+
+Runtime limitations:
+
+- Full `/hc` validation still depends on external SQL Server availability and the legacy health response pipeline.
+- HealthChecks UI web `/hc-ui` is temporarily disabled because the latest available `AspNetCore.HealthChecks.UI` package is 9.0.0 and is not runtime-compatible with EF Core 10 in this solution.
 
 ## Next Step
 
-After this bootstrap commit, run the first technical Phase 2 prompt for:
+Run Prompt 2 for:
 
 ```text
-#4 - Migrate the solution to .NET 10
+#5 - Modernize hosting model
 ```

@@ -16,11 +16,6 @@ namespace Restaurante.IO.Api.Configuration
 
             if (redisCacheSettings.Enabled)
             {
-                services.AddDistributedRedisCache(option =>
-                {
-                    option.Configuration = redisCacheSettings.ConnectionString;
-                    option.InstanceName = redisCacheSettings.InstanceName;
-                });
                 services.AddStackExchangeRedisCache(options =>
                     {
                         options.Configuration = redisCacheSettings.ConnectionString;

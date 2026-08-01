@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using Restaurante.IO.Api.Services.Interfaces;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Restaurante.IO.Api.Services
 {
@@ -24,7 +25,7 @@ namespace Restaurante.IO.Api.Services
 
             var serializedResponse = JsonSerializer.Serialize(response, new JsonSerializerOptions
             {
-                IgnoreNullValues = true
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
             });
 
             await _distributedCache.SetStringAsync(cacheKey, serializedResponse, new DistributedCacheEntryOptions

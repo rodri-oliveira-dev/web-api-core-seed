@@ -14,7 +14,7 @@ namespace Restaurante.IO.Api.Middlewares
     {
         const string MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
 
-        static readonly ILogger Log = Serilog.Log.ForContext<SerilogMiddleware>();
+        static readonly Serilog.ILogger Log = Serilog.Log.ForContext<SerilogMiddleware>();
 
         static readonly HashSet<string> HeaderWhitelist = new HashSet<string> { "Content-Type", "Content-Length", "User-Agent" };
 
@@ -54,7 +54,7 @@ namespace Restaurante.IO.Api.Middlewares
             return false;
         }
 
-        static ILogger LogForErrorContext(HttpContext httpContext)
+        static Serilog.ILogger LogForErrorContext(HttpContext httpContext)
         {
             var request = httpContext.Request;
 

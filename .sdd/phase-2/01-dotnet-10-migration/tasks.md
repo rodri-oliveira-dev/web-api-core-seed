@@ -1,0 +1,22 @@
+# Tasks - 01 .NET 10 Migration
+
+- [x] Confirm branch, clean working tree and bootstrap commit.
+- [x] Read `AGENTS.md`, Phase 2 SDD files and related skills.
+- [x] Read solution, project files, configuration, workflows and tests relevant to migration.
+- [x] Run baseline `dotnet restore`.
+- [x] Run baseline `dotnet build --no-restore`.
+- [x] Run baseline `dotnet test --no-build`.
+- [x] Inventory target frameworks and package references.
+- [x] Search known problematic APIs.
+- [x] Query available package versions for migration decisions.
+- [x] Write requirements, discovery, design, package matrix and task checklist before code edits.
+- [x] Add SDK and common build configuration.
+- [x] Update target frameworks and package references.
+- [x] Apply minimal source compatibility fixes.
+- [x] Run iterative restore/build validation.
+- [x] Run final restore, build, tests and package checks.
+- [x] Run repository searches and diff checks.
+- [x] Smoke test API startup when possible.
+- [x] Update Phase 2 status, decisions and handoff.
+- [x] Review staged changes.
+- [ ] Create semantic commit.

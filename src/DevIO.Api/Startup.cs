@@ -25,6 +25,7 @@ using System;
 using System.IO.Compression;
 using System.Linq;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Restaurante.IO.Api
 {
@@ -45,10 +46,10 @@ namespace Restaurante.IO.Api
             });
 
             services.AddMvc(options => { options.RespectBrowserAcceptHeader = true; })
-                .AddJsonOptions(op => { op.JsonSerializerOptions.IgnoreNullValues = true; });
+                .AddJsonOptions(op => { op.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull; });
 
             services.AddIdentityConfiguration(Configuration);
-            services.AddAutoMapper(typeof(Startup));
+            services.AddAutoMapper(_ => { }, typeof(Startup).Assembly);
             services.AddSwaggerConfig();
             services.ResolveDependencies();
             services.WebApiConfig();
@@ -65,7 +66,7 @@ namespace Restaurante.IO.Api
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
             services.ConfigureCookie();
             services.AddControllers(options => { options.Filters.Add<SerilogLoggingActionFilter>(); })
-                .AddJsonOptions(op => { op.JsonSerializerOptions.IgnoreNullValues = true; });
+                .AddJsonOptions(op => { op.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull; });
 
             services.AddHealthChecks()
                 .AddSqlServer(ConnectionString.GetConnectionString(), name: "Banco de Dados", tags: new[] { "db", "sql", "sqlserver" });
@@ -92,7 +93,6 @@ namespace Restaurante.IO.Api
                 options.MaxAge = TimeSpan.FromDays(365);
             });
 
-            services.AddHealthChecksUI();
             services.ConfigureCache(Configuration);
         }
 
@@ -169,7 +169,6 @@ namespace Restaurante.IO.Api
                 ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
             });
 
-            app.UseHealthChecksUI(options => { options.UIPath = "/hc-ui"; });
         }
     }
 }

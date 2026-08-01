@@ -27,12 +27,14 @@ Leia somente o que for relevante para a tarefa, com prioridade para:
 ## Estado Atual
 
 - A solution atual e `RestauranteAPI.sln`.
-- Todos os projetos ainda miram `netcoreapp3.1`.
+- Todos os projetos ativos miram `net10.0`.
 - O projeto da API e `src/DevIO.Api/Restaurante.IO.Api.csproj`.
 - Existem bibliotecas Business e Data em `src/DevIO.Business/` e `src/DevIO.Data/`.
 - O projeto de testes atual e `test/Pedidos.Test/Pedidos.Test.csproj`.
 - A arquitetura atual e a arquitetura legada em camadas do projeto original; ela ainda nao e um monolito modular moderno.
-- O legado usa ASP.NET Core 3.1, Entity Framework Core 3.1, SQL Server, Redis, Identity, JWT, Swagger, health checks, rate limiting por pacote e Serilog.
+- O legado preservado usa ASP.NET Core 3.1, Entity Framework Core 3.1, SQL Server, Redis, Identity, JWT, Swagger, health checks, rate limiting por pacote e Serilog.
+- A aplicacao ativa foi migrada para .NET 10 mantendo `Startup.cs`, Controllers, migrations, Swagger legado, API Versioning legado e `AspNetCoreRateLimit` como compatibilidades temporarias.
+- A HealthChecks UI web `/hc-ui` esta temporariamente desabilitada porque a linha `AspNetCore.HealthChecks.UI` 9 nao e compativel em runtime com EF Core 10; o endpoint `/hc` permanece registrado.
 - A versao historica esta preservada por `legacy/netcoreapp3.1` e `v1.0.0-legacy`.
 - O ambiente registrado na Fase 1 nao tinha SDK/runtime .NET Core 3.1 e tinha bloqueio local de restore por cache NuGet invalido.
 

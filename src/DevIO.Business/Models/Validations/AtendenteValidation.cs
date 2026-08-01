@@ -15,27 +15,27 @@ namespace Restaurante.IO.Business.Models.Validations
             When(a => a.TipoAtendente == ETipoAtendente.Garcom, () =>
             {
                 RuleFor(c => c.Nome)
-                    .Cascade(CascadeMode.StopOnFirstFailure)
+                    .Cascade(CascadeMode.Stop)
                     .NotEmpty().WithMessage(MensagemCampoObrigatorio)
                     .NotNull().WithMessage(MensagemCampoObrigatorio)
                     .Length(2, 100).WithMessage("O campo {PropertyName} precisa ter entre {MinLength} e {MaxLength} caracteres");
 
                 RuleFor(c => c.Email)
-                    .Cascade(CascadeMode.StopOnFirstFailure)
+                    .Cascade(CascadeMode.Stop)
                     .NotEmpty().WithMessage(MensagemCampoObrigatorio)
                     .NotNull().WithMessage(MensagemCampoObrigatorio)
                     .EmailAddress().WithMessage("E-mail envalido");
 
                 RuleFor(c => c.Telefone)
-                    .Cascade(CascadeMode.StopOnFirstFailure)
+                    .Cascade(CascadeMode.Stop)
                     .NotNull().WithMessage(MensagemCampoObrigatorio)
-                    .SetValidator(new TelefoneValidation());
+                    .SetValidator(_ => new TelefoneValidation());
             });
 
             When(a => a.TipoAtendente == ETipoAtendente.Totem, () =>
             {
                 RuleFor(c => c.Nome)
-                    .Cascade(CascadeMode.StopOnFirstFailure)
+                    .Cascade(CascadeMode.Stop)
                     .NotEmpty().WithMessage(MensagemCampoObrigatorio)
                     .Length(2, 100).WithMessage("O campo {PropertyName} precisa ter entre {MinLength} e {MaxLength} caracteres");
             });

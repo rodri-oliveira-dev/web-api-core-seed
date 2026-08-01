@@ -9,17 +9,17 @@ namespace Restaurante.IO.Business.Models.Validations
         public PedidoValidation()
         {
             RuleFor(c => c.Mesa)
-                .Cascade(CascadeMode.StopOnFirstFailure)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage(MensagemCampoObrigatorio)
-                .SetValidator(new MesaValidation());
+                .SetValidator(_ => new MesaValidation());
 
             RuleFor(c => c.Atendente)
-                .Cascade(CascadeMode.StopOnFirstFailure)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithMessage(MensagemCampoObrigatorio)
-                .SetValidator(new AtendenteValidation());
+                .SetValidator(_ => new AtendenteValidation());
 
             RuleFor(c => c.PedidoPrato)
-                .Cascade(CascadeMode.StopOnFirstFailure)
+                .Cascade(CascadeMode.Stop)
                 .NotNull().WithMessage(MensagemCampoObrigatorio)
                 .NotEmpty().WithMessage(MensagemCampoObrigatorio);
                 //.Must(p => p.Count < 1).WithMessage("O pedido precisa ter ao menos um prato.");
@@ -27,7 +27,7 @@ namespace Restaurante.IO.Business.Models.Validations
             RuleForEach(c => c.PedidoPrato).SetValidator(new PedidoPratoValidation());
 
             RuleFor(c => c.Numero)
-                .Cascade(CascadeMode.StopOnFirstFailure)
+                .Cascade(CascadeMode.Stop)
                 .NotNull().WithMessage("A campo {PropertyName} precisa ser fornecido")
                 .NotEmpty().WithMessage("A campo {PropertyName} precisa ser fornecido")
                 .Length(1, 50).WithMessage("O campo {PropertyName} precisa ter entre {MinLength} e {MaxLength} caracteres");

@@ -38,7 +38,7 @@ namespace Restaurante.IO.Api
                     rollOnFileSizeLimit: true,
                     shared: true,
                     flushToDiskInterval: TimeSpan.FromSeconds(1))
-                .WriteTo.ColoredConsole(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj} {Properties:j}{NewLine}{Exception}")
                 .CreateLogger();
 
             try
@@ -60,7 +60,6 @@ namespace Restaurante.IO.Api
             WebHost.CreateDefaultBuilder(args)
                 .UseIIS()
                 //.UseKestrel(op => op.AddServerHeader = false)
-                .UseSerilog()
                 .ConfigureLogging(logging =>
                 {
                     logging.AddSerilog();
