@@ -8,8 +8,6 @@ namespace Restaurante.IO.Api.Configuration
     {
         public static IServiceCollection WebApiConfig(this IServiceCollection services)
         {
-            services.AddMvc();
-
             services.AddApiVersioning(options =>
             {
                 options.AssumeDefaultVersionWhenUnspecified = true;
@@ -54,10 +52,12 @@ namespace Restaurante.IO.Api.Configuration
             app.UseStaticFiles();
             app.UseRouting();
             app.UseCookiePolicy();
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapControllers();
                 endpoints.MapControllerRoute("default", "{controller=Home}/{action=Index}");
             });
 

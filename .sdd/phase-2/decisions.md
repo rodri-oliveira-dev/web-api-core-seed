@@ -19,9 +19,12 @@
 | D015 | Pin .NET SDK `10.0.302` in `global.json`. | Accepted | It is the highest installed .NET 10 SDK in this environment and avoids a nonexistent feature band. |
 | D016 | Use `net10.0` for all active projects. | Accepted | This completes the first technical migration objective while preserving the legacy branch/tag separately. |
 | D017 | Keep `Nullable` disabled globally for prompt 01. | Accepted | The legacy code was not annotated and enabling nullable would create broad warning churn unrelated to the migration. |
-| D018 | Keep legacy `Startup.cs` and `UseStartup` for prompt 01. | Accepted | Hosting modernization belongs to prompt 02 / issue `#5`. |
+| D018 | Keep the legacy startup file and host hook for prompt 01. | Accepted | Hosting modernization belongs to prompt 02 / issue `#5`. |
 | D019 | Keep `AspNetCoreRateLimit` temporarily and register `AsyncKeyLockProcessingStrategy`. | Accepted | The package remains a bridge until native rate limiting is implemented in a later prompt. |
 | D020 | Keep legacy API Versioning packages temporarily. | Accepted | `Microsoft.AspNetCore.Mvc.Versioning*` is deprecated, but migration to `Asp.Versioning.*` belongs to the OpenAPI/versioning prompt. |
 | D021 | Keep Swashbuckle on `6.9.0` temporarily. | Accepted | Swashbuckle 10 changes the `Microsoft.OpenApi` API surface and would anticipate the future OpenAPI modernization. |
 | D022 | Disable HealthChecks UI web `/hc-ui` temporarily. | Accepted | Latest available `AspNetCore.HealthChecks.UI` is 9.0.0 and failed at runtime with EF Core 10; `/hc` remains registered with `UIResponseWriter`. |
 | D023 | Add direct `KubernetesClient` `19.0.2` as a private transitive override. | Accepted | It removes the vulnerable transitive version pulled by health checks packages without changing application code. |
+| D024 | Use `WebApplication.CreateBuilder` as the only active hosting entry point. | Accepted | Modern ASP.NET Core hosting removes obsolete builders and keeps composition in one place. |
+| D025 | Remove static configuration access and inject `IConfiguration` into registration extensions. | Accepted | Services should not depend on process-wide static configuration state. |
+| D026 | Keep current compatibility packages for rate limiting, Swagger and API Versioning during hosting modernization. | Accepted | Replacing those packages belongs to later Phase 2 issues and would change more behavior than this prompt requires. |

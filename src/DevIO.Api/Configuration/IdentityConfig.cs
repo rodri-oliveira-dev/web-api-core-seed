@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Data.SqlClient;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -9,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Restaurante.IO.Api.DataContext;
 using Restaurante.IO.Api.Extensions;
-using Restaurante.IO.Api.Resources;
 using Restaurante.IO.Api.Settings;
 
 namespace Restaurante.IO.Api.Configuration
@@ -18,7 +16,7 @@ namespace Restaurante.IO.Api.Configuration
     {
         public static IServiceCollection AddIdentityConfiguration(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<ApplicationDbContext>(options => { options.UseSqlServer(ConnectionString.GetConnectionString()); });
+            services.AddDbContext<ApplicationDbContext>(options => { options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")); });
 
             services.AddDefaultIdentity<IdentityUser>()
                 .AddRoles<IdentityRole>()

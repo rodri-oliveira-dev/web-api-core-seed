@@ -75,4 +75,4 @@ Rationale:
 - Do not edit controllers for contract changes.
 - Do not regenerate or modify EF migrations unless compilation proves it is unavoidable.
 - Do not change authentication settings, JWT validation parameters, route templates, status code handling or error payload shapes.
-- Preserve `Startup.cs` and `UseStartup` until the hosting modernization prompt.
+- Preserve the legacy startup file and host hook until the hosting modernization prompt.

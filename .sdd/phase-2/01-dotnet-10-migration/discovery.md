@@ -137,7 +137,7 @@ The NuGet flat container was queried for current stable versions available to th
 | `IgnoreNullValues` | Found in `Startup.cs` and `ResponseCacheService.cs`; replaced by `DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull`. |
 | `SetCompatibilityVersion` | Found in `ApiConfig.cs`; compatibility version API is legacy and should be removed if it blocks build. |
 | `IWebHostBuilder` | Found in `Program.cs`; retained because hosting modernization is future scope. |
-| `UseStartup` | Found in `Program.cs`; retained because hosting modernization is future scope. |
+| Legacy startup host hook | Found in `Program.cs`; retained because hosting modernization is future scope. |
 | `AddMvc` | Found in `Startup.cs` and `ApiConfig.cs`; retained unless compilation requires a minimal adjustment. |
 | `UseMvc` | No direct legacy `UseMvc` call found. |
 | `Microsoft.Extensions.Caching.Redis` | Found in API `.csproj`; remove and keep StackExchange Redis cache. |

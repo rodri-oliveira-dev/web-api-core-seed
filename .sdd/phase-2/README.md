@@ -29,15 +29,15 @@ Base SHA:
 ## Related Issues
 
 - `#4` - Migrate the solution to .NET 10
+- `#5` - Adopt the modern ASP.NET Core hosting model
 
 ## Prompt Order
 
 ```text
 00 - Bootstrap de governanca e ferramentas
 01 - Migrate the solution to .NET 10
+02 - Adopt the modern ASP.NET Core hosting model
 ```
-
-Later prompts must add themselves here when their scope is known.
 
 ## Handoff Files
 
@@ -55,6 +55,6 @@ Later prompts must add themselves here when their scope is known.
 
 ## Current Task
 
-`00 - Bootstrap de governanca e ferramentas`
+`02 - Adopt the modern ASP.NET Core hosting model`
 
-Technical migration is intentionally deferred to the following prompts.
+The active solution now targets .NET 10 and uses modern ASP.NET Core hosting.
