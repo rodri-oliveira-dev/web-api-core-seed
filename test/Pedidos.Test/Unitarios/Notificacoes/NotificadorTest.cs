@@ -8,7 +8,7 @@ namespace Pedidos.Test.Unitarios.Notificacoes
 
         [Fact(DisplayName = "Notificador instanciado vazio")]
         [Trait("Business", "Notificacoes")]
-        public void IniciaNotificadorInstanciado()
+        public void NotificadorQuandoInstanciadoDeveIniciarSemNotificacoes()
         {
             //Arrange
             Notificador notificador = new Notificador();
@@ -23,7 +23,7 @@ namespace Pedidos.Test.Unitarios.Notificacoes
 
         [Fact(DisplayName = "Adicionando notificação")]
         [Trait("Business", "Notificacoes")]
-        public void AdicionaNotificacao()
+        public void HandleQuandoNotificacaoInformadaDeveRegistrarNotificacao()
         {
             //Arrange
             Notificador notificador = new Notificador();
@@ -33,7 +33,8 @@ namespace Pedidos.Test.Unitarios.Notificacoes
 
             //Assert
             Assert.True(notificador.TemNotificacao());
-            Assert.Single(notificador.ObterNotificacoes());
+            var notificacao = Assert.Single(notificador.ObterNotificacoes());
+            Assert.Equal("Teste", notificacao.Mensagem);
         }
     }
 }

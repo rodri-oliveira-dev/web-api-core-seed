@@ -9,7 +9,7 @@ namespace Pedidos.Test.Unitarios.Validators
     {
         [Fact(DisplayName = "Mesa falha validação")]
         [Trait("Validators", "Mesa")]
-        public void MesaFalhaValidacao()
+        public void MesaQuandoCamposObrigatoriosInvalidosDeveFalharValidacao()
         {
             //Arrange
             var mesa = new Mesa();
@@ -25,7 +25,7 @@ namespace Pedidos.Test.Unitarios.Validators
 
         [Fact(DisplayName = "Mesa passa validação")]
         [Trait("Validators", "Mesa")]
-        public void MesaPassaValidacao()
+        public void MesaQuandoCamposObrigatoriosValidosDevePassarValidacao()
         {
             //Arrange
             var mesa = new Mesa { Numero = "07", Lugares = 4 };

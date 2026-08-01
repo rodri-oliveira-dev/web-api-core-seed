@@ -9,7 +9,7 @@ namespace Pedidos.Test.Unitarios.Validators
     {
         [Fact(DisplayName = "Pedido Prato falha validação, campos obrigatorios")]
         [Trait("Validators", "PedidoPrato")]
-        public void PedidoPratoFalhaValidacaoCamposObrigatorios()
+        public void PedidoPratoQuandoPratoAusenteDeveFalharValidacao()
         {
             //Arrange
             var pedidoPrato = new PedidoPrato();
@@ -24,29 +24,52 @@ namespace Pedidos.Test.Unitarios.Validators
 
         [Fact(DisplayName = "Pedido Prato falha validação, campo observação maior que o aceito")]
         [Trait("Validators", "PedidoPrato")]
-        public void PedidoPratoFalhaValidacaoObs()
+        public void PedidoPratoQuandoObservacaoMaiorQueLimiteDeveFalharValidacao()
         {
             //Arrange
-            var pedidoPrato = new PedidoPrato { Observacao = new string('a', 1001) };
+            var pedidoPrato = new PedidoPrato
+            {
+                Prato = new Prato(),
+                Observacao = new string('a', 1001)
+            };
             var validator = new PedidoPratoValidation();
 
             //Act
             var resultado = validator.TestValidate(pedidoPrato);
 
             //Assert
-            resultado.ShouldHaveValidationErrorFor(pp => pp.Prato);
             resultado.ShouldHaveValidationErrorFor(pp => pp.Observacao);
         }
 
         [Fact(DisplayName = "Pedido Prato passa validação")]
         [Trait("Validators", "PedidoPrato")]
-        public void PedidoPratoPassaValidacao()
+        public void PedidoPratoQuandoCamposValidosDevePassarValidacao()
         {
             //Arrange
             var pedidoPrato = new PedidoPrato
             {
                 Pedido = new Pedido(),
                 Prato = new Prato(),
+            };
+            var validator = new PedidoPratoValidation();
+
+            //Act
+            var resultado = validator.TestValidate(pedidoPrato);
+
+            //Assert
+            resultado.ShouldNotHaveValidationErrorFor(pp => pp.Prato);
+            resultado.ShouldNotHaveValidationErrorFor(pp => pp.Observacao);
+        }
+
+        [Fact(DisplayName = "Pedido Prato aceita observação dentro do limite")]
+        [Trait("Validators", "PedidoPrato")]
+        public void PedidoPratoQuandoObservacaoDentroDoLimiteDevePassarValidacao()
+        {
+            //Arrange
+            var pedidoPrato = new PedidoPrato
+            {
+                Prato = new Prato(),
+                Observacao = "Sem cebola"
             };
             var validator = new PedidoPratoValidation();
 

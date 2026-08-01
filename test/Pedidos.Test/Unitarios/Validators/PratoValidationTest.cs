@@ -9,7 +9,7 @@ namespace Pedidos.Test.Unitarios.Validators
     {
         [Fact(DisplayName = "Prato falha validação, campos obrigatorios")]
         [Trait("Validators", "Prato")]
-        public void PratoFalhaValidacaoCamposObrigatorios()
+        public void PratoQuandoCamposObrigatoriosInvalidosDeveFalharValidacao()
         {
             //Arrange
             var prato = new Prato();
@@ -27,7 +27,7 @@ namespace Pedidos.Test.Unitarios.Validators
 
         [Fact(DisplayName = "Prato passa validação, campos obrigatorios")]
         [Trait("Validators", "Prato")]
-        public void PratoPassaValidacaoCamposObrigatorios()
+        public void PratoQuandoCamposObrigatoriosValidosDevePassarValidacao()
         {
             //Arrange
             var prato = new Prato

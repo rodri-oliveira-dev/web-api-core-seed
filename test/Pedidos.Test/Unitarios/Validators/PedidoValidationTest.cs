@@ -3,7 +3,6 @@ using Restaurante.IO.Business.Models;
 using Restaurante.IO.Business.Models.Core;
 using Restaurante.IO.Business.Models.Enums;
 using Restaurante.IO.Business.Models.Validations;
-using System;
 using System.Collections.Generic;
 using Xunit;
 
@@ -13,7 +12,7 @@ namespace Pedidos.Test.Unitarios.Validators
     {
         [Fact(DisplayName = "Pedido falha validação, campos obrigatorios")]
         [Trait("Validators", "Pedido")]
-        public void PedidoFalhaValidacaoCamposObrigatorios()
+        public void PedidoQuandoCamposObrigatoriosAusentesDeveFalharValidacao()
         {
             //Arrange
             var pedido = new Pedido();
@@ -31,7 +30,7 @@ namespace Pedidos.Test.Unitarios.Validators
 
         [Fact(DisplayName = "Pedido passa validação, campos obrigatorios")]
         [Trait("Validators", "Pedido")]
-        public void PedidoPassaValidacaoCamposObrigatorios()
+        public void PedidoQuandoCamposObrigatoriosValidosDevePassarValidacao()
         {
             //Arrange
             var pedido = new Pedido
@@ -50,7 +49,7 @@ namespace Pedidos.Test.Unitarios.Validators
                 Mesa = new Mesa
                 {
                     LocalizacaoMesa = ELocalizacaoMesa.Interna,
-                    Numero = DateTime.Now.AddSeconds(-7).Second.ToString(),
+                    Numero = "07",
                     Lugares = 4
                 },
                 PedidoPrato = new List<PedidoPrato>()
@@ -68,7 +67,7 @@ namespace Pedidos.Test.Unitarios.Validators
                         
                     }
                 },
-                Numero = DateTime.Now.Second.ToString(),
+                Numero = "PED-001",
             };
             var validator = new PedidoValidation();
 

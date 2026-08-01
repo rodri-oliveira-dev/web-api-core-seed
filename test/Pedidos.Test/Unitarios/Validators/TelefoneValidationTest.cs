@@ -10,7 +10,7 @@ namespace Pedidos.Test.Unitarios.Validators
     {
         [Fact(DisplayName = "Telefone falha validação")]
         [Trait("Validators", "Telefone")]
-        public void TelefoneFalhaValidacao()
+        public void TelefoneQuandoCamposInvalidosDeveFalharValidacao()
         {
             //Arrange
             var telefone = new Telefone();
@@ -26,7 +26,7 @@ namespace Pedidos.Test.Unitarios.Validators
 
         [Fact(DisplayName = "Telefone passa validação")]
         [Trait("Validators", "Telefone")]
-        public void TelefonePassaValidacao()
+        public void TelefoneQuandoCamposValidosDevePassarValidacao()
         {
             //Arrange
             var telefone = new Telefone { Ddd = 19, Numero = 998861787, TipoTelefone = ETipoTelefone.Celular };

@@ -12,8 +12,7 @@ namespace Restaurante.IO.Business.Models.Validations
                 .NotNull().WithMessage(MensagemCampoObrigatorio);
 
             RuleFor(c => c.Observacao)
-                .Must(c => string.IsNullOrWhiteSpace(c))
-                .Length(1000).WithMessage("O campo {PropertyName} precisa ter no maximo {MaxLength} caracteres");
+                .MaximumLength(1000).WithMessage("O campo {PropertyName} precisa ter no maximo {MaxLength} caracteres");
         }
     }
 }

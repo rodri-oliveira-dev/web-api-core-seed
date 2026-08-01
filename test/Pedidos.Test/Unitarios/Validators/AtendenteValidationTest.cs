@@ -11,10 +11,10 @@ namespace Pedidos.Test.Unitarios.Validators
     {
         [Fact(DisplayName = "Atendente tipo garçon falha validação")]
         [Trait("Validators", "Atendente")]
-        public void AtendenteTipoGarconFalhaValidacao()
+        public void GarcomQuandoCamposObrigatoriosAusentesDeveFalharValidacao()
         {
             //Arrange
-            var atendente = new Atendente();
+            var atendente = new Atendente { TipoAtendente = ETipoAtendente.Garcom };
             var validator = new AtendenteValidation();
 
             //Act
@@ -28,10 +28,21 @@ namespace Pedidos.Test.Unitarios.Validators
 
         [Fact(DisplayName = "Atendente tipo garçom passa validação")]
         [Trait("Validators", "Atendente")]
-        public void AtendenteTipoGarconPassaValidacao()
+        public void GarcomQuandoCamposObrigatoriosValidosDevePassarValidacao()
         {
             //Arrange
-            var atendente = new Atendente { Nome = "Rodrigo de Oliveira", Email = "rodrigodotnet@gmail.com", Telefone = new Telefone { Ddd = 19, Numero = 998861785 } };
+            var atendente = new Atendente
+            {
+                Nome = "Rodrigo de Oliveira",
+                Email = "rodrigodotnet@gmail.com",
+                Telefone = new Telefone
+                {
+                    Ddd = 19,
+                    Numero = 998861785,
+                    TipoTelefone = ETipoTelefone.Celular
+                },
+                TipoAtendente = ETipoAtendente.Garcom
+            };
             var validator = new AtendenteValidation();
 
             //Act
@@ -45,7 +56,7 @@ namespace Pedidos.Test.Unitarios.Validators
 
         [Fact(DisplayName = "Atendente tipo Totem falha validação")]
         [Trait("Validators", "Atendente")]
-        public void AtendenteTipoTotemFalhaValidacao()
+        public void TotemQuandoNomeAusenteDeveFalharValidacao()
         {
             //Arrange
             var atendente = new Atendente { TipoAtendente = ETipoAtendente.Totem };
@@ -60,7 +71,7 @@ namespace Pedidos.Test.Unitarios.Validators
 
         [Fact(DisplayName = "Atendente tipo Totem passa validação")]
         [Trait("Validators", "Atendente")]
-        public void AtendenteTipoTotemPassaValidacao()
+        public void TotemQuandoNomeValidoDevePassarValidacao()
         {
             //Arrange
             var atendente = new Atendente { Nome = "Totem Shop Patio", TipoAtendente = ETipoAtendente.Totem };
