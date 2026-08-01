@@ -8,8 +8,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Restaurante.IO.Api.Configuration;
 using Restaurante.IO.Api.Extensions;
 using Restaurante.IO.Api.Settings;
 using Restaurante.IO.Api.ViewModels.User;
@@ -19,6 +21,7 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
 {
     [ApiVersion("1.0", Deprecated = true)]
     [Route("api/v{version:apiVersion}")]
+    [EnableRateLimiting(NativeRateLimitPolicies.AuthenticationSensitive)]
     public class AuthController : MainController
     {
         private readonly SignInManager<IdentityUser> _signInManager;

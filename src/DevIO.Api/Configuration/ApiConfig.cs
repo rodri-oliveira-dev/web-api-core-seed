@@ -53,6 +53,7 @@ namespace Restaurante.IO.Api.Configuration
             app.UseRouting();
             app.UseCookiePolicy();
             app.UseAuthentication();
+            app.UseRateLimiter();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

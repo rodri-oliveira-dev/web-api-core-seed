@@ -34,7 +34,8 @@ Leia somente o que for relevante para a tarefa, com prioridade para:
 - A arquitetura atual e a arquitetura legada em camadas do projeto original; ela ainda nao e um monolito modular moderno.
 - O legado preservado usa ASP.NET Core 3.1, Entity Framework Core 3.1, SQL Server, Redis, Identity, JWT, Swagger, health checks, rate limiting por pacote e Serilog.
 - A aplicacao ativa foi migrada para .NET 10 e usa o hosting moderno do ASP.NET Core com `WebApplication`.
-- Controllers, migrations, Swagger legado, API Versioning legado e `AspNetCoreRateLimit` permanecem como compatibilidades temporarias.
+- Controllers, migrations, Swagger legado e API Versioning legado permanecem como compatibilidades temporarias.
+- O rate limiting ativo usa o middleware nativo do ASP.NET Core com politicas explicitas para superficies publicas, autenticadas e sensiveis a autenticacao.
 - A HealthChecks UI web `/hc-ui` esta temporariamente desabilitada porque a linha `AspNetCore.HealthChecks.UI` 9 nao e compativel em runtime com EF Core 10; o endpoint `/hc` permanece registrado.
 - A versao historica esta preservada por `legacy/netcoreapp3.1` e `v1.0.0-legacy`.
 - O ambiente registrado na Fase 1 nao tinha SDK/runtime .NET Core 3.1 e tinha bloqueio local de restore por cache NuGet invalido.
@@ -50,7 +51,7 @@ As seguintes decisoes sao direcao de modernizacao, nao implementacao concluida:
 - manter Controllers como adaptadores HTTP;
 - usar Entity Framework Core e SQL Server no desenho moderno;
 - usar Redis quando houver necessidade real;
-- adotar Problem Details, rate limiting nativo e OpenAPI moderno;
+- adotar OpenAPI moderno;
 - adicionar OpenTelemetry;
 - ampliar testes unitarios;
 - criar testes de integracao com Testcontainers quando a dependencia real justificar;

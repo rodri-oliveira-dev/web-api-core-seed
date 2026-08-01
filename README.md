@@ -38,7 +38,7 @@ To know more about how to setup your enviroment visit the [Microsoft .NET Downlo
 - Swagger UI com JWT support
 - Health Checks
 - Redis
-- Ip Rate Limit 
+- Native ASP.NET Core Rate Limiting
 - OWASP Security
 - Serilog
 - Datasul / Seq

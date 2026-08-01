@@ -32,3 +32,8 @@
 | D028 | Keep `CustomResult` for success responses during Problem Details migration. | Accepted | The prompt changes error contracts only; changing success contracts would broaden the blast radius. |
 | D029 | Keep Domain Notification and map it to Problem Details. | Accepted | The pattern still carries business messages; there is no replacement domain error model yet. |
 | D030 | Use minimal HTTP integration tests with `WebApplicationFactory` and isolated fakes. | Accepted | The task changes HTTP error contracts, while full SQL/Testcontainers strategy belongs to a later phase. |
+| D031 | Replace `AspNetCoreRateLimit` with native ASP.NET Core rate limiting. | Accepted | .NET 10 includes first-party rate limiting middleware and the legacy package was only a temporary bridge. |
+| D032 | Use explicit `public`, `authenticated` and `authentication-sensitive` policies. | Accepted | Different endpoint surfaces have different abuse and usability risks; one implicit global API rule would hide that design. |
+| D033 | Partition authenticated traffic by validated user identity. | Accepted | It avoids one authenticated user consuming another user's quota. The selected identity value is hashed before use as a limiter key. |
+| D034 | Do not trust forwarded client IP headers in rate limiting. | Accepted | The repository has no trusted proxy or known network configuration, so trusting forwarded headers would allow spoofed partitions. |
+| D035 | Keep `/hc` and `/swagger/*` exempt from API rate limiting. | Accepted | They were outside the legacy `*:/api/*` rule and are needed for health and smoke validation. |

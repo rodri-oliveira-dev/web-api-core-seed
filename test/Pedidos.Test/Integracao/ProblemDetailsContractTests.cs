@@ -22,6 +22,8 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using Restaurante.IO.Api;
 using Restaurante.IO.Api.DataContext;
+using Restaurante.IO.Api.Services.Interfaces;
+using Restaurante.IO.Api.Settings;
 using Restaurante.IO.Business.Interfaces.Pagination;
 using Restaurante.IO.Business.Interfaces.Repository;
 using Restaurante.IO.Business.Models;
@@ -133,6 +135,88 @@ namespace Pedidos.Test.Integracao
             Assert.Equal(HttpStatusCode.OK, health.StatusCode);
         }
 
+        [Fact]
+        public async Task RequisicoesPublicasAbaixoDoLimiteDevemSerPermitidas()
+        {
+            using var factory = new RestauranteApiFactory(configureRateLimits: CreateRateLimitConfiguration(publicPermitLimit: 2));
+            using var client = factory.CreateApiClient();
+            client.DefaultRequestHeaders.Add("X-ClientId", "public-allowed");
+
+            var first = await client.GetAsync("/api/v1/Pratos?pageNumber=1&pageSize=10");
+            var second = await client.GetAsync("/api/v1/Pratos?pageNumber=1&pageSize=10");
+
+            Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, second.StatusCode);
+        }
+
+        [Fact]
+        public async Task RequisicaoPublicaAcimaDoLimiteDeveRetornarProblemDetails()
+        {
+            using var factory = new RestauranteApiFactory(configureRateLimits: CreateRateLimitConfiguration(publicPermitLimit: 2));
+            using var client = factory.CreateApiClient();
+            client.DefaultRequestHeaders.Add("X-ClientId", "public-blocked");
+
+            Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/v1/Pratos?pageNumber=1&pageSize=10")).StatusCode);
+            Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/v1/Pratos?pageNumber=1&pageSize=10")).StatusCode);
+
+            var response = await client.GetAsync("/api/v1/Pratos?pageNumber=1&pageSize=10");
+            var problem = await ReadProblemAsync(response, HttpStatusCode.TooManyRequests);
+
+            Assert.Equal("urn:problem:rate-limit", problem.GetProperty("type").GetString());
+            Assert.True(problem.TryGetProperty("traceId", out _));
+            Assert.NotNull(response.Headers.RetryAfter);
+        }
+
+        [Fact]
+        public async Task LoginAcimaDoLimiteDeveUsarParticoesAnonimasIndependentes()
+        {
+            using var factory = new RestauranteApiFactory(configureRateLimits: CreateRateLimitConfiguration(authenticationSensitivePermitLimit: 1));
+            using var firstPartition = factory.CreateApiClient();
+            using var secondPartition = factory.CreateApiClient();
+            firstPartition.DefaultRequestHeaders.Add("X-ClientId", "login-partition-1");
+            secondPartition.DefaultRequestHeaders.Add("X-ClientId", "login-partition-2");
+
+            Assert.Equal(HttpStatusCode.BadRequest, (await firstPartition.PostAsJsonAsync("/api/v1/entrar", new { })).StatusCode);
+
+            var blocked = await firstPartition.PostAsJsonAsync("/api/v1/entrar", new { });
+            var problem = await ReadProblemAsync(blocked, HttpStatusCode.TooManyRequests);
+            var recovered = await secondPartition.PostAsJsonAsync("/api/v1/entrar", new { });
+
+            Assert.Equal("urn:problem:rate-limit", problem.GetProperty("type").GetString());
+            Assert.NotNull(blocked.Headers.RetryAfter);
+            Assert.Equal(HttpStatusCode.BadRequest, recovered.StatusCode);
+        }
+
+        [Fact]
+        public async Task LimiteAutenticadoDeveSerIndependentePorUsuario()
+        {
+            using var factory = new RestauranteApiFactory(configureRateLimits: CreateRateLimitConfiguration(authenticatedPermitLimit: 1));
+            using var firstUser = factory.CreateApiClient(("Mesas", "ObterPorId"));
+            using var secondUser = factory.CreateApiClient(("Mesas", "ObterPorId"));
+
+            Assert.Equal(HttpStatusCode.NotFound, (await firstUser.GetAsync($"/api/v1/Mesas/{Guid.NewGuid()}")).StatusCode);
+
+            var blocked = await firstUser.GetAsync($"/api/v1/Mesas/{Guid.NewGuid()}");
+            var secondUserResponse = await secondUser.GetAsync($"/api/v1/Mesas/{Guid.NewGuid()}");
+
+            await ReadProblemAsync(blocked, HttpStatusCode.TooManyRequests);
+            Assert.Equal(HttpStatusCode.NotFound, secondUserResponse.StatusCode);
+        }
+
+        [Fact]
+        public async Task HealthCheckDeveFicarIsentoDeRateLimit()
+        {
+            using var factory = new RestauranteApiFactory(configureRateLimits: CreateRateLimitConfiguration(
+                publicPermitLimit: 1,
+                authenticatedPermitLimit: 1,
+                authenticationSensitivePermitLimit: 1));
+            using var client = factory.CreateApiClient();
+
+            Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/hc")).StatusCode);
+            Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/hc")).StatusCode);
+            Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/hc")).StatusCode);
+        }
+
         private static async Task<JsonElement> ReadProblemAsync(HttpResponseMessage response, HttpStatusCode expectedStatusCode)
         {
             Assert.Equal(expectedStatusCode, response.StatusCode);
@@ -144,15 +228,39 @@ namespace Pedidos.Test.Integracao
             return document.RootElement.Clone();
         }
 
+        private static Action<NativeRateLimitingSettings> CreateRateLimitConfiguration(
+            int publicPermitLimit = 3,
+            int authenticatedPermitLimit = 3,
+            int authenticationSensitivePermitLimit = 2,
+            int windowSeconds = 30)
+        {
+            return settings =>
+            {
+                settings.Public.PermitLimit = publicPermitLimit;
+                settings.Public.WindowSeconds = windowSeconds;
+                settings.Public.QueueLimit = 0;
+                settings.Authenticated.PermitLimit = authenticatedPermitLimit;
+                settings.Authenticated.WindowSeconds = windowSeconds;
+                settings.Authenticated.QueueLimit = 0;
+                settings.AuthenticationSensitive.PermitLimit = authenticationSensitivePermitLimit;
+                settings.AuthenticationSensitive.WindowSeconds = windowSeconds;
+                settings.AuthenticationSensitive.QueueLimit = 0;
+            };
+        }
+
         private sealed class RestauranteApiFactory : WebApplicationFactory<Program>
         {
             private const string TestSecret = "X-BURGUER@COCA-2-PROBLEM-DETAILS-TEST-SECRET-2026";
             private readonly Action<IServiceCollection> _configureServices;
+            private readonly Action<NativeRateLimitingSettings> _configureRateLimits;
             private readonly string _databaseName = Guid.NewGuid().ToString();
 
-            public RestauranteApiFactory(Action<IServiceCollection> configureServices = null)
+            public RestauranteApiFactory(
+                Action<IServiceCollection> configureServices = null,
+                Action<NativeRateLimitingSettings> configureRateLimits = null)
             {
                 _configureServices = configureServices;
+                _configureRateLimits = configureRateLimits;
             }
 
             public HttpClient CreateApiClient(params (string Type, string Value)[] claims)
@@ -185,6 +293,7 @@ namespace Pedidos.Test.Integracao
                         ["DatasulSeqSettings:Url"] = "http://localhost",
                         ["DatasulSeqSettings:FilePath"] = "test-problem-details.log"
                     });
+
                 });
 
                 builder.ConfigureServices(services =>
@@ -201,6 +310,14 @@ namespace Pedidos.Test.Integracao
                         options.TokenValidationParameters.IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(TestSecret));
                     });
                     services.PostConfigure<HealthCheckServiceOptions>(options => options.Registrations.Clear());
+                    services.RemoveAll<RedisCacheSettings>();
+                    services.RemoveAll<IResponseCacheService>();
+                    services.AddSingleton(new RedisCacheSettings { Enabled = false });
+                    if (_configureRateLimits != null)
+                    {
+                        services.Configure(_configureRateLimits);
+                    }
+
                     services.RemoveAll<IPratoRepository>();
                     services.RemoveAll<IMesaRepository>();
                     services.AddScoped<IPratoRepository, FakePratoRepository>();

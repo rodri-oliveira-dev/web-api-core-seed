@@ -98,7 +98,7 @@ namespace Restaurante.IO.Api.Configuration
             services.AddSwaggerConfig();
             services.ResolveDependencies();
             services.WebApiConfig();
-            services.ConfigureRateLimit(configuration);
+            services.AddNativeRateLimiting(configuration);
             services.AddApiResponseCompression();
             services.ConfigureCookie();
             services.AddApiHealthChecks(configuration, defaultConnection);
@@ -174,7 +174,6 @@ namespace Restaurante.IO.Api.Configuration
                 });
             });
 
-            app.ConfigureRateLimit();
             app.AjustesSeguranca();
             app.UseResponseCompression();
             app.UseMvcConfiguration();

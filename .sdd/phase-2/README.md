@@ -55,6 +55,6 @@ Base SHA:
 
 ## Current Task
 
-`02 - Adopt the modern ASP.NET Core hosting model`
+`04 - Native rate limiting`
 
-The active solution now targets .NET 10 and uses modern ASP.NET Core hosting.
+The active solution now targets .NET 10, uses modern ASP.NET Core hosting, returns Problem Details for errors, and uses native ASP.NET Core rate limiting.

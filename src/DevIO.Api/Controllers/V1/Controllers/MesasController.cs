@@ -4,7 +4,9 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Restaurante.IO.Api.Attributes;
+using Restaurante.IO.Api.Configuration;
 using Restaurante.IO.Api.Extensions;
 using Restaurante.IO.Api.Results;
 using Restaurante.IO.Api.ViewModels;
@@ -20,6 +22,7 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
     [Route("api/v{version:apiVersion}/Mesas")]
     [ProducesResponseType(typeof(CustomResult), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(CustomResult), StatusCodes.Status403Forbidden)]
+    [EnableRateLimiting(NativeRateLimitPolicies.Authenticated)]
     public class MesasController : MainController
     {
         private readonly IMesaRepository _mesaRepository;

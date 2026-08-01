@@ -5,13 +5,13 @@
 | Field | Value |
 | --- | --- |
 | Phase | Phase 2 - Modernization to .NET 10 |
-| Current task | `03 - Problem Details` |
+| Current task | `04 - Native rate limiting` |
 | Current branch | `phase/2-dotnet-10-migration` |
 | Branch base | `phase/1-preserve-legacy` |
 | Base SHA | `2799562943ac03926d69bc716617d091d04ecc82` |
 | Initial branch SHA | `2799562943ac03926d69bc716617d091d04ecc82` |
 | Source repository SHA | `9029163f1a795a1bb18f138dd8fa9179f13f544e` |
-| Related next issue | `#7 - Native rate limiting` |
+| Related next issue | `#8 - OpenAPI and API versioning` |
 
 ## Base Selection
 
@@ -25,7 +25,7 @@ Phase 1 has not been integrated into `main` in this local repository. `git merge
 | 01 - Migracao .NET 10 | concluido |
 | 02 - Hosting moderno | concluido |
 | 03 - Problem Details | concluido |
-| 04 - Rate limiting nativo | pendente |
+| 04 - Rate limiting nativo | concluido |
 | 05 - OpenAPI e versionamento | pendente |
 
 ## Validations
@@ -33,6 +33,7 @@ Phase 1 has not been integrated into `main` in this local repository. `git merge
 Final validation results for prompt 01 are recorded in `01-dotnet-10-migration/validation.md`.
 Final validation results for prompt 02 are recorded in `02-modern-hosting/validation.md`.
 Final validation results for prompt 03 are recorded in `03-problem-details/validation.md`.
+Final validation results for prompt 04 are recorded in `04-native-rate-limiting/validation.md`.
 
 Prompt 01 summary:
 
@@ -62,6 +63,18 @@ Prompt 03 summary:
 - Smoke confirmed Swagger `200`, invalid payload `400 application/problem+json`, missing route `404 application/problem+json`, and protected endpoint without token `401 application/problem+json`.
 - `/hc` remains registered but real smoke timed out locally because SQL Server is unavailable; host-test health check is covered with health registrations cleared.
 
+Prompt 04 summary:
+
+- `AspNetCoreRateLimit` was removed from the active API project.
+- Native ASP.NET Core rate limiting is registered with explicit `public`, `authenticated` and `authentication-sensitive` policies.
+- `UseRateLimiter` runs after routing and authentication, before authorization.
+- Rate-limit rejections return `429 application/problem+json` with `urn:problem:rate-limit`, `traceId` and `Retry-After`.
+- Authenticated partitions use validated user identity; anonymous fallback uses a hashed composite of optional `X-ClientId` and direct connection remote address.
+- Forwarded IP headers are not trusted because no trusted proxy configuration exists.
+- Integration tests cover allowed, rejected, exempt and independent partition behavior.
+- `dotnet restore`, `dotnet build --configuration Release --no-restore`, `dotnet test --configuration Release --no-build`, `dotnet list package` and active-code legacy searches passed.
+- HTTP smoke/regression through `WebApplicationFactory` passed with 11 focused tests; process-based local smoke was blocked by local shell policy before API startup.
+
 ## Blockers
 
 No build or test blocker remains for the migrated solution.
@@ -73,8 +86,8 @@ Runtime limitations:
 
 ## Next Step
 
-Run Prompt 4 for:
+Run Prompt 5 for:
 
 ```text
-#7 - Native rate limiting
+#8 - OpenAPI and API versioning
 ```

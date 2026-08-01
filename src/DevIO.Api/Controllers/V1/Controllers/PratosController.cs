@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.Extensions.Logging;
 using Restaurante.IO.Api.Attributes;
+using Restaurante.IO.Api.Configuration;
 using Restaurante.IO.Api.Extensions;
 using Restaurante.IO.Api.Extensions.Clains;
 using Restaurante.IO.Api.ViewModels;
@@ -25,6 +27,7 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
     [Route("api/v{version:apiVersion}/Pratos")]
     [ProducesResponseType(typeof(CustomResult), StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(typeof(CustomResult), StatusCodes.Status403Forbidden)]
+    [EnableRateLimiting(NativeRateLimitPolicies.Authenticated)]
     public class PratosController : MainController
     {
         private readonly IPratoRepository _pratoRepository;
@@ -57,7 +60,8 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
         /// <response code="403">O usuário esta autenticado, mas o não possui permissão para executar essa ação.</response>
         /// <response code="404">Caso a lista de objeto não seja encontrada</response>
         /// <response code="429">Excedeu a cota de requisições</response> 
-        [AllowAnonymous] 
+        [AllowAnonymous]
+        [EnableRateLimiting(NativeRateLimitPolicies.Public)]
         [HttpGet]
         //[ClaimsAuthorize("Pratos")]
         [ProducesResponseType(typeof(PaginationResult<PratoViewModel>), StatusCodes.Status200OK)]
