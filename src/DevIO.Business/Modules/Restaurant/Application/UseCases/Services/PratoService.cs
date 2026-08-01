@@ -1,7 +1,9 @@
-﻿using System;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Restaurante.IO.Business.Intefaces;
 using Restaurante.IO.Business.Intefaces.Service;
+using Restaurante.IO.Business.Interfaces.Pagination;
 using Restaurante.IO.Business.Interfaces.Repository;
 using Restaurante.IO.Business.Models;
 using Restaurante.IO.Business.Models.Validations;
@@ -45,8 +47,23 @@ namespace Restaurante.IO.Business.Services
 
         public async Task<bool> Remover(Guid id)
         {
-            var excluido= await _pratoRepository.Remover(id);
+            var excluido = await _pratoRepository.Remover(id);
             return true;
+        }
+
+        public async Task<Prato> ObterPorId(Guid id)
+        {
+            return await _pratoRepository.ObterPorId(id);
+        }
+
+        public async Task<IEnumerable<Prato>> Paginacao(PaginationParameter paginationParameter)
+        {
+            return await _pratoRepository.Paginacao(paginationParameter);
+        }
+
+        public async Task<int> TotalRegistros()
+        {
+            return await _pratoRepository.TotalRegistros();
         }
 
         public void Dispose()

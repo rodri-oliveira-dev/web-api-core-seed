@@ -13,7 +13,6 @@ using Restaurante.IO.Api.ViewModels;
 using Restaurante.IO.Business.Intefaces;
 using Restaurante.IO.Business.Intefaces.Service;
 using Restaurante.IO.Business.Interfaces.Pagination;
-using Restaurante.IO.Business.Interfaces.Repository;
 using Restaurante.IO.Business.Models;
 using System;
 using System.Collections.Generic;
@@ -31,20 +30,17 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
     [EnableRateLimiting(NativeRateLimitPolicies.Authenticated)]
     public class PratosController : MainController
     {
-        private readonly IPratoRepository _pratoRepository;
         private readonly IPratoService _pratoService;
         private readonly IMapper _mapper;
         private readonly ILogger<PratosController> _logger;
         private readonly IUser _user;
 
         public PratosController(INotificador notificador,
-                                  IPratoRepository pratoRepository,
                                   IPratoService pratoService,
                                   IMapper mapper,
                                   ILogger<PratosController> logger,
                                   IUser user) : base(notificador)
         {
-            _pratoRepository = pratoRepository;
             _pratoService = pratoService;
             _mapper = mapper;
             _logger = logger;
@@ -246,13 +242,13 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
 
         private async Task<PratoViewModel> ObterPrato(Guid id)
         {
-            return _mapper.Map<PratoViewModel>(await _pratoRepository.ObterPorId(id));
+            return _mapper.Map<PratoViewModel>(await _pratoService.ObterPorId(id));
         }
 
         private async Task<PaginationResult<PratoViewModel>> ObterPratos(PaginationParameter paginationParameter)
         {
-            var pratos = _mapper.Map<List<PratoViewModel>>(await _pratoRepository.Paginacao(paginationParameter));
-            var totalItens = await _pratoRepository.TotalRegistros();
+            var pratos = _mapper.Map<List<PratoViewModel>>(await _pratoService.Paginacao(paginationParameter));
+            var totalItens = await _pratoService.TotalRegistros();
             var totalPaginas = totalItens / paginationParameter.PageSize;
 
             return new PaginationResult<PratoViewModel>

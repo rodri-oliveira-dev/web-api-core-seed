@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using Restaurante.IO.Business.Intefaces;
 using Restaurante.IO.Business.Intefaces.Service;
@@ -12,7 +12,7 @@ namespace Restaurante.IO.Business.Services
     {
         private readonly IMesaRepository _fornecedorRepository;
 
-        public MesaService(IMesaRepository fornecedorRepository, 
+        public MesaService(IMesaRepository fornecedorRepository,
                                  INotificador notificador) : base(notificador)
         {
             _fornecedorRepository = fornecedorRepository;
@@ -20,7 +20,7 @@ namespace Restaurante.IO.Business.Services
 
         public async Task<bool> Adicionar(Mesa mesa)
         {
-            if (!ExecutarValidacao(new MesaValidation(), mesa) ) return false;
+            if (!ExecutarValidacao(new MesaValidation(), mesa)) return false;
 
             await _fornecedorRepository.Adicionar(mesa);
             return true;
@@ -38,6 +38,11 @@ namespace Restaurante.IO.Business.Services
         {
             await _fornecedorRepository.Remover(id);
             return true;
+        }
+
+        public async Task<Mesa> ObterPorId(Guid id)
+        {
+            return await _fornecedorRepository.ObterPorId(id);
         }
 
         public void Dispose()

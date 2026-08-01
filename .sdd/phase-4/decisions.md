@@ -1,0 +1,14 @@
+# Decisions - Phase 4
+
+| ID | Decision | Status | Rationale |
+| --- | --- | --- | --- |
+| D001 | Criar `phase/4-architecture-modernization` a partir de `phase/3-quality-and-safety` no commit `18af517adab5d21ae58ac9674da411244a5379b9`. | Accepted | A Fase 3 esta concluida localmente e ainda nao ha evidencia de integracao em `main`. |
+| D002 | Usar um unico modulo de negocio inicial chamado `Restaurant`. | Accepted | O dominio ativo gira em torno de pratos, mesas, pedidos e atendentes de restaurante; criar varios modulos agora seria artificial. |
+| D003 | Tratar `Restaurante.IO.Business` como nucleo do modulo `Restaurant`, com subestruturas `Domain` e `Application` no mesmo assembly nesta entrega. | Accepted | Reduz risco e evita churn de namespaces/projetos antes da separacao definitiva do dominio de exemplo no Prompt 2. |
+| D004 | Tratar `Restaurante.IO.Data` como adaptador `Infrastructure` do modulo `Restaurant`. | Accepted | O projeto ja implementa EF Core, DbContext, mappings e repositorios concretos para o dominio ativo. |
+| D005 | Manter `Restaurante.IO.Api` como adaptador de entrada e composition root. | Accepted | A API contem controllers, autenticacao, autorizacao, Problem Details, OpenAPI, rate limiting, health checks e DI. |
+| D006 | Nao redesenhar o repositorio generico, Unit of Work, CancellationToken, migrations ou paginacao neste prompt. | Accepted | Esses itens pertencem aos prompts seguintes da Fase 4. |
+| D007 | Preservar nomes de assemblies e namespaces publicos nesta entrega. | Accepted | A reorganizacao fisica cria o limite modular sem churn amplo nem quebra de testes/contratos. |
+| D008 | Expor consultas de pratos e mesas nas portas de entrada existentes, em vez de criar handlers novos. | Accepted | Remove acoplamento direto dos controllers a repositorios sem criar abstracoes cerimoniais antes dos prompts de portas de persistencia. |
+| D009 | Trocar `Microsoft.Extensions.Logging.LogLevel` por `ELogLevel` no dominio. | Accepted | Logging tecnico nao deve vazar para Domain; os valores numericos foram preservados para manter o schema e dados existentes. |
+| D010 | Usar testes arquiteturais por reflexao no projeto `Pedidos.Test`. | Accepted | A solucao simples cobre as regras atuais sem adicionar framework pesado. |

@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Microsoft.Extensions.Logging;
 using Restaurante.IO.Business.Models.Enums;
 
 namespace Restaurante.IO.Data.Mappings
@@ -11,7 +10,7 @@ namespace Restaurante.IO.Data.Mappings
     {
         public void Configure(EntityTypeBuilder<LogginEntity> builder)
         {
-            var converter = new EnumToNumberConverter<LogLevel, int>();
+            var converter = new EnumToNumberConverter<ELogLevel, int>();
 
             builder.HasKey(p => p.Id);
 

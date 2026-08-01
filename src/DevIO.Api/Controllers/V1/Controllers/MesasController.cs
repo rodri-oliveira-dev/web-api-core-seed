@@ -13,7 +13,6 @@ using Restaurante.IO.Api.Results;
 using Restaurante.IO.Api.ViewModels;
 using Restaurante.IO.Business.Intefaces;
 using Restaurante.IO.Business.Intefaces.Service;
-using Restaurante.IO.Business.Interfaces.Repository;
 using Restaurante.IO.Business.Models;
 
 namespace Restaurante.IO.Api.Controllers.V1.Controllers
@@ -26,16 +25,13 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
     [EnableRateLimiting(NativeRateLimitPolicies.Authenticated)]
     public class MesasController : MainController
     {
-        private readonly IMesaRepository _mesaRepository;
         private readonly IMesaService _mesaService;
         private readonly IMapper _mapper;
 
         public MesasController(INotificador notificador,
-                                  IMesaRepository mesaRepository,
                                   IMesaService mesaService,
                                   IMapper mapper) : base(notificador)
         {
-            _mesaRepository = mesaRepository;
             _mesaService = mesaService;
             _mapper = mapper;
         }
@@ -150,7 +146,7 @@ namespace Restaurante.IO.Api.Controllers.V1.Controllers
 
         private async Task<MesaViewModel> ObterPrato(Guid id)
         {
-            return _mapper.Map<MesaViewModel>(await _mesaRepository.ObterPorId(id));
+            return _mapper.Map<MesaViewModel>(await _mesaService.ObterPorId(id));
         }
     }
 }
