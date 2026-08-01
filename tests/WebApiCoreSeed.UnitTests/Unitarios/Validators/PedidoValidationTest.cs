@@ -6,7 +6,7 @@ using WebApiCoreSeed.SampleRestaurant.Models.Validations;
 using System.Collections.Generic;
 using Xunit;
 
-namespace WebApiCoreSeed.Tests.Unitarios.Validators
+namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
 {
     public class PedidoValidationTest
     {

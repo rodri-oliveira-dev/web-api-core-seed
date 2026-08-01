@@ -11,7 +11,7 @@
 | D007 | Preservar nomes de assemblies e namespaces publicos nesta entrega. | Accepted | A reorganizacao fisica cria o limite modular sem churn amplo nem quebra de testes/contratos. |
 | D008 | Expor consultas de pratos e mesas nas portas de entrada existentes, em vez de criar handlers novos. | Accepted | Remove acoplamento direto dos controllers a repositorios sem criar abstracoes cerimoniais antes dos prompts de portas de persistencia. |
 | D009 | Trocar `Microsoft.Extensions.Logging.LogLevel` por `ELogLevel` no dominio. | Accepted | Logging tecnico nao deve vazar para Domain; os valores numericos foram preservados para manter o schema e dados existentes. |
-| D010 | Usar testes arquiteturais por reflexao no projeto `WebApiCoreSeed.Tests`. | Accepted | A solucao simples cobre as regras atuais sem adicionar framework pesado. |
+| D010 | Usar testes arquiteturais por reflexao no projeto `WebApiCoreSeed.UnitTests`. | Accepted | A solucao simples cobre as regras atuais sem adicionar framework pesado. |
 | D011 | Usar `WebApiCoreSeed.*` para componentes reutilizaveis e composition root, e `WebApiCoreSeed.SampleRestaurant.*` para o dominio demonstrativo. | Accepted | A separacao fica explicita para novos consumidores sem criar projetos ou abstracoes artificiais. |
 | D012 | Renomear `MeuDbContext` para `SampleRestaurantDbContext` mantendo migrations antigas no projeto de infraestrutura do sample. | Accepted | Remove nome legado em codigo ativo e preserva ownership/movimentacao de migrations para o Prompt 6. |
 | D013 | Preservar rotas HTTP de exemplo em portugues, como `/Pratos` e `/Mesas`. | Accepted | Elas pertencem ao contrato do sample; neutraliza-las artificialmente quebraria compatibilidade sem ganho para o seed reutilizavel. |

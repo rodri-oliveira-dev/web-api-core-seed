@@ -36,7 +36,7 @@
 
 ## Testes implementados
 
-As regras verificaveis desta entrega sao cobertas por `test/WebApiCoreSeed.Tests/Arquitetura/ModularHexagonalArchitectureTest.cs`.
+As regras verificaveis desta entrega sao cobertas por `tests/WebApiCoreSeed.UnitTests/Arquitetura/ModularHexagonalArchitectureTest.cs`.
 
 No Prompt 03 foi adicionada verificacao para impedir a declaracao de repositorio generico no core e na infraestrutura do sample.
 

@@ -24,8 +24,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\WebApiCoreSeed.Api\WebApiCoreSeed.Api.csproj" />
-    <ProjectReference Include="..\..\src\Identity.Infrastructure\WebApiCoreSeed.Identity.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\src\SampleRestaurant.Infrastructure\WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Identity\WebApiCoreSeed.Identity.Infrastructure\WebApiCoreSeed.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Modules\SampleRestaurant\WebApiCoreSeed.SampleRestaurant.Infrastructure\WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

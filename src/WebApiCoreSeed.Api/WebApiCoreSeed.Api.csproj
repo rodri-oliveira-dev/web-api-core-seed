@@ -68,9 +68,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Identity.Infrastructure\WebApiCoreSeed.Identity.Infrastructure.csproj" />
-    <ProjectReference Include="..\SampleRestaurant\WebApiCoreSeed.SampleRestaurant.csproj" />
-    <ProjectReference Include="..\SampleRestaurant.Infrastructure\WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\Identity\WebApiCoreSeed.Identity.Infrastructure\WebApiCoreSeed.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\SampleRestaurant\WebApiCoreSeed.SampleRestaurant\WebApiCoreSeed.SampleRestaurant.csproj" />
+    <ProjectReference Include="..\Modules\SampleRestaurant\WebApiCoreSeed.SampleRestaurant.Infrastructure\WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj" />
   </ItemGroup>
 
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>

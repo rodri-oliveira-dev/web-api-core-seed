@@ -1,7 +1,7 @@
 using WebApiCoreSeed.SampleRestaurant.Notificacoes;
 using Xunit;
 
-namespace WebApiCoreSeed.Tests.Unitarios.Notificacoes
+namespace WebApiCoreSeed.UnitTests.Unitarios.Notificacoes
 {
     public class NotificadorTest
     {

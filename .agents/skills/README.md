@@ -10,7 +10,7 @@ Use uma skill apenas quando a descricao corresponder ao pedido atual. Em caso de
 | `dotnet-service-change` | parcialmente aplicavel | Mudancas na solution .NET atual ou na migracao tecnica, respeitando o estado real. | Governanca pura ou mudancas sem impacto tecnico. | `WebApiCoreSeed.sln`, projetos reais |
 | `dotnet-refactoring-engineer` | parcialmente aplicavel | Refatoracao, revisao e melhoria de codigo .NET/C# com comportamento preservado. | Reescrita ampla ou mudanca de framework sem prompt especifico. | Projetos e testes reais |
 | `integration-tests-dotnet` | planejada | Criar ou revisar testes de integracao quando a Fase 2 introduzir base moderna para isso. | Testes unitarios simples ou antes da infraestrutura de teste existir. | Futuro `WebApplicationFactory` e Testcontainers |
-| `test-anti-patterns` | pronta | Auditar qualidade dos testes atuais ou futuros. | Medir cobertura pura ou escrever testes do zero sem foco em anti-padroes. | Projeto `test/WebApiCoreSeed.Tests` |
+| `test-anti-patterns` | pronta | Auditar qualidade dos testes atuais ou futuros. | Medir cobertura pura ou escrever testes do zero sem foco em anti-padroes. | Projeto `tests/WebApiCoreSeed.UnitTests` |
 
 ## Notas
 

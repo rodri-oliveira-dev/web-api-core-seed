@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.28729.10
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiCoreSeed.SampleRestaurant", "src\SampleRestaurant\WebApiCoreSeed.SampleRestaurant.csproj", "{E0428DC3-35B6-48D2-BBC5-595A72F3D50A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiCoreSeed.SampleRestaurant", "src\Modules\SampleRestaurant\WebApiCoreSeed.SampleRestaurant\WebApiCoreSeed.SampleRestaurant.csproj", "{E0428DC3-35B6-48D2-BBC5-595A72F3D50A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiCoreSeed.SampleRestaurant.Infrastructure", "src\SampleRestaurant.Infrastructure\WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj", "{C4D3D107-4A72-4AD4-AF92-3C2161A50775}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiCoreSeed.SampleRestaurant.Infrastructure", "src\Modules\SampleRestaurant\WebApiCoreSeed.SampleRestaurant.Infrastructure\WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj", "{C4D3D107-4A72-4AD4-AF92-3C2161A50775}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebApiCoreSeed.Api", "src\WebApiCoreSeed.Api\WebApiCoreSeed.Api.csproj", "{3707AC1F-2AE4-4C93-AAD2-3BD17CFA5271}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{29AA8C8C-2623-44B4-AC6E-6F594CDE9B01}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{29AA8C8C-2623-44B4-AC6E-6F594CDE9B01}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiCoreSeed.Tests", "test\WebApiCoreSeed.Tests\WebApiCoreSeed.Tests.csproj", "{3BF25F17-84C1-429A-8A92-3AD2D8909E82}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiCoreSeed.UnitTests", "tests\WebApiCoreSeed.UnitTests\WebApiCoreSeed.UnitTests.csproj", "{3BF25F17-84C1-429A-8A92-3AD2D8909E82}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{07C2787E-EAC7-C090-1BA3-A61EC2A24D84}"
 EndProject
@@ -21,11 +21,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WebApiCoreSeed.Api", "WebApiCoreSeed.Api", "{D8A6A74A-C02F-54F7-3BF9-40B34D47EF7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiCoreSeed.IntegrationTests", "test\WebApiCoreSeed.IntegrationTests\WebApiCoreSeed.IntegrationTests.csproj", "{B6F8C14C-1ADF-4932-AC6A-37FDDD13DF8B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiCoreSeed.IntegrationTests", "tests\WebApiCoreSeed.IntegrationTests\WebApiCoreSeed.IntegrationTests.csproj", "{B6F8C14C-1ADF-4932-AC6A-37FDDD13DF8B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity.Infrastructure", "Identity.Infrastructure", "{0DE32D44-2DD7-34A2-BFEF-D2E1D5A2AE13}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{6E5A9E6A-111E-4E13-9F0B-7955E35C006D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiCoreSeed.Identity.Infrastructure", "src\Identity.Infrastructure\WebApiCoreSeed.Identity.Infrastructure.csproj", "{29AA38BB-FE6A-4467-AD89-6378254BB695}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SampleRestaurant", "SampleRestaurant", "{6D156EF3-26A1-4820-B557-1CBBF86AB451}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Identity", "Identity", "{0DE32D44-2DD7-34A2-BFEF-D2E1D5A2AE13}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiCoreSeed.Identity.Infrastructure", "src\Modules\Identity\WebApiCoreSeed.Identity.Infrastructure\WebApiCoreSeed.Identity.Infrastructure.csproj", "{29AA38BB-FE6A-4467-AD89-6378254BB695}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -130,7 +134,12 @@ Global
 		{0C20FDE3-163F-47B6-AA1B-ACA7A139D1ED} = {07C2787E-EAC7-C090-1BA3-A61EC2A24D84}
 		{D8A6A74A-C02F-54F7-3BF9-40B34D47EF7B} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{B6F8C14C-1ADF-4932-AC6A-37FDDD13DF8B} = {29AA8C8C-2623-44B4-AC6E-6F594CDE9B01}
-		{0DE32D44-2DD7-34A2-BFEF-D2E1D5A2AE13} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{3707AC1F-2AE4-4C93-AAD2-3BD17CFA5271} = {D8A6A74A-C02F-54F7-3BF9-40B34D47EF7B}
+		{6E5A9E6A-111E-4E13-9F0B-7955E35C006D} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{6D156EF3-26A1-4820-B557-1CBBF86AB451} = {6E5A9E6A-111E-4E13-9F0B-7955E35C006D}
+		{0DE32D44-2DD7-34A2-BFEF-D2E1D5A2AE13} = {6E5A9E6A-111E-4E13-9F0B-7955E35C006D}
+		{E0428DC3-35B6-48D2-BBC5-595A72F3D50A} = {6D156EF3-26A1-4820-B557-1CBBF86AB451}
+		{C4D3D107-4A72-4AD4-AF92-3C2161A50775} = {6D156EF3-26A1-4820-B557-1CBBF86AB451}
 		{29AA38BB-FE6A-4467-AD89-6378254BB695} = {0DE32D44-2DD7-34A2-BFEF-D2E1D5A2AE13}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution

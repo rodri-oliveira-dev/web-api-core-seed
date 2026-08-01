@@ -15,8 +15,8 @@ Recommended branch protection checks for Phase 3:
 ```bash
 dotnet restore WebApiCoreSeed.sln
 dotnet build WebApiCoreSeed.sln --configuration Release --no-restore
-dotnet test test/WebApiCoreSeed.Tests/WebApiCoreSeed.Tests.csproj --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory TestResults/Unit
-dotnet test test/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory TestResults/Integration
+dotnet test tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory TestResults/Unit
+dotnet test tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory TestResults/Integration
 dotnet run --project tools/OpenApiGenerator/OpenApiGenerator.csproj --configuration Release --no-build
 git diff --exit-code -- docs/openapi/openapi-v1.json docs/openapi/openapi-v2.json
 dotnet list WebApiCoreSeed.sln package --vulnerable

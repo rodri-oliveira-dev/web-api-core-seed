@@ -48,7 +48,7 @@ Procure comandos existentes antes de assumir. Quando nao houver instrucao especi
 ```bash
 dotnet restore WebApiCoreSeed.sln
 dotnet build WebApiCoreSeed.sln --no-restore
-dotnet test test/WebApiCoreSeed.Tests/WebApiCoreSeed.Tests.csproj --no-build
+dotnet test tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj --no-build
 ```
 
 Registre validacoes bloqueadas pelo ambiente sem alterar o projeto para contornar o bloqueio.

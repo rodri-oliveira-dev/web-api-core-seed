@@ -53,7 +53,7 @@ is_documentation_path() {
 
 is_dotnet_impact_path() {
   case "$1" in
-    *.cs|*.csproj|*.sln|*.slnx|*.props|*.targets|global.json|NuGet.config|.editorconfig|src/*|test/*)
+    *.cs|*.csproj|*.sln|*.slnx|*.props|*.targets|global.json|NuGet.config|.editorconfig|src/*|tests/*)
       return 0
       ;;
   esac

@@ -31,7 +31,7 @@ using WebApiCoreSeed.SampleRestaurant.Models;
 using WebApiCoreSeed.SampleRestaurant.Infrastructure.Context;
 using Xunit;
 
-namespace WebApiCoreSeed.Tests.Integracao
+namespace WebApiCoreSeed.UnitTests.Integracao
 {
     public class ProblemDetailsContractTests
     {

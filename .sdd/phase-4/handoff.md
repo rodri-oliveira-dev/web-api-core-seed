@@ -5,8 +5,8 @@
 - Branch atual: `phase/4-architecture-modernization`.
 - Branch-base: `phase/3-quality-and-safety`.
 - Commit-base da fase: `18af517adab5d21ae58ac9674da411244a5379b9`.
-- Prompt atual: `06 - Migrations na infraestrutura` concluido.
-- Commit esperado: `refactor: move EF Core migrations to infrastructure`.
+- Prompt atual: repository hardening `02 - Layout e namespaces` concluido.
+- Commit esperado: `refactor: normalize project layout and namespaces`.
 - Push: nao realizado.
 - PR: nao realizado.
 
@@ -14,20 +14,20 @@
 
 - `WebApiCoreSeed.sln`
 - `src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj`
-- `src/Identity.Infrastructure/WebApiCoreSeed.Identity.Infrastructure.csproj`
-- `src/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.csproj`
-- `src/SampleRestaurant.Infrastructure/WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj`
-- `test/WebApiCoreSeed.Tests/WebApiCoreSeed.Tests.csproj`
-- `test/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj`
-- `src/SampleRestaurant/Modules/SampleRestaurant/Domain/Models`
-- `src/SampleRestaurant/Modules/SampleRestaurant/Application/Contracts/Pagination`
-- `src/SampleRestaurant/Modules/SampleRestaurant/Application/Notifications`
-- `src/SampleRestaurant/Modules/SampleRestaurant/Application/Ports/Inbound`
-- `src/SampleRestaurant/Modules/SampleRestaurant/Application/Ports/Outbound`
-- `src/SampleRestaurant/Modules/SampleRestaurant/Application/UseCases`
-- `src/SampleRestaurant.Infrastructure/Modules/SampleRestaurant/Infrastructure/Persistence`
-- `src/Identity.Infrastructure/Context`
-- `src/Identity.Infrastructure/Migrations`
+- `src/Modules/Identity/WebApiCoreSeed.Identity.Infrastructure/WebApiCoreSeed.Identity.Infrastructure.csproj`
+- `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant/WebApiCoreSeed.SampleRestaurant.csproj`
+- `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.Infrastructure/WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj`
+- `tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj`
+- `tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj`
+- `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant/Modules/SampleRestaurant/Domain/Models`
+- `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant/Modules/SampleRestaurant/Application/Contracts/Pagination`
+- `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant/Modules/SampleRestaurant/Application/Notifications`
+- `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant/Modules/SampleRestaurant/Application/Ports/Inbound`
+- `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant/Modules/SampleRestaurant/Application/Ports/Outbound`
+- `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant/Modules/SampleRestaurant/Application/UseCases`
+- `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.Infrastructure/Modules/SampleRestaurant/Infrastructure/Persistence`
+- `src/Modules/Identity/WebApiCoreSeed.Identity.Infrastructure/Context`
+- `src/Modules/Identity/WebApiCoreSeed.Identity.Infrastructure/Migrations`
 
 ## Modulos
 
@@ -50,11 +50,11 @@
 | `Restaurante.IO.Business` | `WebApiCoreSeed.SampleRestaurant` |
 | `Restaurante.IO.Data` | `WebApiCoreSeed.SampleRestaurant.Infrastructure` |
 | `src/DevIO.Api` | `src/WebApiCoreSeed.Api` |
-| `src/DevIO.Business` | `src/SampleRestaurant` |
-| `src/DevIO.Data` | `src/SampleRestaurant.Infrastructure` |
+| `src/DevIO.Business` | `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant` |
+| `src/DevIO.Data` | `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.Infrastructure` |
 | `Modules/Restaurant` | `Modules/SampleRestaurant` |
 | `MeuDbContext` | `SampleRestaurantDbContext` |
-| `Pedidos.Test` | `WebApiCoreSeed.Tests` |
+| `Pedidos.Test` | `WebApiCoreSeed.UnitTests` |
 | `PedidosApi` | `SampleRestaurantDb` |
 
 ## Contratos preservados
@@ -146,13 +146,13 @@
 
 ## Resultado do prompt 06
 
-- Novo projeto: `src/Identity.Infrastructure/WebApiCoreSeed.Identity.Infrastructure.csproj`.
+- Novo projeto: `src/Modules/Identity/WebApiCoreSeed.Identity.Infrastructure/WebApiCoreSeed.Identity.Infrastructure.csproj`.
 - `ApplicationDbContext` movido para `WebApiCoreSeed.Identity.Infrastructure.Context`.
-- Migrations de Identity movidas para `src/Identity.Infrastructure/Migrations`:
+- Migrations de Identity ficam em `src/Modules/Identity/WebApiCoreSeed.Identity.Infrastructure/Migrations`:
   - `20200817223121_InitialCreate.cs`
   - `20200817223121_InitialCreate.Designer.cs`
   - `ApplicationDbContextModelSnapshot.cs`
-- Migrations do sample permanecem em `src/SampleRestaurant.Infrastructure/Migrations`:
+- Migrations do sample ficam em `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.Infrastructure/Migrations`:
   - `20200817223231_InitialCreate.cs`
   - `20200817223231_InitialCreate.Designer.cs`
   - `SampleRestaurantDbContextModelSnapshot.cs`
@@ -179,13 +179,13 @@
 
 - `dotnet restore`: passou.
 - `dotnet build --configuration Release --no-restore`: passou com warnings de analyzer preexistentes na API.
-- `dotnet test --configuration Release --no-build`: passou, 53 testes em `WebApiCoreSeed.Tests` e 32 em `WebApiCoreSeed.IntegrationTests`.
+- `dotnet test --configuration Release --no-build`: passou, 53 testes no projeto unitario/leves e 32 em `WebApiCoreSeed.IntegrationTests`.
 - `dotnet ef --version`: `10.0.10`.
 - `dotnet ef dbcontext list`: validado para `ApplicationDbContext` e `SampleRestaurantDbContext`.
 - `dotnet ef migrations list --no-connect`: validado para `ApplicationDbContext` e `SampleRestaurantDbContext`.
 - `dotnet ef migrations has-pending-model-changes`: sem alteracoes pendentes para ambos os contextos.
 - Scripts idempotentes de migrations foram gerados com sucesso em `%TEMP%`.
-- `dotnet test test/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj --configuration Release --no-build --filter "FullyQualifiedName~MigrationsQuandoBancoVazioDeveCriarSchema"`: passou; SQL Server Testcontainers aplicou migrations em banco vazio.
+- `dotnet test tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj --configuration Release --no-build --filter "FullyQualifiedName~MigrationsQuandoBancoVazioDeveCriarSchema"`: passou; SQL Server Testcontainers aplicou migrations em banco vazio.
 - Busca de arquivos de migration dentro da API: sem arquivos.
 - Banco local do usuario: nao alterado.
 
@@ -220,9 +220,9 @@
 
 - A solucao ativa e `WebApiCoreSeed.sln`.
 - A API fica em `src/WebApiCoreSeed.Api` como adaptador de entrada e composition root.
-- O dominio demonstrativo fica isolado em `src/SampleRestaurant`.
-- A infraestrutura EF Core do sample fica em `src/SampleRestaurant.Infrastructure`.
-- A persistencia de Identity fica em `src/Identity.Infrastructure`.
+- O dominio demonstrativo fica isolado em `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant`.
+- A infraestrutura EF Core do sample fica em `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.Infrastructure`.
+- A persistencia de Identity fica em `src/Modules/Identity/WebApiCoreSeed.Identity.Infrastructure`.
 - O desenho atual e um monolito modular pragmatico com limites Hexagonais no modulo `SampleRestaurant`.
 - Nenhuma implementacao de Aspire foi adicionada.
 - Nenhum empacotamento `dotnet new` foi adicionado.
@@ -257,8 +257,8 @@
 
 ## Migrations
 
-- Identity: `src/Identity.Infrastructure/Migrations`.
-- SampleRestaurant: `src/SampleRestaurant.Infrastructure/Migrations`.
+- Identity: `src/Modules/Identity/WebApiCoreSeed.Identity.Infrastructure/Migrations`.
+- SampleRestaurant: `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.Infrastructure/Migrations`.
 - Migration final da fase: `AddPratosPaginationOrderingIndex`, adicionando `IX_Pratos_Titulo_Id`.
 - API nao contem arquivos de migration.
 - Validacao com SQL Server Testcontainers confirmou aplicacao em banco vazio.

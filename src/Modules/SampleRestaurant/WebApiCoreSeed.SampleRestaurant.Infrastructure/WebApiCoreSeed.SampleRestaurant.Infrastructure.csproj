@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SampleRestaurant\WebApiCoreSeed.SampleRestaurant.csproj" />
+    <ProjectReference Include="..\WebApiCoreSeed.SampleRestaurant\WebApiCoreSeed.SampleRestaurant.csproj" />
   </ItemGroup>
 
 </Project>

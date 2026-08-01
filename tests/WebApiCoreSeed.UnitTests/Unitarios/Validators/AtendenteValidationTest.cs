@@ -5,7 +5,7 @@ using WebApiCoreSeed.SampleRestaurant.Models.Enums;
 using WebApiCoreSeed.SampleRestaurant.Models.Validations;
 using Xunit;
 
-namespace WebApiCoreSeed.Tests.Unitarios.Validators
+namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
 {
     public class AtendenteValidationTest
     {

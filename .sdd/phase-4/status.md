@@ -39,9 +39,9 @@
 
 - Solution ativa renomeada para `WebApiCoreSeed.sln`.
 - Composition root/API renomeada para `src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj`.
-- Dominio demonstrativo isolado em `src/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.csproj`.
-- Infraestrutura EF Core do demonstrativo isolada em `src/SampleRestaurant.Infrastructure/WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj`.
-- Projeto de testes unitarios/leves renomeado para `test/WebApiCoreSeed.Tests/WebApiCoreSeed.Tests.csproj`.
+- Dominio demonstrativo isolado em `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant/WebApiCoreSeed.SampleRestaurant.csproj`.
+- Infraestrutura EF Core do demonstrativo isolada em `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.Infrastructure/WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj`.
+- Projeto de testes unitarios/leves renomeado para `tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj`.
 - Modulo fisico renomeado para `Modules/SampleRestaurant`.
 - `MeuDbContext` renomeado para `SampleRestaurantDbContext`.
 - Nomes ativos `Restaurante`, `Datasul`, `MeuDbContext`, `DevIO`, `Pedidos.Test`, `RestauranteAPI` e `PedidosApi` removidos de codigo, configuracao, testes, tooling e workflows ativos.
@@ -102,9 +102,9 @@ PR: pendente
 ## Resultado do prompt 06
 
 - Projeto `WebApiCoreSeed.Identity.Infrastructure` criado para persistencia de Identity.
-- `ApplicationDbContext` movido da API para `src/Identity.Infrastructure/Context`.
-- Migration `20200817223121_InitialCreate` e snapshot de Identity movidos para `src/Identity.Infrastructure/Migrations`.
-- Migration `20200817223231_InitialCreate` do `SampleRestaurantDbContext` permaneceu em `src/SampleRestaurant.Infrastructure/Migrations`.
+- `ApplicationDbContext` movido da API para `src/Modules/Identity/WebApiCoreSeed.Identity.Infrastructure/Context`.
+- Migration `20200817223121_InitialCreate` e snapshot de Identity movidos para `src/Modules/Identity/WebApiCoreSeed.Identity.Infrastructure/Migrations`.
+- Migration `20200817223231_InitialCreate` do `SampleRestaurantDbContext` permaneceu em `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.Infrastructure/Migrations`.
 - `MigrationsAssembly` explicito configurado para `ApplicationDbContext` e `SampleRestaurantDbContext`.
 - Factories design-time adicionadas para `ApplicationDbContext` e `SampleRestaurantDbContext`.
 - `ApplicationDbContext` preserva schema legado de Identity com max length 128 em chaves de login/token.

@@ -2,8 +2,8 @@
 
 | Padrao | Arquivo afetado | Motivo | Manter | Remover | Risco |
 | --- | --- | --- | --- | --- | --- |
-| `**/[Bb]in/` | `src/*/bin/`, `test/*/bin/`, `tools/*/bin/` | Output de build local. | Sim | Nao | Baixo; arquivos sao regeneraveis. |
-| `**/[Oo]bj/` | `src/*/obj/`, `test/*/obj/`, `tools/*/obj/` | Output intermediario de build/restore. | Sim | Nao | Baixo; arquivos sao regeneraveis. |
+| `**/[Bb]in/` | `src/*/bin/`, `tests/*/bin/`, `tools/*/bin/` | Output de build local. | Sim | Nao | Baixo; arquivos sao regeneraveis. |
+| `**/[Oo]bj/` | `src/*/obj/`, `tests/*/obj/`, `tools/*/obj/` | Output intermediario de build/restore. | Sim | Nao | Baixo; arquivos sao regeneraveis. |
 | `TestResults/` | `TestResults/` | Resultado local/CI de testes. | Sim | Nao | Baixo; artefatos devem vir do CI. |
 | `coverage/` | `coverage/` | Cobertura local. | Sim | Nao | Baixo; relatorios sao regeneraveis. |
 | `coverage-report/` | `coverage-report/` | Relatorio gerado. | Sim | Nao | Baixo. |

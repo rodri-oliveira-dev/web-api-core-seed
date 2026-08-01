@@ -12,7 +12,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace WebApiCoreSeed.Tests.Unitarios.Services
+namespace WebApiCoreSeed.UnitTests.Unitarios.Services
 {
     public class AtendenteServiceTest
     {

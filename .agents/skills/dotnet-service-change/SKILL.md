@@ -40,7 +40,7 @@ Comandos baseline, a partir da raiz:
 ```bash
 dotnet restore WebApiCoreSeed.sln
 dotnet build WebApiCoreSeed.sln --no-restore
-dotnet test test/WebApiCoreSeed.Tests/WebApiCoreSeed.Tests.csproj --no-build
+dotnet test tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj --no-build
 ```
 
 Se a validacao for bloqueada por ambiente legado, registre o bloqueio sem alterar SDK, target framework ou pacotes.

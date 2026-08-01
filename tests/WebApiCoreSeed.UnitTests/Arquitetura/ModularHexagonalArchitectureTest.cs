@@ -8,7 +8,7 @@ using WebApiCoreSeed.SampleRestaurant.Models;
 using WebApiCoreSeed.SampleRestaurant.Infrastructure.Context;
 using Xunit;
 
-namespace WebApiCoreSeed.Tests.Arquitetura
+namespace WebApiCoreSeed.UnitTests.Arquitetura
 {
     public class ModularHexagonalArchitectureTest
     {

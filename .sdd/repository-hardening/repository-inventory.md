@@ -20,7 +20,7 @@ Inventario feito na branch `phase/4-architecture-modernization`.
 | `scripts/` | 2 | Setup de hooks em PowerShell e shell. |
 | `docker/` | 3 | Imagens auxiliares de SQL Server, Redis e Seq; nao ha Dockerfile ativo da API. |
 | `src/` | 148 antes da remocao | Incluia quatro artefatos ativos de Sonar removidos neste prompt. |
-| `test/` | 25 | Projeto unitario e projeto de integracao. |
+| `tests/` | 25 | Projeto unitario e projeto de integracao. |
 | `tests/` | 0 | Pasta ausente. |
 | `tools/` | 2 | OpenApiGenerator. |
 

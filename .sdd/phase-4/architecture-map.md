@@ -5,11 +5,11 @@
 | Area | Projeto | Responsabilidade real |
 | --- | --- | --- |
 | API | `src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj` | Hosting, controllers, autenticacao, autorizacao, Problem Details, OpenAPI, rate limiting, health checks, cache HTTP/Redis e composition root. |
-| Identity Infrastructure | `src/Identity.Infrastructure/WebApiCoreSeed.Identity.Infrastructure.csproj` | EF Core Identity, `ApplicationDbContext`, migrations de Identity e factory design-time. |
-| SampleRestaurant | `src/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.csproj` | Entidades, validadores, notificacoes, contratos de paginacao/query, portas de repositorio, portas de servico e services de aplicacao do dominio demonstrativo. |
-| SampleRestaurant Infrastructure | `src/SampleRestaurant.Infrastructure/WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj` | EF Core, `SampleRestaurantDbContext`, mappings, migrations de dominio demonstrativo, indices e repositorios concretos. |
-| Unit/API tests | `test/WebApiCoreSeed.Tests/WebApiCoreSeed.Tests.csproj` | Testes unitarios, testes leves de contrato e configuracao com `WebApplicationFactory`. |
-| Integration tests | `test/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj` | Testes HTTP e infraestrutura real com SQL Server e Redis via Testcontainers. |
+| Identity Infrastructure | `src/Modules/Identity/WebApiCoreSeed.Identity.Infrastructure/WebApiCoreSeed.Identity.Infrastructure.csproj` | EF Core Identity, `ApplicationDbContext`, migrations de Identity e factory design-time. |
+| SampleRestaurant | `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant/WebApiCoreSeed.SampleRestaurant.csproj` | Entidades, validadores, notificacoes, contratos de paginacao/query, portas de repositorio, portas de servico e services de aplicacao do dominio demonstrativo. |
+| SampleRestaurant Infrastructure | `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.Infrastructure/WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj` | EF Core, `SampleRestaurantDbContext`, mappings, migrations de dominio demonstrativo, indices e repositorios concretos. |
+| Unit/API tests | `tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj` | Testes unitarios, testes leves de contrato e configuracao com `WebApplicationFactory`. |
+| Integration tests | `tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj` | Testes HTTP e infraestrutura real com SQL Server e Redis via Testcontainers. |
 | OpenAPI tool | `tools/OpenApiGenerator/OpenApiGenerator.csproj` | Geracao de contratos OpenAPI versionados. |
 
 ## Direcao alvo
@@ -35,24 +35,27 @@
 ```text
 src/
 |-- WebApiCoreSeed.Api/
-|-- Identity.Infrastructure/
-|   |-- Context/
-|   `-- Migrations/
-|-- SampleRestaurant/
-|   `-- Modules/
-|       `-- SampleRestaurant/
-|           |-- Domain/
-|           |   `-- Models/
-|           `-- Application/
-|               |-- Contracts/
-|               |-- Notifications/
-|               |-- Ports/
-|               `-- UseCases/
-`-- SampleRestaurant.Infrastructure/
-    `-- Modules/
-        `-- SampleRestaurant/
-            `-- Infrastructure/
-                `-- Persistence/
+`-- Modules/
+    |-- Identity/
+    |   `-- WebApiCoreSeed.Identity.Infrastructure/
+    |       |-- Context/
+    |       `-- Migrations/
+    `-- SampleRestaurant/
+        |-- WebApiCoreSeed.SampleRestaurant/
+        |   `-- Modules/
+        |       `-- SampleRestaurant/
+        |           |-- Domain/
+        |           |   `-- Models/
+        |           `-- Application/
+        |               |-- Contracts/
+        |               |-- Notifications/
+        |               |-- Ports/
+        |               `-- UseCases/
+        `-- WebApiCoreSeed.SampleRestaurant.Infrastructure/
+            `-- Modules/
+                `-- SampleRestaurant/
+                    `-- Infrastructure/
+                        `-- Persistence/
 ```
 
-Namespaces ativos usam `WebApiCoreSeed.Api`, `WebApiCoreSeed.Identity.Infrastructure`, `WebApiCoreSeed.SampleRestaurant` e `WebApiCoreSeed.SampleRestaurant.Infrastructure`.
+Namespaces ativos usam `WebApiCoreSeed.Api`, `WebApiCoreSeed.Identity.Infrastructure`, `WebApiCoreSeed.SampleRestaurant`, `WebApiCoreSeed.SampleRestaurant.Infrastructure`, `WebApiCoreSeed.UnitTests` e `WebApiCoreSeed.IntegrationTests`.

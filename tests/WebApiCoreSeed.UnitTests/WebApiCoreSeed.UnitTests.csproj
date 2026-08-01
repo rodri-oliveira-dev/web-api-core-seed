@@ -15,8 +15,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\WebApiCoreSeed.Api\WebApiCoreSeed.Api.csproj" />
-    <ProjectReference Include="..\..\src\Identity.Infrastructure\WebApiCoreSeed.Identity.Infrastructure.csproj" />
-    <ProjectReference Include="..\..\src\SampleRestaurant\WebApiCoreSeed.SampleRestaurant.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Identity\WebApiCoreSeed.Identity.Infrastructure\WebApiCoreSeed.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Modules\SampleRestaurant\WebApiCoreSeed.SampleRestaurant\WebApiCoreSeed.SampleRestaurant.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Core\Fixtures\" />
