@@ -94,7 +94,11 @@ namespace WebApiCoreSeed.Api.Configuration
 
             services.AddDbContext<SampleRestaurantDbContext>(options =>
             {
-                options.UseSqlServer(defaultConnection).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+                options
+                    .UseSqlServer(
+                        defaultConnection,
+                        sqlOptions => sqlOptions.MigrationsAssembly(typeof(SampleRestaurantDbContext).Assembly.FullName))
+                    .UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
             });
 
             services.AddControllers(options =>

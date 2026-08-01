@@ -21,7 +21,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using WebApiCoreSeed.Api;
-using WebApiCoreSeed.Api.DataContext;
+using WebApiCoreSeed.Identity.Infrastructure.Context;
 using WebApiCoreSeed.Api.Services.Interfaces;
 using WebApiCoreSeed.Api.Settings;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Pagination;

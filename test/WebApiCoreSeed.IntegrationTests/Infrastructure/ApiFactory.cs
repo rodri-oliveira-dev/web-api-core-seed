@@ -8,7 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using WebApiCoreSeed.Api;
-using WebApiCoreSeed.Api.DataContext;
+using WebApiCoreSeed.Identity.Infrastructure.Context;
 using WebApiCoreSeed.SampleRestaurant.Infrastructure.Context;
 using StackExchange.Redis;
 using Testcontainers.MsSql;

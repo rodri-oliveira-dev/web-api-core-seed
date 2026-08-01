@@ -4,9 +4,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WebApiCoreSeed.Api.DataContext;
+using WebApiCoreSeed.Identity.Infrastructure.Context;
 
-namespace WebApiCoreSeed.Api.Migrations
+namespace WebApiCoreSeed.Identity.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
     partial class ApplicationDbContextModelSnapshot : ModelSnapshot

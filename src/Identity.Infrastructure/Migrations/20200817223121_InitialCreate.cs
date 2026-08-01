@@ -1,7 +1,7 @@
 using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace WebApiCoreSeed.Api.Migrations
+namespace WebApiCoreSeed.Identity.Infrastructure.Migrations
 {
     public partial class InitialCreate : Migration
     {

@@ -24,6 +24,6 @@
 | Casos de uso | Registrar usuario, autenticar usuario, gerar token JWT. |
 | Dados pertencentes | Tabelas `AspNetUsers`, `AspNetRoles`, `AspNetUserClaims`, `AspNetUserRoles`, `AspNetUserLogins`, `AspNetUserTokens`, `AspNetRoleClaims`. |
 | Contratos publicos | `POST /api/v1/nova-conta`, `POST /api/v1/entrar`, `POST /api/v2/entrar`. |
-| Dependencias permitidas | API e infraestrutura de Identity do ASP.NET Core nesta etapa. |
+| Dependencias permitidas | API para endpoints e composition root; `WebApiCoreSeed.Identity.Infrastructure` para `ApplicationDbContext`, EF Core Identity e migrations. |
 | Dependencias proibidas | Nao deve acessar detalhes internos do modulo `SampleRestaurant`; nao deve depender dos repositorios de restaurante. |
-| Maturidade do limite | Imaturo. Permanece acoplado ao adaptador API por pragmatismo e deve ser reavaliado apos a separacao do dominio de exemplo. |
+| Maturidade do limite | Imaturo no application layer. A persistencia ja tem infraestrutura propria, mas endpoints e fluxos de auth permanecem no adaptador API por pragmatismo. |

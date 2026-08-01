@@ -68,6 +68,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Identity.Infrastructure\WebApiCoreSeed.Identity.Infrastructure.csproj" />
     <ProjectReference Include="..\SampleRestaurant\WebApiCoreSeed.SampleRestaurant.csproj" />
     <ProjectReference Include="..\SampleRestaurant.Infrastructure\WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj" />
   </ItemGroup>

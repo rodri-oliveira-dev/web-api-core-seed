@@ -7,7 +7,7 @@
 | 03 - Portas de persistencia | concluido |
 | 04 - Unit of Work | concluido |
 | 05 - CancellationToken | concluido |
-| 06 - Migrations na infraestrutura | pendente |
+| 06 - Migrations na infraestrutura | concluido |
 | 07 - Paginacao | pendente |
 
 ## Estado inicial do prompt 01
@@ -62,6 +62,22 @@
 - Teste arquitetural adicionado para impedir repositorio generico no core e na infraestrutura do sample.
 - Build/test final: passou.
 - OpenAPI regenerado e sem diff de contrato.
+- Push: nao realizado.
+
+## Resultado do prompt 06
+
+- Projeto `WebApiCoreSeed.Identity.Infrastructure` criado para persistencia de Identity.
+- `ApplicationDbContext` movido da API para `src/Identity.Infrastructure/Context`.
+- Migration `20200817223121_InitialCreate` e snapshot de Identity movidos para `src/Identity.Infrastructure/Migrations`.
+- Migration `20200817223231_InitialCreate` do `SampleRestaurantDbContext` permaneceu em `src/SampleRestaurant.Infrastructure/Migrations`.
+- `MigrationsAssembly` explicito configurado para `ApplicationDbContext` e `SampleRestaurantDbContext`.
+- Factories design-time adicionadas para `ApplicationDbContext` e `SampleRestaurantDbContext`.
+- `ApplicationDbContext` preserva schema legado de Identity com max length 128 em chaves de login/token.
+- API nao contem arquivos de migration.
+- Nao existe seed runtime ou migration seed; testes criam dados por caso.
+- `dotnet ef` 10.0.10 validado com listagem de contextos, migrations, scripts idempotentes e ausencia de pending model changes.
+- SQL Server Testcontainers validou aplicacao de migrations em banco vazio.
+- Build/test final: passou.
 - Push: nao realizado.
 
 ## Resultado do prompt 04

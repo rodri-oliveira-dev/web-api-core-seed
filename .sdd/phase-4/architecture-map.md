@@ -5,6 +5,7 @@
 | Area | Projeto | Responsabilidade real |
 | --- | --- | --- |
 | API | `src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj` | Hosting, controllers, autenticacao, autorizacao, Problem Details, OpenAPI, rate limiting, health checks, cache HTTP/Redis e composition root. |
+| Identity Infrastructure | `src/Identity.Infrastructure/WebApiCoreSeed.Identity.Infrastructure.csproj` | EF Core Identity, `ApplicationDbContext`, migrations de Identity e factory design-time. |
 | SampleRestaurant | `src/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.csproj` | Entidades, validadores, notificacoes, interfaces de repositorio, interfaces de servico e services de aplicacao do dominio demonstrativo. |
 | SampleRestaurant Infrastructure | `src/SampleRestaurant.Infrastructure/WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj` | EF Core, `SampleRestaurantDbContext`, mappings, migrations de dominio demonstrativo e repositorios concretos. |
 | Unit/API tests | `test/WebApiCoreSeed.Tests/WebApiCoreSeed.Tests.csproj` | Testes unitarios, testes leves de contrato e configuracao com `WebApplicationFactory`. |
@@ -24,8 +25,8 @@
 
 ## Limites temporarios
 
-- O modulo `Identity` ainda esta hospedado dentro da API por causa do ASP.NET Core Identity.
-- As migrations do Identity ainda ficam no projeto API; a correcao esta reservada para o Prompt 6.
+- O modulo `Identity` ainda tem endpoints e application flow hospedados na API por causa do ASP.NET Core Identity.
+- A persistencia e as migrations de Identity ficam em `WebApiCoreSeed.Identity.Infrastructure`.
 - O repositorio generico e a unidade de trabalho implicita continuam temporarios ate os Prompts 3 e 4.
 - A paginacao ainda usa a implementacao legada ate o Prompt 7.
 
@@ -34,6 +35,9 @@
 ```text
 src/
 |-- WebApiCoreSeed.Api/
+|-- Identity.Infrastructure/
+|   |-- Context/
+|   `-- Migrations/
 |-- SampleRestaurant/
 |   `-- Modules/
 |       `-- SampleRestaurant/
@@ -51,4 +55,4 @@ src/
                 `-- Persistence/
 ```
 
-Namespaces ativos usam `WebApiCoreSeed.Api`, `WebApiCoreSeed.SampleRestaurant` e `WebApiCoreSeed.SampleRestaurant.Infrastructure`.
+Namespaces ativos usam `WebApiCoreSeed.Api`, `WebApiCoreSeed.Identity.Infrastructure`, `WebApiCoreSeed.SampleRestaurant` e `WebApiCoreSeed.SampleRestaurant.Infrastructure`.
