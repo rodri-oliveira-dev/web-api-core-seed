@@ -1,0 +1,113 @@
+name: ci
+
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  SOLUTION: RestauranteAPI.sln
+  UNIT_TEST_PROJECT: test/Pedidos.Test/Pedidos.Test.csproj
+  INTEGRATION_TEST_PROJECT: test/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj
+  OPENAPI_GENERATOR_PROJECT: tools/OpenApiGenerator/OpenApiGenerator.csproj
+
+jobs:
+  build-test-quality:
+    name: Build, test and quality gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('global.json', 'Directory.Build.props', '**/*.csproj') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore "$SOLUTION"
+
+      - name: Build
+        run: dotnet build "$SOLUTION" --configuration Release --no-restore
+
+      - name: Run unit tests with coverage
+        run: >
+          dotnet test "$UNIT_TEST_PROJECT"
+          --configuration Release
+          --no-build
+          --logger "trx;LogFileName=unit-tests.trx"
+          --results-directory TestResults/Unit
+          --collect:"XPlat Code Coverage"
+
+      - name: Run integration and container tests with coverage
+        run: >
+          dotnet test "$INTEGRATION_TEST_PROJECT"
+          --configuration Release
+          --no-build
+          --logger "trx;LogFileName=integration-tests.trx"
+          --results-directory TestResults/Integration
+          --collect:"XPlat Code Coverage"
+
+      - name: Generate OpenAPI contracts
+        run: dotnet run --project "$OPENAPI_GENERATOR_PROJECT" --configuration Release --no-build
+
+      - name: Validate OpenAPI JSON
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          Get-ChildItem docs/openapi/openapi-v*.json | ForEach-Object {
+            Get-Content $_.FullName -Raw | ConvertFrom-Json | Out-Null
+          }
+
+      - name: Verify OpenAPI contracts are synchronized
+        run: git diff --exit-code -- docs/openapi/openapi-v1.json docs/openapi/openapi-v2.json
+
+      - name: Check vulnerable packages
+        run: dotnet list "$SOLUTION" package --vulnerable
+
+      - name: Report deprecated packages
+        run: dotnet list "$SOLUTION" package --deprecated
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: TestResults/**/*.trx
+          if-no-files-found: error
+
+      - name: Upload coverage results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-results
+          path: TestResults/**/coverage.cobertura.xml
+          if-no-files-found: error
+
+      - name: Upload generated OpenAPI contracts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: openapi-contracts
+          path: docs/openapi/openapi-v*.json
+          if-no-files-found: error

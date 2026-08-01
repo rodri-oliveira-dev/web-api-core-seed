@@ -6,7 +6,11 @@
 | 02 - Testes de integracao | concluido |
 | 03 - Seguranca | concluido |
 | 04 - OpenTelemetry | concluido |
-| 05 - CI e gates | pendente |
+| 05 - CI e gates | concluido |
+
+Fase 3: concluida localmente
+Push: pendente
+PR: pendente
 
 ## Estado inicial do prompt 01
 
@@ -70,4 +74,21 @@
 - Testes finais: 41 em `Pedidos.Test` e 26 em `WebApiCoreSeed.IntegrationTests`.
 - Build/test final: passou.
 - `git grep -n -i "Datasul"` retorna apenas referencias historicas em `LEGACY.md` e SDD antigo; codigo/configuracao ativos nao possuem o termo.
+- Push: nao realizado.
+
+## Resultado do prompt 05
+
+- Workflows criados: `.github/workflows/ci.yml` e `.github/workflows/codeql.yml`.
+- Workflow ajustado: `.github/workflows/dependency-review.yml`.
+- Dependabot ajustado: `.github/dependabot.yml` com agenda explicita e agrupamento para NuGet e GitHub Actions.
+- Documentacao criada: `docs/quality-gates.md`.
+- SDD criado: `.sdd/phase-3/05-ci-quality-gates/`.
+- CI principal valida restore, build Release, testes unitarios, testes de integracao/container, cobertura, OpenAPI sincronizado, pacotes vulneraveis e pacotes deprecated informativos.
+- CodeQL ativo para C# em PR, push para `main` e schedule semanal.
+- Dependency Review ativo em Pull Requests com `fail-on-severity: moderate`.
+- Cobertura no comando de CI local: unit 32,78% linhas / 20,42% branches; integration 67,41% linhas / 23,54% branches.
+- `dotnet format --verify-no-changes` avaliado e nao ativado como gate porque falha por divida de whitespace existente.
+- `dotnet list package --vulnerable`: nenhum pacote vulneravel nas fontes atuais.
+- `dotnet list package --deprecated`: `xunit` 2.9.3 reportado como `Legacy` nos projetos de teste.
+- Build/test final: passou.
 - Push: nao realizado.

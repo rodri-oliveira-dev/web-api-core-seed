@@ -1,117 +1,104 @@
 # Handoff - Phase 3
 
-## Estado atual
+## Estado final local
 
 - Branch atual: `phase/3-quality-and-safety`.
 - Branch-base: `phase/2-dotnet-10-migration`.
-- Prompt atual: `04 - OpenTelemetry baseline`.
-- Issue atual: `#10`.
-- Status do prompt 01: concluido.
-- Status do prompt 02: concluido.
-- Status do prompt 03: concluido.
-- Status do prompt 04: concluido.
-- Commit do prompt 01: `test: strengthen existing unit test suite`.
-- Commit do prompt 02: `test: add API and infrastructure integration tests`.
-- Commit do prompt 03: `fix: harden API security defaults`.
-- Commit do prompt 04: pendente ate delivery.
+- Fase 3: concluida localmente.
+- Push: pendente.
+- PR: pendente.
+- Proxima branch planejada: `phase/4-architecture-modernization`.
+- Issues seguintes: `#14`, `#15`, `#16`, `#17`, `#18`, `#19`, `#20`.
 
-## Resultado do prompt 03
+## Status dos prompts
 
-- CORS:
-  - `AllowAnyOrigin` removido.
-  - `Cors:AllowedOrigins` controla origins permitidas.
-  - Producao fica fechada quando nenhuma origin e configurada.
-  - `*` e rejeitado como origin literal.
-  - Credenciais seguem desabilitadas por padrao.
-- Forwarded headers:
-  - `ForwardedHeaders:Enabled=false` por padrao.
-  - Quando habilitado, usa apenas `KnownProxies` e `KnownNetworks`.
-  - Em producao, habilitar sem proxy/rede conhecida falha no startup.
-- Headers:
-  - Removidos do middleware ativo: `X-XSS-Protection`, `Feature-Policy`.
-  - Adicionados/reforcados: `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, CSP, `X-Frame-Options`, HSTS fora de Development e no-store para respostas sensiveis.
-- Logging:
-  - Serilog request logging nao grava query string completa.
-  - Middleware customizado deixou de usar `RawTarget` e passa a registrar somente `Request.Path`.
-  - Headers sensiveis seguem fora da whitelist de logging.
-- Health:
-  - `/health/live`: status agregado.
-  - `/health/ready`: readiness com detalhes em Development/Testing, status agregado em producao.
-  - `/hc`: alias legado com status agregado.
-- Limites:
-  - `RequestLimits:TimeoutSeconds` default 30 segundos.
-  - `RequestLimits:MaxRequestBodyBytes` default 10 MB.
-- Testes:
-  - Suite completa passou com 36 testes em `Pedidos.Test` e 26 em `WebApiCoreSeed.IntegrationTests`.
-  - Novos cenarios cobrem CORS permitido/negado, headers modernos, headers obsoletos ausentes, logging sem token/query sensivel, health minimo, readiness e no-store em auth.
+- 01 - Testes unitarios: concluido.
+- 02 - Testes de integracao: concluido.
+- 03 - Seguranca: concluido.
+- 04 - OpenTelemetry: concluido.
+- 05 - CI e gates: concluido.
 
-## Validacoes oficiais
+## Cinco commits da fase
+
+- `d8730d3 test: strengthen existing unit test suite`
+- `e21a215 test: add API and infrastructure integration tests`
+- `c9c4641 fix: harden API security defaults`
+- `4b493e2 feat: add OpenTelemetry observability`
+- `ci: add quality and security workflows` (este commit)
+
+## Testes e cobertura
+
+- Suite final: 41 testes em `Pedidos.Test` e 26 testes em `WebApiCoreSeed.IntegrationTests`.
+- `dotnet test RestauranteAPI.sln --configuration Release --no-build`: passou.
+- Cobertura baseline geral historica: 29,15% linhas / 17,66% branches.
+- Cobertura local do comando de CI unit: 32,78% linhas / 20,42% branches.
+- Cobertura local do comando de CI integration: 67,41% linhas / 23,54% branches.
+- Nenhum threshold novo foi definido.
+
+## Testcontainers e WebApplicationFactory
+
+- Projeto de integracao: `test/WebApiCoreSeed.IntegrationTests`.
+- Host: `WebApplicationFactory<Program>` em ambiente `Testing`.
+- Containers: SQL Server `mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04` e Redis `redis:7.4.2-alpine`.
+- Isolamento: collection xUnit compartilhada, reset SQL/Redis antes de cada teste.
+- Docker e requisito para a suite de integracao e para o CI principal.
+
+## Seguranca
+
+- CORS fechado por padrao em producao quando `Cors:AllowedOrigins` esta vazio.
+- Forwarded headers desabilitados por padrao e restritos a proxies/redes conhecidos quando habilitados.
+- Headers modernos ativos: `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, CSP com `frame-ancestors 'none'`, `X-Frame-Options` e no-store em respostas sensiveis.
+- `/health/live` e `/hc` expoem status minimo; `/health/ready` expoe detalhes apenas em Development/Testing.
+- `dotnet list package --vulnerable`: nenhum pacote vulneravel.
+- Dependency Review ativo em PR com `fail-on-severity: moderate`.
+- CodeQL ativo para C#.
+
+## OpenTelemetry
+
+- Registro central em `AddApiOpenTelemetry`.
+- Traces/metrics: ASP.NET Core, HttpClient, EF Core e Runtime.
+- OTLP opcional; startup passa com telemetria desativada e ativada sem collector obrigatorio.
+- Serilog permanece pipeline de logs com `TraceId` e `SpanId`.
+- Redis spans nao foram adicionados; Redis segue coberto por health/readiness e testes de integracao.
+
+## Workflows e check names
+
+- `.github/workflows/ci.yml`: `Build, test and quality gates`.
+- `.github/workflows/codeql.yml`: `CodeQL analysis`.
+- `.github/workflows/dependency-review.yml`: `Review dependency changes`.
+- `.github/dependabot.yml`: updates semanais agrupados para NuGet e GitHub Actions.
+
+## Comandos locais
 
 ```text
-dotnet restore
-dotnet build --configuration Release --no-restore
-dotnet test --configuration Release --no-build
-dotnet list package --vulnerable
+dotnet restore RestauranteAPI.sln
+dotnet build RestauranteAPI.sln --configuration Release --no-restore
+dotnet test RestauranteAPI.sln --configuration Release --no-build
+dotnet test test/Pedidos.Test/Pedidos.Test.csproj --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory TestResults/Unit
+dotnet test test/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory TestResults/Integration
+dotnet run --project tools/OpenApiGenerator/OpenApiGenerator.csproj --configuration Release --no-build
+git diff --exit-code -- docs/openapi/openapi-v1.json docs/openapi/openapi-v2.json
+dotnet list RestauranteAPI.sln package --vulnerable
+dotnet list RestauranteAPI.sln package --deprecated
 ```
 
-Resultados:
+## Debitos tecnicos e riscos
 
-- `dotnet restore`: passou.
-- `dotnet build --configuration Release --no-restore`: passou.
-- `dotnet test --configuration Release --no-build`: passou.
-- `dotnet list package --vulnerable`: nenhum pacote vulneravel nas fontes atuais.
-- Docker estava disponivel.
-- Push: nao realizado.
+- `dotnet format --verify-no-changes` falha por divida de whitespace existente; gate adiado.
+- `xunit` 2.9.3 aparece como deprecated/Legacy nos projetos de teste.
+- Nao ha `packages.lock.json`; cache NuGet melhora tempo de restore, mas lock files seriam melhoria futura de reproducibilidade.
+- `actionlint` nao estava disponivel localmente; YAML foi validado com PyYAML.
+- EF Core OpenTelemetry instrumentation permanece em pacote beta.
+- Producao precisa configurar `Cors:AllowedOrigins` e, se houver proxy, `ForwardedHeaders`.
 
-## Resultado do prompt 04
+## Proximo PR
 
-- OpenTelemetry:
-  - Registro central em `src/DevIO.Api/Configuration/OpenTelemetryConfig.cs`.
-  - Configuracao por `OpenTelemetry:*`.
-  - `service.name`: `web-api-core-seed-api`.
-  - `service.namespace`: `rodri-oliveira-dev.web-api-core-seed`.
-  - `service.version`: configuracao ou assembly informational version.
-  - Ambiente: `OpenTelemetry:Environment` ou ASP.NET Core environment.
-- Instrumentacoes:
-  - ASP.NET Core traces/metrics.
-  - HttpClient traces/metrics.
-  - EF Core traces.
-  - Runtime metrics.
-  - Meters de ASP.NET Core, Kestrel, HTTP, name resolution e EF Core.
-- Exporters:
-  - OTLP traces/metrics opcional.
-  - `OpenTelemetry:Otlp:Enabled`, `OpenTelemetry:Otlp:Endpoint`, `OpenTelemetry:Otlp:Protocol`.
-  - Tambem le `OTEL_SERVICE_NAME`, `OTEL_EXPORTER_OTLP_ENDPOINT` e `OTEL_EXPORTER_OTLP_PROTOCOL`.
-- Logs:
-  - Serilog preservado como pipeline unico.
-  - Console/file com `TraceId` e `SpanId`.
-  - Seq opcional por `SeqSettings`.
-- Dados excluidos:
-  - Sem baggage customizado.
-  - Sem labels de alta cardinalidade.
-  - Sem enriquecimento SQL customizado.
-  - Redacao de query forçada para instrumentacao ASP.NET Core/HttpClient.
-- Redis:
-  - Nao instrumentado neste prompt.
-  - Motivo: pacote StackExchange.Redis pre-release e cache ativo nao expoe `IConnectionMultiplexer`.
-- Testes:
-  - `ObservabilityConfigurationTests` cobre startup desativado, startup com OTLP sem collector, span de request, correlacao de logs e ausencia de valores sensiveis em tags capturadas.
-- Artefatos removidos:
-  - `src/DevIO.Api/healthchecksdb`.
-  - `src/DevIO.Api/teste.txt`.
-- Validacoes finais:
-  - `dotnet restore`: passou.
-  - `dotnet build --configuration Release --no-restore`: passou com 21 avisos de analyzer existentes.
-  - `dotnet test --configuration Release --no-build`: passou com 41 testes em `Pedidos.Test` e 26 em `WebApiCoreSeed.IntegrationTests`.
-  - `dotnet list package`: passou.
-  - `git grep -n -i "Datasul"` retorna apenas referencias historicas em `LEGACY.md` e SDD antigo.
+O PR futuro da Fase 3 deve conter:
 
-## Breaking changes e configuracao de producao
-
-- Aplicacoes browser precisam definir `Cors:AllowedOrigins`.
-- Ambientes atras de proxy devem configurar `ForwardedHeaders:Enabled`, `KnownProxies` ou `KnownNetworks`.
-- Valores locais de connection string/JWT em `appsettings.json` agora sao placeholders e devem ser sobrescritos fora do desenvolvimento local.
-
-## Proxima issue
-
-`#13` - executar o Prompt 5 da Fase 3, CI e quality gates.
+```text
+Closes #9
+Closes #10
+Closes #11
+Closes #12
+Closes #13
+```
