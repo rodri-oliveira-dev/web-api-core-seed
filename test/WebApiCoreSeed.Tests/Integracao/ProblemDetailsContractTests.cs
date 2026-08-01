@@ -24,6 +24,7 @@ using WebApiCoreSeed.Api;
 using WebApiCoreSeed.Identity.Infrastructure.Context;
 using WebApiCoreSeed.Api.Services.Interfaces;
 using WebApiCoreSeed.Api.Settings;
+using WebApiCoreSeed.SampleRestaurant.Application.Contracts.Queries;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Pagination;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Repository;
 using WebApiCoreSeed.SampleRestaurant.Models;
@@ -457,7 +458,7 @@ namespace WebApiCoreSeed.Tests.Integracao
 
             public Task<bool> ExisteComId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult(false);
 
-            public Task<IEnumerable<Prato>> ListarPagina(PaginationParameter paginationParameter, CancellationToken cancellationToken = default) => Task.FromResult<IEnumerable<Prato>>(Array.Empty<Prato>());
+            public Task<IReadOnlyList<PratoListItem>> ListarPagina(PaginationParameter paginationParameter, CancellationToken cancellationToken = default) => Task.FromResult<IReadOnlyList<PratoListItem>>(Array.Empty<PratoListItem>());
 
             public Task<int> Contar(CancellationToken cancellationToken = default) => Task.FromResult(0);
 
@@ -493,7 +494,7 @@ namespace WebApiCoreSeed.Tests.Integracao
 
             public Task<bool> ExisteComId(Guid id, CancellationToken cancellationToken = default) => Task.FromException<bool>(CreateException());
 
-            public Task<IEnumerable<Prato>> ListarPagina(PaginationParameter paginationParameter, CancellationToken cancellationToken = default) => Task.FromException<IEnumerable<Prato>>(CreateException());
+            public Task<IReadOnlyList<PratoListItem>> ListarPagina(PaginationParameter paginationParameter, CancellationToken cancellationToken = default) => Task.FromException<IReadOnlyList<PratoListItem>>(CreateException());
 
             public Task<int> Contar(CancellationToken cancellationToken = default) => Task.FromException<int>(CreateException());
 
@@ -526,12 +527,12 @@ namespace WebApiCoreSeed.Tests.Integracao
 
             public Task<bool> ExisteComId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult(false);
 
-            public async Task<IEnumerable<Prato>> ListarPagina(PaginationParameter paginationParameter, CancellationToken cancellationToken = default)
+            public async Task<IReadOnlyList<PratoListItem>> ListarPagina(PaginationParameter paginationParameter, CancellationToken cancellationToken = default)
             {
                 _probe.MarkStarted(cancellationToken);
                 await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken);
 
-                return Array.Empty<Prato>();
+                return Array.Empty<PratoListItem>();
             }
 
             public Task<int> Contar(CancellationToken cancellationToken = default) => Task.FromResult(0);

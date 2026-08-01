@@ -207,3 +207,130 @@
 - A solucao ativa permanece `WebApiCoreSeed.sln`.
 - Os projetos ativos miram `net10.0`.
 - As skills DDD citadas no prompt nao estavam instaladas nesta sessao; foram usadas as skills locais aplicaveis de SDD, mudanca .NET, integracao .NET e refatoracao .NET.
+
+## Estado final da Fase 4
+
+- Branch atual: `phase/4-architecture-modernization`.
+- Fase 4: concluida localmente.
+- Push: pendente.
+- PR: pendente.
+- Proxima branch: `phase/5-open-source-productization`.
+
+## Arquitetura final
+
+- A solucao ativa e `WebApiCoreSeed.sln`.
+- A API fica em `src/WebApiCoreSeed.Api` como adaptador de entrada e composition root.
+- O dominio demonstrativo fica isolado em `src/SampleRestaurant`.
+- A infraestrutura EF Core do sample fica em `src/SampleRestaurant.Infrastructure`.
+- A persistencia de Identity fica em `src/Identity.Infrastructure`.
+- O desenho atual e um monolito modular pragmatico com limites Hexagonais no modulo `SampleRestaurant`.
+- Nenhuma implementacao de Aspire foi adicionada.
+- Nenhum empacotamento `dotnet new` foi adicionado.
+- Nenhuma configuracao Sonar foi adicionada.
+
+## Modulos
+
+- `SampleRestaurant`: pratos, mesas, pedidos, itens de pedido, atendentes e logs legados do exemplo.
+- `Identity`: registro, login, JWT e schema `AspNet*`, com persistencia em infraestrutura propria e application flow ainda hospedado na API.
+
+## Portas e repositories
+
+- Portas de entrada principais: `IPratoService`, `IMesaService`, `IAtendenteService`, `IPedidoService`, `IPedidoPratoService`, `ILogginService`.
+- Portas de saida principais: `IPratoRepository`, `IMesaRepository`, `IAtendenteRepository`, `IPedidoRepository`, `IPedidoPratoRepository`, `ILogginRepository`, `ISampleRestaurantUnitOfWork`.
+- Repositories concretos do sample ficam somente em `WebApiCoreSeed.SampleRestaurant.Infrastructure`.
+- Nao ha generic repository no codigo ativo.
+
+## Unit of Work
+
+- `ISampleRestaurantUnitOfWork.CommitAsync` e a fronteira de commit do `SampleRestaurantDbContext`.
+- Repositories de escrita registram alteracoes e nao chamam `SaveChangesAsync`.
+- Controllers nao coordenam commit.
+- `ApplicationDbContext` de Identity permanece fora da Unit of Work do sample.
+
+## CancellationToken
+
+- Controllers propagam `CancellationToken` de request.
+- Services, repositories e Unit of Work aceitam token explicito.
+- EF Core recebe token em operacoes async relevantes.
+- Redis cache, health response writers e OpenAPI generator tambem propagam token onde aplicavel.
+- APIs usadas de `UserManager` e `SignInManager` continuam sem token direto.
+
+## Migrations
+
+- Identity: `src/Identity.Infrastructure/Migrations`.
+- SampleRestaurant: `src/SampleRestaurant.Infrastructure/Migrations`.
+- Migration final da fase: `AddPratosPaginationOrderingIndex`, adicionando `IX_Pratos_Titulo_Id`.
+- API nao contem arquivos de migration.
+- Validacao com SQL Server Testcontainers confirmou aplicacao em banco vazio.
+
+## Paginacao
+
+- Endpoint paginado ativo: `GET /api/v{version}/Pratos`.
+- Estrategia: offset pagination.
+- Query params: `PageNumber` default `1`, minimo `1`; `PageSize` default `10`, minimo `1`, maximo `50`.
+- Valores invalidos retornam Validation Problem Details `400`.
+- Ordenacao: `Titulo` ascendente, `Id` ascendente.
+- Metadata: `items`, `page`, `pageSize`, `totalItems`, `totalPages`, `hasNextPage`, `hasPreviousPage`.
+- A query usa `AsNoTracking`, projecao para read model, `CountAsync` para totais e cancelamento.
+
+## Testes
+
+- Testes arquiteturais cobrem dependencias modulares e ausencia de repositorio generico.
+- Testes unitarios/leves cobrem validadores, contratos, Problem Details, observabilidade e cancelamento com fakes.
+- Testes de integracao usam SQL Server e Redis reais por Testcontainers.
+- Testes HTTP cobrem contratos publicos, rate limiting, seguranca, health checks e paginacao.
+- Testes com Testcontainers validam migrations em banco vazio.
+
+## Contratos HTTP alterados
+
+- `GET /api/v{version}/Pratos` mudou o envelope paginado:
+  - antigo: `data`, `pageNumber`, `totalItens`, `totalPages`;
+  - novo: `items`, `page`, `pageSize`, `totalItems`, `totalPages`, `hasNextPage`, `hasPreviousPage`.
+- `PageSize > 50`, `PageSize <= 0` e `PageNumber <= 0` agora retornam `400` Validation Problem Details.
+- OpenAPI foi regenerado com limites de query e novo schema.
+
+## Debitos
+
+- Services e repositories ainda preservam `IDisposable` legado.
+- Identity ainda nao possui application layer propria.
+- Upload de arquivo em `PratosController` permanece sincrono e fora do escopo desta fase.
+- Offset pagination pode deslocar itens entre paginas quando ha escrita concorrente.
+- HealthChecks UI `/hc-ui` permanece desabilitada conforme fase anterior.
+
+## Riscos
+
+- Consumidores existentes de `GET /api/v{version}/Pratos` precisam adaptar o response paginado.
+- Paginas muito altas podem ter custo crescente por offset.
+- Ordenacao por `Titulo` depende do comportamento de collation do SQL Server configurado.
+
+## Commits da Fase 4
+
+1. `refactor: introduce modular hexagonal structure`
+2. `refactor: separate sample domain from reusable seed`
+3. `refactor: replace generic repository with explicit ports`
+4. `refactor: define explicit unit of work boundary`
+5. `refactor: propagate cancellation tokens`
+6. `refactor: move EF Core migrations to infrastructure`
+7. `refactor: make pagination deterministic and bounded`
+
+## Proximas issues
+
+- `#21` - Rewrite onboarding and architecture documentation.
+- `#22` - Package the project as a dotnet new template.
+- `#23` - Publish the v2.0.0 release.
+
+## Avaliacao adicional para Fase 5
+
+- Avaliar uma issue adicional para adicionar .NET Aspire como orquestracao local opcional.
+
+## Futuro PR da Fase 4
+
+```text
+Closes #14
+Closes #15
+Closes #16
+Closes #17
+Closes #18
+Closes #19
+Closes #20
+```

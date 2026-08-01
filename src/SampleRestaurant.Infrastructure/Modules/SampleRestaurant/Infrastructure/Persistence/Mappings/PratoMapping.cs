@@ -39,6 +39,8 @@ namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Mappings
                 .HasColumnType("int")
                 .HasConversion(converter);
 
+            builder.HasIndex(p => new { p.Titulo, p.Id });
+
             builder.ToTable("Pratos");
         }
     }

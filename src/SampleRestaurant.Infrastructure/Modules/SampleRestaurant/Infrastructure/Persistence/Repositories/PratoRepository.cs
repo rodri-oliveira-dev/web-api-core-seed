@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using WebApiCoreSeed.SampleRestaurant.Application.Contracts.Queries;
 using WebApiCoreSeed.SampleRestaurant.Infrastructure.Context;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Pagination;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Repository;
@@ -51,11 +52,23 @@ namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Repository
             return await _context.Pratos.AnyAsync(prato => prato.Id == id, cancellationToken);
         }
 
-        public async Task<IEnumerable<Prato>> ListarPagina(PaginationParameter paginationParameter, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<PratoListItem>> ListarPagina(PaginationParameter paginationParameter, CancellationToken cancellationToken = default)
         {
             return await _context.Pratos.AsNoTracking()
+                .OrderBy(prato => prato.Titulo)
+                .ThenBy(prato => prato.Id)
                 .Skip((paginationParameter.PageNumber - 1) * paginationParameter.PageSize)
                 .Take(paginationParameter.PageSize)
+                .Select(prato => new PratoListItem
+                {
+                    Id = prato.Id,
+                    Titulo = prato.Titulo,
+                    Descricao = prato.Descricao,
+                    Foto = prato.Foto,
+                    Preco = prato.Preco,
+                    Ativo = prato.Ativo,
+                    TipoPrato = prato.TipoPrato
+                })
                 .ToListAsync(cancellationToken);
         }
 

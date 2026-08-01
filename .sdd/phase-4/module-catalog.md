@@ -9,10 +9,17 @@
 | Entidades principais | `Prato`, `Mesa`, `Pedido`, `PedidoPrato`, `Atendente`, `LogginEntity`. |
 | Casos de uso | Criar, atualizar, remover e consultar pratos e mesas; manter operacoes legadas de pedidos, atendentes e logs. |
 | Dados pertencentes | Tabelas `Pratos`, `Mesas`, `Pedidos`, `PedidoPrato`, `Atendentes`, `Loggin`. |
-| Contratos publicos | Endpoints HTTP versionados atuais em `/api/v{version}`; view models do sample permanecem na API nesta entrega. |
+| Contratos publicos | Endpoints HTTP versionados atuais em `/api/v{version}`; `GET /api/v{version}/Pratos` usa envelope paginado `items/page/pageSize/totalItems/totalPages/hasNextPage/hasPreviousPage`; view models do sample permanecem na API nesta entrega. |
 | Dependencias permitidas | Domain sem infraestrutura; Application depende de Domain; Infrastructure depende do nucleo do modulo; API depende de Application e Infrastructure para composicao. |
 | Dependencias proibidas | Domain nao pode depender de API, EF Core, ASP.NET Core, Redis, Identity ou logging; Application nao pode depender de API, EF Core, ASP.NET Core ou Infrastructure concreta; Infrastructure nao deve ser consumida diretamente por outro modulo de negocio. |
 | Maturidade do limite | Inicial. O limite fisico e nominal deixa claro que este e o dominio demonstrativo do seed; separacoes mais finas estao planejadas para os prompts seguintes. |
+
+### Contratos de consulta
+
+- `PaginationParameter`: `PageNumber` default `1`, minimo `1`; `PageSize` default `10`, minimo `1`, maximo `50`.
+- `PaginationResult<T>`: metadata consistente para pagina, tamanho, totais e navegacao.
+- `PratoListItem`: read model usado pela listagem paginada para evitar materializacao desnecessaria de entidade completa.
+- Ordenacao de pratos: `Titulo` ascendente e `Id` ascendente.
 
 ## Identity
 

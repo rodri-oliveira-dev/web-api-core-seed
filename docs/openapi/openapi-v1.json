@@ -522,6 +522,8 @@
             "in": "query",
             "description": "Parametros de paginação da lista",
             "schema": {
+              "maximum": 2147483647,
+              "minimum": 1,
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "format": "int32",
               "default": 1
@@ -532,6 +534,8 @@
             "in": "query",
             "description": "Parametros de paginação da lista",
             "schema": {
+              "maximum": 50,
+              "minimum": 1,
               "pattern": "^-?(?:0|[1-9]\\d*)$",
               "format": "int32",
               "default": 10
@@ -1029,7 +1033,22 @@
       "PaginationResultOfPratoViewModel": {
         "type": "object",
         "properties": {
-          "pageNumber": {
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PratoViewModel"
+            },
+            "nullable": true
+          },
+          "page": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "format": "int32"
+          },
+          "pageSize": {
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "format": "int32"
+          },
+          "totalItems": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "format": "int32"
           },
@@ -1037,16 +1056,11 @@
             "pattern": "^-?(?:0|[1-9]\\d*)$",
             "format": "int32"
           },
-          "totalItens": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "format": "int32"
+          "hasNextPage": {
+            "type": "boolean"
           },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/PratoViewModel"
-            },
-            "nullable": true
+          "hasPreviousPage": {
+            "type": "boolean"
           }
         }
       },

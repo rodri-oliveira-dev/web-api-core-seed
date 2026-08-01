@@ -71,6 +71,8 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
             [FromQuery] PaginationParameter paginationParameter,
             CancellationToken cancellationToken)
         {
+            if (!ModelState.IsValid) return CustomResponse(ModelState);
+
             var pratosViewModel = await ObterPratos(paginationParameter, cancellationToken);
 
             if (pratosViewModel == null) return CustomResponse(tipoAcao: ETipoAcao.NaoEncontrado);
@@ -257,14 +259,17 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         {
             var pratos = _mapper.Map<List<PratoViewModel>>(await _pratoService.Paginacao(paginationParameter, cancellationToken));
             var totalItens = await _pratoService.TotalRegistros(cancellationToken);
-            var totalPaginas = totalItens / paginationParameter.PageSize;
+            var totalPaginas = (int)Math.Ceiling(totalItens / (double)paginationParameter.PageSize);
 
             return new PaginationResult<PratoViewModel>
             {
-                PageNumber = paginationParameter.PageNumber,
-                TotalItens = totalItens,
-                TotalPages = totalItens % paginationParameter.PageSize > 0 ? totalPaginas + 1 : totalPaginas,
-                Data = pratos
+                Items = pratos,
+                Page = paginationParameter.PageNumber,
+                PageSize = paginationParameter.PageSize,
+                TotalItems = totalItens,
+                TotalPages = totalPaginas,
+                HasNextPage = paginationParameter.PageNumber < totalPaginas,
+                HasPreviousPage = totalItens > 0 && paginationParameter.PageNumber > 1
             };
         }
     }

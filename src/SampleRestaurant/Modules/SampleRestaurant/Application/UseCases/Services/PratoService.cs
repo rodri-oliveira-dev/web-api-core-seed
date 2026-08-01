@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WebApiCoreSeed.SampleRestaurant.Intefaces;
 using WebApiCoreSeed.SampleRestaurant.Intefaces.Service;
+using WebApiCoreSeed.SampleRestaurant.Application.Contracts.Queries;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Pagination;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Persistence;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Repository;
@@ -70,7 +71,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
             return await _pratoRepository.ObterPorId(id, cancellationToken);
         }
 
-        public async Task<IEnumerable<Prato>> Paginacao(PaginationParameter paginationParameter, CancellationToken cancellationToken = default)
+        public async Task<IReadOnlyList<PratoListItem>> Paginacao(PaginationParameter paginationParameter, CancellationToken cancellationToken = default)
         {
             return await _pratoRepository.ListarPagina(paginationParameter, cancellationToken);
         }

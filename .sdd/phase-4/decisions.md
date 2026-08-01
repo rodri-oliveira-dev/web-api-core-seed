@@ -33,3 +33,8 @@
 | D029 | Criar `WebApiCoreSeed.Identity.Infrastructure` para `ApplicationDbContext` e migrations de Identity. | Accepted | Remove migrations da API sem misturar Identity com a infraestrutura do modulo demonstrativo `SampleRestaurant`. |
 | D030 | Manter migrations do `SampleRestaurantDbContext` em `WebApiCoreSeed.SampleRestaurant.Infrastructure`. | Accepted | O schema do sample pertence ao adaptador de persistencia do proprio modulo. |
 | D031 | Preservar o schema legado de Identity com max length 128 para chaves de login/token. | Accepted | O Identity/EF Core 10 detectava alteracao de modelo sem essa configuracao; fixar o max length evita migration nova e preserva a migration historica. |
+| D032 | Manter offset pagination em `GET /api/v{version}/Pratos`. | Accepted | O endpoint e um catalogo de exemplo de volume moderado; navegacao por paginas e simplicidade sao mais relevantes do que consistencia forte entre paginas. |
+| D033 | Ordenar pratos por `Titulo` ascendente e `Id` ascendente. | Accepted | `Titulo` e adequado para catalogo; `Id` torna a ordenacao unica quando titulos se repetem. |
+| D034 | Rejeitar `PageSize > 50` em vez de truncar silenciosamente. | Accepted | Erro explicito torna o contrato previsivel e evita que clientes acreditem ter recebido o tamanho solicitado. |
+| D035 | Trocar o envelope paginado para `items/page/pageSize/totalItems/totalPages/hasNextPage/hasPreviousPage`. | Accepted | A metadata fica consistente e autoexplicativa; a mudanca de formato foi documentada como breaking change. |
+| D036 | Adicionar indice `IX_Pratos_Titulo_Id`. | Accepted | O indice apoia a ordenacao estavel usada antes de `Skip` e `Take`. |

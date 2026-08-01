@@ -8,7 +8,7 @@
 | 04 - Unit of Work | concluido |
 | 05 - CancellationToken | concluido |
 | 06 - Migrations na infraestrutura | concluido |
-| 07 - Paginacao | pendente |
+| 07 - Paginacao | concluido |
 
 ## Estado inicial do prompt 01
 
@@ -63,6 +63,41 @@
 - Build/test final: passou.
 - OpenAPI regenerado e sem diff de contrato.
 - Push: nao realizado.
+
+## Resultado do prompt 07
+
+- Endpoint paginado ativo identificado: `GET /api/v{version}/Pratos`.
+- Estrategia mantida: offset pagination.
+- Justificativa: catalogo de volume moderado, navegacao por paginas e simplicidade prioritarias.
+- Contrato de entrada preserva `PageNumber` e `PageSize`.
+- `PageNumber` tem default `1` e minimo `1`.
+- `PageSize` tem default `10`, minimo `1` e maximo `50`.
+- Valores invalidos retornam Validation Problem Details `400`.
+- `PaginationResult<T>` passou a expor `items`, `page`, `pageSize`, `totalItems`, `totalPages`, `hasNextPage` e `hasPreviousPage`.
+- Response anterior `data/pageNumber/totalItens` foi removido do contrato paginado.
+- `PratoRepository.ListarPagina` usa `AsNoTracking`, ordenacao `Titulo` ascendente e `Id` ascendente, projecao para read model, `Skip`, `Take` e `ToListAsync(cancellationToken)`.
+- `CountAsync(cancellationToken)` permanece porque o contrato retorna totais.
+- Migration `AddPratosPaginationOrderingIndex` adicionou `IX_Pratos_Titulo_Id`.
+- OpenAPI regenerado com limites de query e novo schema de response.
+- Testes de integracao cobrem primeira pagina, pagina intermediaria, ultima pagina, pagina apos final, colecao vazia, limites de page size, valores invalidos, ordenacao estavel e insercao entre consultas.
+- Build/test final: passou.
+- Push: nao realizado.
+
+## Fechamento da Fase 4
+
+```text
+01 — Arquitetura modular Hexagonal: concluído
+02 — Separação do domínio de exemplo: concluído
+03 — Portas de persistência: concluído
+04 — Unit of Work: concluído
+05 — CancellationToken: concluído
+06 — Migrations na infraestrutura: concluído
+07 — Paginação: concluído
+
+Fase 4: concluída localmente
+Push: pendente
+PR: pendente
+```
 
 ## Resultado do prompt 06
 

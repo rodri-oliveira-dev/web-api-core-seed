@@ -1,5 +1,6 @@
 using AutoMapper;
 using WebApiCoreSeed.Api.ViewModels;
+using WebApiCoreSeed.SampleRestaurant.Application.Contracts.Queries;
 using WebApiCoreSeed.SampleRestaurant.Models;
 
 namespace WebApiCoreSeed.Api.Configuration
@@ -13,6 +14,7 @@ namespace WebApiCoreSeed.Api.Configuration
             CreateMap<Pedido, PedidoViewModel>().ReverseMap();
             CreateMap<PedidoPrato, PedidoPratoViewModel>().ReverseMap();
             CreateMap<Prato, PratoViewModel>().ReverseMap();
+            CreateMap<PratoListItem, PratoViewModel>();
         }
     }
 }

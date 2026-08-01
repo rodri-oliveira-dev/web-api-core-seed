@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WebApiCoreSeed.SampleRestaurant.Infrastructure.Context;
 
@@ -11,9 +12,11 @@ using WebApiCoreSeed.SampleRestaurant.Infrastructure.Context;
 namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Migrations
 {
     [DbContext(typeof(SampleRestaurantDbContext))]
-    partial class SampleRestaurantDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260801191447_AddPratosPaginationOrderingIndex")]
+    partial class AddPratosPaginationOrderingIndex
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

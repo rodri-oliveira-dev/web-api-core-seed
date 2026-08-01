@@ -30,9 +30,14 @@
 - O modulo `SampleRestaurant` nao deve declarar repositorio generico no core nem na infraestrutura.
 - Portas de persistencia nao devem expor `IQueryable` nem receber predicados arbitrarios `Expression<Func<...>>`.
 - Repositories concretos podem usar `SampleRestaurantDbContext` somente dentro da infraestrutura.
+- Queries paginadas devem aplicar ordenacao estavel antes de `Skip` e `Take`.
+- Page size deve ter default, minimo e maximo documentados.
+- Valores invalidos de paginacao devem retornar Problem Details.
 
 ## Testes implementados
 
 As regras verificaveis desta entrega sao cobertas por `test/WebApiCoreSeed.Tests/Arquitetura/ModularHexagonalArchitectureTest.cs`.
 
 No Prompt 03 foi adicionada verificacao para impedir a declaracao de repositorio generico no core e na infraestrutura do sample.
+
+No Prompt 07 foram adicionados testes de integracao para limites, metadata e ordenacao estavel da paginacao de pratos.
