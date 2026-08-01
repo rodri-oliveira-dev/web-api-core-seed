@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -224,19 +225,19 @@ namespace WebApiCoreSeed.Tests.Integracao
 
         private sealed class FakePratoRepository : IPratoRepository
         {
-            public Task Adicionar(Prato prato) => Task.CompletedTask;
+            public Task Adicionar(Prato prato, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
-            public Task Atualizar(Prato prato) => Task.CompletedTask;
+            public Task Atualizar(Prato prato, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
-            public Task RemoverPorId(Guid id) => Task.CompletedTask;
+            public Task RemoverPorId(Guid id, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
-            public Task<Prato> ObterPorId(Guid id) => Task.FromResult<Prato>(null);
+            public Task<Prato> ObterPorId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult<Prato>(null);
 
-            public Task<bool> ExisteComId(Guid id) => Task.FromResult(false);
+            public Task<bool> ExisteComId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult(false);
 
-            public Task<IEnumerable<Prato>> ListarPagina(PaginationParameter paginationParameter) => Task.FromResult<IEnumerable<Prato>>(Array.Empty<Prato>());
+            public Task<IEnumerable<Prato>> ListarPagina(PaginationParameter paginationParameter, CancellationToken cancellationToken = default) => Task.FromResult<IEnumerable<Prato>>(Array.Empty<Prato>());
 
-            public Task<int> Contar() => Task.FromResult(0);
+            public Task<int> Contar(CancellationToken cancellationToken = default) => Task.FromResult(0);
 
             public void Dispose()
             {

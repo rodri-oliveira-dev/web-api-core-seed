@@ -8,6 +8,7 @@ using WebApiCoreSeed.SampleRestaurant.Models.Enums;
 using WebApiCoreSeed.SampleRestaurant.Notificacoes;
 using WebApiCoreSeed.SampleRestaurant.Services;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -32,7 +33,7 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
         {
             //Arrange
             var atendente = CriarAtendenteValido();
-            _atendenteRepository.Setup(r => r.Adicionar(atendente)).Returns(Task.CompletedTask);
+            _atendenteRepository.Setup(r => r.Adicionar(atendente, default)).Returns(Task.CompletedTask);
             _unitOfWork.Setup(unitOfWork => unitOfWork.CommitAsync(default)).ReturnsAsync(1);
             var atendenteService = CriarService();
 
@@ -42,7 +43,7 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
             //Assert
             Assert.True(retorno);
             Assert.False(_notificador.TemNotificacao());
-            _atendenteRepository.Verify(r => r.Adicionar(atendente), Times.Once);
+            _atendenteRepository.Verify(r => r.Adicionar(atendente, default), Times.Once);
             _unitOfWork.Verify(unitOfWork => unitOfWork.CommitAsync(default), Times.Once);
             _atendenteRepository.VerifyNoOtherCalls();
             _unitOfWork.VerifyNoOtherCalls();
@@ -63,7 +64,7 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
             Assert.False(retorno);
             Assert.True(_notificador.TemNotificacao());
             Assert.NotEmpty(_notificador.ObterNotificacoes());
-            _atendenteRepository.Verify(r => r.Adicionar(atendente), Times.Never);
+            _atendenteRepository.Verify(r => r.Adicionar(atendente, default), Times.Never);
             _atendenteRepository.VerifyNoOtherCalls();
             _unitOfWork.Verify(unitOfWork => unitOfWork.CommitAsync(default), Times.Never);
             _unitOfWork.VerifyNoOtherCalls();
@@ -75,7 +76,7 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
         {
             //Arrange
             var atendente = CriarAtendenteValido();
-            _atendenteRepository.Setup(r => r.Atualizar(atendente)).Returns(Task.CompletedTask);
+            _atendenteRepository.Setup(r => r.Atualizar(atendente, default)).Returns(Task.CompletedTask);
             _unitOfWork.Setup(unitOfWork => unitOfWork.CommitAsync(default)).ReturnsAsync(1);
             var atendenteService = CriarService();
 
@@ -85,7 +86,7 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
             //Assert
             Assert.True(retorno);
             Assert.False(_notificador.TemNotificacao());
-            _atendenteRepository.Verify(r => r.Atualizar(atendente), Times.Once);
+            _atendenteRepository.Verify(r => r.Atualizar(atendente, default), Times.Once);
             _unitOfWork.Verify(unitOfWork => unitOfWork.CommitAsync(default), Times.Once);
             _atendenteRepository.VerifyNoOtherCalls();
             _unitOfWork.VerifyNoOtherCalls();
@@ -106,8 +107,8 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
             Assert.False(retorno);
             Assert.True(_notificador.TemNotificacao());
             Assert.NotEmpty(_notificador.ObterNotificacoes());
-            _atendenteRepository.Verify(r => r.Adicionar(atendente), Times.Never);
-            _atendenteRepository.Verify(r => r.Atualizar(atendente), Times.Never);
+            _atendenteRepository.Verify(r => r.Adicionar(atendente, default), Times.Never);
+            _atendenteRepository.Verify(r => r.Atualizar(atendente, default), Times.Never);
             _atendenteRepository.VerifyNoOtherCalls();
             _unitOfWork.Verify(unitOfWork => unitOfWork.CommitAsync(default), Times.Never);
             _unitOfWork.VerifyNoOtherCalls();
@@ -119,7 +120,7 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
         {
             //Arrange
             var id = Guid.Parse("6b0bb7e2-49ca-4b02-bff4-e6fed1007391");
-            _atendenteRepository.Setup(r => r.RemoverPorId(id)).Returns(Task.CompletedTask);
+            _atendenteRepository.Setup(r => r.RemoverPorId(id, default)).Returns(Task.CompletedTask);
             _unitOfWork.Setup(unitOfWork => unitOfWork.CommitAsync(default)).ReturnsAsync(1);
             var atendenteService = CriarService();
 
@@ -129,7 +130,7 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
             //Assert
             Assert.True(retorno);
             Assert.False(_notificador.TemNotificacao());
-            _atendenteRepository.Verify(r => r.RemoverPorId(id), Times.Once);
+            _atendenteRepository.Verify(r => r.RemoverPorId(id, default), Times.Once);
             _unitOfWork.Verify(unitOfWork => unitOfWork.CommitAsync(default), Times.Once);
             _atendenteRepository.VerifyNoOtherCalls();
             _unitOfWork.VerifyNoOtherCalls();
@@ -142,7 +143,7 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
             //Arrange
             var atendente = CriarAtendenteValido();
             var exception = new InvalidOperationException("commit failed");
-            _atendenteRepository.Setup(r => r.Adicionar(atendente)).Returns(Task.CompletedTask);
+            _atendenteRepository.Setup(r => r.Adicionar(atendente, default)).Returns(Task.CompletedTask);
             _unitOfWork.Setup(unitOfWork => unitOfWork.CommitAsync(default)).ThrowsAsync(exception);
             var atendenteService = CriarService();
 
@@ -151,8 +152,74 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
 
             //Assert
             Assert.Same(exception, actual);
-            _atendenteRepository.Verify(r => r.Adicionar(atendente), Times.Once);
+            _atendenteRepository.Verify(r => r.Adicionar(atendente, default), Times.Once);
             _unitOfWork.Verify(unitOfWork => unitOfWork.CommitAsync(default), Times.Once);
+            _atendenteRepository.VerifyNoOtherCalls();
+            _unitOfWork.VerifyNoOtherCalls();
+        }
+
+        [Fact(DisplayName = "Atendente com token ja cancelado nao chama dependencias")]
+        [Trait("Services", "Atendente")]
+        public async Task AdicionarQuandoTokenJaCanceladoNaoDeveChamarDependencias()
+        {
+            //Arrange
+            var atendente = CriarAtendenteValido();
+            using var cancellationTokenSource = new CancellationTokenSource();
+            cancellationTokenSource.Cancel();
+            var atendenteService = CriarService();
+
+            //Act
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+                atendenteService.Adicionar(atendente, cancellationTokenSource.Token));
+
+            //Assert
+            _atendenteRepository.VerifyNoOtherCalls();
+            _unitOfWork.VerifyNoOtherCalls();
+        }
+
+        [Fact(DisplayName = "Atendente propaga cancelamento do commit")]
+        [Trait("Services", "Atendente")]
+        public async Task AdicionarQuandoCommitCanceladoDevePropagarCancelamento()
+        {
+            //Arrange
+            var atendente = CriarAtendenteValido();
+            using var cancellationTokenSource = new CancellationTokenSource();
+            _atendenteRepository.Setup(r => r.Adicionar(atendente, cancellationTokenSource.Token)).Returns(Task.CompletedTask);
+            _unitOfWork
+                .Setup(unitOfWork => unitOfWork.CommitAsync(cancellationTokenSource.Token))
+                .ThrowsAsync(new OperationCanceledException(cancellationTokenSource.Token));
+            var atendenteService = CriarService();
+
+            //Act
+            await Assert.ThrowsAsync<OperationCanceledException>(() =>
+                atendenteService.Adicionar(atendente, cancellationTokenSource.Token));
+
+            //Assert
+            _atendenteRepository.Verify(r => r.Adicionar(atendente, cancellationTokenSource.Token), Times.Once);
+            _unitOfWork.Verify(unitOfWork => unitOfWork.CommitAsync(cancellationTokenSource.Token), Times.Once);
+            _atendenteRepository.VerifyNoOtherCalls();
+            _unitOfWork.VerifyNoOtherCalls();
+        }
+
+        [Fact(DisplayName = "Atendente cancelado no repositorio nao executa commit")]
+        [Trait("Services", "Atendente")]
+        public async Task AdicionarQuandoRepositorioCancelaNaoDeveExecutarCommit()
+        {
+            //Arrange
+            var atendente = CriarAtendenteValido();
+            using var cancellationTokenSource = new CancellationTokenSource();
+            _atendenteRepository
+                .Setup(r => r.Adicionar(atendente, cancellationTokenSource.Token))
+                .ThrowsAsync(new OperationCanceledException(cancellationTokenSource.Token));
+            var atendenteService = CriarService();
+
+            //Act
+            await Assert.ThrowsAsync<OperationCanceledException>(() =>
+                atendenteService.Adicionar(atendente, cancellationTokenSource.Token));
+
+            //Assert
+            _atendenteRepository.Verify(r => r.Adicionar(atendente, cancellationTokenSource.Token), Times.Once);
+            _unitOfWork.Verify(unitOfWork => unitOfWork.CommitAsync(cancellationTokenSource.Token), Times.Never);
             _atendenteRepository.VerifyNoOtherCalls();
             _unitOfWork.VerifyNoOtherCalls();
         }

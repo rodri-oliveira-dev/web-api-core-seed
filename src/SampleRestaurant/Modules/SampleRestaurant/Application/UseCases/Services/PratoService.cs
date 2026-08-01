@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using WebApiCoreSeed.SampleRestaurant.Intefaces;
 using WebApiCoreSeed.SampleRestaurant.Intefaces.Service;
@@ -27,50 +28,56 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
             _notificador = notificador;
         }
 
-        public async Task<bool> Adicionar(Prato prato)
+        public async Task<bool> Adicionar(Prato prato, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (!ExecutarValidacao(new PratoValidation(), prato)) return false;
 
-            if (await _pratoRepository.ExisteComId(prato.Id))
+            if (await _pratoRepository.ExisteComId(prato.Id, cancellationToken))
             {
                 _notificador.Handle(new Notificacao($"Já existe um objeto cadastrado com a ID {prato.Id}."));
                 return false;
             }
 
-            await _pratoRepository.Adicionar(prato);
-            await _unitOfWork.CommitAsync();
+            await _pratoRepository.Adicionar(prato, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
 
-        public async Task<bool> Atualizar(Prato prato)
+        public async Task<bool> Atualizar(Prato prato, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (!ExecutarValidacao(new PratoValidation(), prato)) return false;
 
-            await _pratoRepository.Atualizar(prato);
-            await _unitOfWork.CommitAsync();
+            await _pratoRepository.Atualizar(prato, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
 
-        public async Task<bool> Remover(Guid id)
+        public async Task<bool> Remover(Guid id, CancellationToken cancellationToken = default)
         {
-            await _pratoRepository.RemoverPorId(id);
-            await _unitOfWork.CommitAsync();
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await _pratoRepository.RemoverPorId(id, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
 
-        public async Task<Prato> ObterPorId(Guid id)
+        public async Task<Prato> ObterPorId(Guid id, CancellationToken cancellationToken = default)
         {
-            return await _pratoRepository.ObterPorId(id);
+            return await _pratoRepository.ObterPorId(id, cancellationToken);
         }
 
-        public async Task<IEnumerable<Prato>> Paginacao(PaginationParameter paginationParameter)
+        public async Task<IEnumerable<Prato>> Paginacao(PaginationParameter paginationParameter, CancellationToken cancellationToken = default)
         {
-            return await _pratoRepository.ListarPagina(paginationParameter);
+            return await _pratoRepository.ListarPagina(paginationParameter, cancellationToken);
         }
 
-        public async Task<int> TotalRegistros()
+        public async Task<int> TotalRegistros(CancellationToken cancellationToken = default)
         {
-            return await _pratoRepository.Contar();
+            return await _pratoRepository.Contar(cancellationToken);
         }
 
         public void Dispose()

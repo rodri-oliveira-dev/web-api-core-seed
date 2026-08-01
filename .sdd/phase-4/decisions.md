@@ -26,3 +26,7 @@
 | D022 | Nao adicionar transacoes explicitas no Prompt 04. | Accepted | Um unico `SaveChangesAsync` por caso de uso ja e atomico para o provider relacional usado; transacoes explicitas seriam redundantes no estado atual. |
 | D023 | Manter `ApplicationDbContext` de Identity fora da Unit of Work do sample. | Accepted | Identity possui contexto e stores proprios, e nao ha fluxo atual que grave Identity e SampleRestaurant no mesmo caso de uso. |
 | D024 | Nao integrar domain events ao commit no Prompt 04. | Accepted | Nao existem domain events, interceptors ou outbox no codigo ativo; introduzir isso seria escopo novo. |
+| D025 | Usar `CancellationToken cancellationToken` como ultimo parametro em contratos internos do sample. | Accepted | A convencao torna a propagacao explicita, preserva a origem HTTP e evita esconder token em estado global. |
+| D026 | Manter token com default `default` em portas internas e implementacoes. | Accepted | Reduz churn em callers nao HTTP e testes legados, enquanto controllers e novos fluxos cancelaveis passam token explicitamente. |
+| D027 | Nao transformar `OperationCanceledException` em Problem Details 500 nem log de erro inesperado. | Accepted | Cancelamento cooperativo e comportamento esperado quando o cliente encerra a request ou a operacao e cancelada. |
+| D028 | Registrar APIs de Identity usadas em Auth como sem suporte direto a token nesta etapa. | Accepted | `UserManager` e `SignInManager` expõem os metodos usados sem `CancellationToken`; adaptar stores de Identity seria escopo novo. |

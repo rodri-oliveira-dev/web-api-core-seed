@@ -337,7 +337,8 @@ namespace WebApiCoreSeed.Api.Configuration
                 new
                 {
                     status = report.Status.ToString()
-                });
+                },
+                cancellationToken: context.RequestAborted);
         }
 
         private static async System.Threading.Tasks.Task WriteDetailedHealthResponse(HttpContext context, HealthReport report)
@@ -355,7 +356,8 @@ namespace WebApiCoreSeed.Api.Configuration
                             status = entry.Value.Status.ToString(),
                             description = entry.Value.Description
                         })
-                });
+                },
+                cancellationToken: context.RequestAborted);
         }
 
         private static IServiceCollection AddApiResponseCompression(this IServiceCollection services)

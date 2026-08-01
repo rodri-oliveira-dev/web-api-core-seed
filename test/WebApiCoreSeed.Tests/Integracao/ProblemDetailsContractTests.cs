@@ -9,6 +9,7 @@ using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
@@ -106,6 +107,29 @@ namespace WebApiCoreSeed.Tests.Integracao
             Assert.DoesNotContain("sensitive-sql", body, StringComparison.OrdinalIgnoreCase);
             Assert.DoesNotContain("stack", body, StringComparison.OrdinalIgnoreCase);
             Assert.DoesNotContain("connection string", body, StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public async Task RequisicaoCanceladaNaoDeveRetornarProblemDetails500()
+        {
+            var probe = new CancellationProbe();
+            using var factory = new WebApiCoreSeedApiFactory(services =>
+            {
+                services.AddSingleton(probe);
+                services.RemoveAll<IPratoRepository>();
+                services.AddScoped<IPratoRepository, BlockingPratoRepository>();
+            });
+            using var client = factory.CreateApiClient();
+            using var cancellationTokenSource = new CancellationTokenSource();
+
+            var request = client.GetAsync("/api/v1/Pratos?pageNumber=1&pageSize=10", cancellationTokenSource.Token);
+            await probe.Started.WaitAsync(TimeSpan.FromSeconds(5));
+
+            Assert.True(probe.TokenCanBeCanceled);
+
+            cancellationTokenSource.Cancel();
+
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => request);
         }
 
         [Fact]
@@ -423,19 +447,19 @@ namespace WebApiCoreSeed.Tests.Integracao
 
         private sealed class FakePratoRepository : IPratoRepository
         {
-            public Task Adicionar(Prato prato) => Task.CompletedTask;
+            public Task Adicionar(Prato prato, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
-            public Task Atualizar(Prato prato) => Task.CompletedTask;
+            public Task Atualizar(Prato prato, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
-            public Task RemoverPorId(Guid id) => Task.CompletedTask;
+            public Task RemoverPorId(Guid id, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
-            public Task<Prato> ObterPorId(Guid id) => Task.FromResult<Prato>(null);
+            public Task<Prato> ObterPorId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult<Prato>(null);
 
-            public Task<bool> ExisteComId(Guid id) => Task.FromResult(false);
+            public Task<bool> ExisteComId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult(false);
 
-            public Task<IEnumerable<Prato>> ListarPagina(PaginationParameter paginationParameter) => Task.FromResult<IEnumerable<Prato>>(Array.Empty<Prato>());
+            public Task<IEnumerable<Prato>> ListarPagina(PaginationParameter paginationParameter, CancellationToken cancellationToken = default) => Task.FromResult<IEnumerable<Prato>>(Array.Empty<Prato>());
 
-            public Task<int> Contar() => Task.FromResult(0);
+            public Task<int> Contar(CancellationToken cancellationToken = default) => Task.FromResult(0);
 
             public void Dispose()
             {
@@ -444,13 +468,13 @@ namespace WebApiCoreSeed.Tests.Integracao
 
         private sealed class FakeMesaRepository : IMesaRepository
         {
-            public Task Adicionar(Mesa mesa) => Task.CompletedTask;
+            public Task Adicionar(Mesa mesa, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
-            public Task Atualizar(Mesa mesa) => Task.CompletedTask;
+            public Task Atualizar(Mesa mesa, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
-            public Task RemoverPorId(Guid id) => Task.CompletedTask;
+            public Task RemoverPorId(Guid id, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
-            public Task<Mesa> ObterPorId(Guid id) => Task.FromResult<Mesa>(null);
+            public Task<Mesa> ObterPorId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult<Mesa>(null);
 
             public void Dispose()
             {
@@ -459,19 +483,19 @@ namespace WebApiCoreSeed.Tests.Integracao
 
         private sealed class ThrowingPratoRepository : IPratoRepository
         {
-            public Task Adicionar(Prato prato) => Task.FromException(CreateException());
+            public Task Adicionar(Prato prato, CancellationToken cancellationToken = default) => Task.FromException(CreateException());
 
-            public Task Atualizar(Prato prato) => Task.FromException(CreateException());
+            public Task Atualizar(Prato prato, CancellationToken cancellationToken = default) => Task.FromException(CreateException());
 
-            public Task RemoverPorId(Guid id) => Task.FromException(CreateException());
+            public Task RemoverPorId(Guid id, CancellationToken cancellationToken = default) => Task.FromException(CreateException());
 
-            public Task<Prato> ObterPorId(Guid id) => Task.FromException<Prato>(CreateException());
+            public Task<Prato> ObterPorId(Guid id, CancellationToken cancellationToken = default) => Task.FromException<Prato>(CreateException());
 
-            public Task<bool> ExisteComId(Guid id) => Task.FromException<bool>(CreateException());
+            public Task<bool> ExisteComId(Guid id, CancellationToken cancellationToken = default) => Task.FromException<bool>(CreateException());
 
-            public Task<IEnumerable<Prato>> ListarPagina(PaginationParameter paginationParameter) => Task.FromException<IEnumerable<Prato>>(CreateException());
+            public Task<IEnumerable<Prato>> ListarPagina(PaginationParameter paginationParameter, CancellationToken cancellationToken = default) => Task.FromException<IEnumerable<Prato>>(CreateException());
 
-            public Task<int> Contar() => Task.FromException<int>(CreateException());
+            public Task<int> Contar(CancellationToken cancellationToken = default) => Task.FromException<int>(CreateException());
 
             public void Dispose()
             {
@@ -480,6 +504,55 @@ namespace WebApiCoreSeed.Tests.Integracao
             private static InvalidOperationException CreateException()
             {
                 return new InvalidOperationException("sensitive-sql connection string stack token");
+            }
+        }
+
+        private sealed class BlockingPratoRepository : IPratoRepository
+        {
+            private readonly CancellationProbe _probe;
+
+            public BlockingPratoRepository(CancellationProbe probe)
+            {
+                _probe = probe;
+            }
+
+            public Task Adicionar(Prato prato, CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+            public Task Atualizar(Prato prato, CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+            public Task RemoverPorId(Guid id, CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+            public Task<Prato> ObterPorId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult<Prato>(null);
+
+            public Task<bool> ExisteComId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult(false);
+
+            public async Task<IEnumerable<Prato>> ListarPagina(PaginationParameter paginationParameter, CancellationToken cancellationToken = default)
+            {
+                _probe.MarkStarted(cancellationToken);
+                await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken);
+
+                return Array.Empty<Prato>();
+            }
+
+            public Task<int> Contar(CancellationToken cancellationToken = default) => Task.FromResult(0);
+
+            public void Dispose()
+            {
+            }
+        }
+
+        private sealed class CancellationProbe
+        {
+            private readonly TaskCompletionSource<bool> _started = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+            public Task Started => _started.Task;
+
+            public bool TokenCanBeCanceled { get; private set; }
+
+            public void MarkStarted(CancellationToken cancellationToken)
+            {
+                TokenCanBeCanceled = cancellationToken.CanBeCanceled;
+                _started.TrySetResult(true);
             }
         }
     }

@@ -5,6 +5,7 @@ using WebApiCoreSeed.SampleRestaurant.Interfaces.Repository;
 using WebApiCoreSeed.SampleRestaurant.Models;
 using WebApiCoreSeed.SampleRestaurant.Models.Validations;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace WebApiCoreSeed.SampleRestaurant.Services
@@ -22,28 +23,34 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Adicionar(Atendente atendente)
+        public async Task<bool> Adicionar(Atendente atendente, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (!ExecutarValidacao(new AtendenteValidation(), atendente)) return false;
 
-            await _atendenteRepository.Adicionar(atendente);
-            await _unitOfWork.CommitAsync();
+            await _atendenteRepository.Adicionar(atendente, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
 
-        public async Task<bool> Atualizar(Atendente atendente)
+        public async Task<bool> Atualizar(Atendente atendente, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (!ExecutarValidacao(new AtendenteValidation(), atendente)) return false;
 
-            await _atendenteRepository.Atualizar(atendente);
-            await _unitOfWork.CommitAsync();
+            await _atendenteRepository.Atualizar(atendente, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
 
-        public async Task<bool> Remover(Guid id)
+        public async Task<bool> Remover(Guid id, CancellationToken cancellationToken = default)
         {
-            await _atendenteRepository.RemoverPorId(id);
-            await _unitOfWork.CommitAsync();
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await _atendenteRepository.RemoverPorId(id, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
 

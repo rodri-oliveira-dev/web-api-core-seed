@@ -42,7 +42,7 @@ namespace WebApiCoreSeed.Api.Middlewares
                 log.Write(level, MessageTemplate, httpContext.Request.Method, GetPath(httpContext), statusCode, elapsedMs);
             }
             // Never caught, because `LogException()` returns false.
-            catch (Exception ex) when (LogException(httpContext, GetElapsedMilliseconds(start, Stopwatch.GetTimestamp()), ex)) { }
+            catch (Exception ex) when (ex is not OperationCanceledException && LogException(httpContext, GetElapsedMilliseconds(start, Stopwatch.GetTimestamp()), ex)) { }
         }
 
         static bool LogException(HttpContext httpContext, double elapsedMs, Exception ex)

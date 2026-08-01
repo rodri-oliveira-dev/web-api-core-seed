@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using WebApiCoreSeed.SampleRestaurant.Models;
 
@@ -6,9 +7,9 @@ namespace WebApiCoreSeed.SampleRestaurant.Intefaces.Service
 {
     public interface IPedidoService : IDisposable
     {
-        Task<bool> Adicionar(Pedido pedido);
-        Task<bool> Atualizar(Pedido pedido);
-        Task<bool> Remover(Guid id);
+        Task<bool> Adicionar(Pedido pedido, CancellationToken cancellationToken = default);
+        Task<bool> Atualizar(Pedido pedido, CancellationToken cancellationToken = default);
+        Task<bool> Remover(Guid id, CancellationToken cancellationToken = default);
 
     }
 }

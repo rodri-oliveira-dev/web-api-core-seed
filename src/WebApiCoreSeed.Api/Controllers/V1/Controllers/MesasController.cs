@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Asp.Versioning;
 using AutoMapper;
@@ -40,6 +41,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// Método responsavel pela obtenção da Mesa
         /// </summary>
         /// <param name="id">ID de identificação do objeto a ser pesquisado</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisição.</param>
         /// <returns></returns>
         /// <response code="200">Retorna o objeto referente a ID informada</response>
         /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
@@ -49,9 +51,9 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         [ClaimsAuthorize("Mesas")]
         [ProducesResponseType(typeof(MesaViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<MesaViewModel>> ObterPorId(Guid id)
+        public async Task<ActionResult<MesaViewModel>> ObterPorId(Guid id, CancellationToken cancellationToken)
         {
-            var mesaViewModel = await ObterPrato(id);
+            var mesaViewModel = await ObterMesa(id, cancellationToken);
 
             if (mesaViewModel == null) return CustomResponse(tipoAcao: ETipoAcao.NaoEncontrado);
 
@@ -62,6 +64,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// Cadastra o novo Mesa no sistema.
         /// </summary>
         /// <param name="mesaViewModel">Mesa a ser cadastrado</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisição.</param>
         /// <returns></returns>
         /// <response code="201">Retorna o objeto referente a ID informada</response>
         /// <response code="400">Não foi possivel executar a ação solicitada</response>
@@ -71,11 +74,11 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         [ClaimsAuthorize("Mesas")]
         [ProducesResponseType(typeof(MesaViewModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<MesaViewModel>> Adicionar(MesaViewModel mesaViewModel)
+        public async Task<ActionResult<MesaViewModel>> Adicionar(MesaViewModel mesaViewModel, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState, ETipoAcao.ModeloInvalido);
 
-            await _mesaService.Adicionar(_mapper.Map<Mesa>(mesaViewModel));
+            await _mesaService.Adicionar(_mapper.Map<Mesa>(mesaViewModel), cancellationToken);
 
             return CustomResponse(mesaViewModel, ETipoAcao.Adicionado);
         }
@@ -85,6 +88,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// </summary>
         /// <param name="id">ID de identificação do Mesa a ser atualiado</param>
         /// <param name="mesaViewModel">Mesa a ser atualizado</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisição.</param>
         /// <returns></returns>
         /// <response code="204">Objeto atualizado com sucesso</response>
         /// <response code="400">Não foi possivel executar a ação solicitada</response>
@@ -95,7 +99,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         [ClaimsAuthorize("Mesas")]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Atualizar(Guid id, MesaViewModel mesaViewModel)
+        public async Task<IActionResult> Atualizar(Guid id, MesaViewModel mesaViewModel, CancellationToken cancellationToken)
         {
             if (id != mesaViewModel.Id)
             {
@@ -103,7 +107,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
                 return CustomResponse(mesaViewModel, ETipoAcao.ModeloInvalido);
             }
 
-            var mesaAtualizada = await ObterPrato(id);
+            var mesaAtualizada = await ObterMesa(id, cancellationToken);
 
             if (mesaAtualizada == null) return CustomResponse(ModelState, ETipoAcao.NaoEncontrado);
 
@@ -113,7 +117,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
             mesaAtualizada.Ativo = mesaViewModel.Ativo;
             mesaAtualizada.LocalizacaoMesa = mesaAtualizada.LocalizacaoMesa;
 
-            await _mesaService.Atualizar(_mapper.Map<Mesa>(mesaAtualizada));
+            await _mesaService.Atualizar(_mapper.Map<Mesa>(mesaAtualizada), cancellationToken);
 
             return CustomResponse(mesaViewModel, ETipoAcao.Atualizado);
         }
@@ -122,6 +126,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// Exclui o Mesa do sistema.
         /// </summary>
         /// <param name="id">ID de identificação do Mesa a ser atualiado</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisição.</param>
         /// <returns></returns>
         /// <response code="204">Objeto excluido com sucesso</response>
         /// <response code="400">Não foi possivel executar a ação solicitada</response>
@@ -133,20 +138,20 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<MesaViewModel>> Excluir(Guid id)
+        public async Task<ActionResult<MesaViewModel>> Excluir(Guid id, CancellationToken cancellationToken)
         {
-            var mesa = await ObterPrato(id);
+            var mesa = await ObterMesa(id, cancellationToken);
 
             if (mesa == null) return CustomResponse(null, ETipoAcao.NaoEncontrado);
 
-            await _mesaService.Remover(id);
+            await _mesaService.Remover(id, cancellationToken);
 
             return CustomResponse(mesa, ETipoAcao.Excluido);
         }
 
-        private async Task<MesaViewModel> ObterPrato(Guid id)
+        private async Task<MesaViewModel> ObterMesa(Guid id, CancellationToken cancellationToken)
         {
-            return _mapper.Map<MesaViewModel>(await _mesaService.ObterPorId(id));
+            return _mapper.Map<MesaViewModel>(await _mesaService.ObterPorId(id, cancellationToken));
         }
     }
 }

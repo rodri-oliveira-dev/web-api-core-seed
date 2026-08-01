@@ -165,6 +165,31 @@ public sealed class SqlServerIntegrationTests
         Assert.False(pedidoExists);
     }
 
+    [Fact(DisplayName = "Unit of Work com commit cancelado nao persiste alteracao")]
+    public async Task UnitOfWorkQuandoCommitCanceladoNaoDevePersistir()
+    {
+        await _factory.ResetStateAsync();
+        var mesa = TestData.CreateMesa("UOW-CANCEL");
+
+        using (var scope = _factory.Services.CreateScope())
+        {
+            var repository = scope.ServiceProvider.GetRequiredService<IMesaRepository>();
+            var unitOfWork = scope.ServiceProvider.GetRequiredService<ISampleRestaurantUnitOfWork>();
+            using var cancellationTokenSource = new CancellationTokenSource();
+
+            await repository.Adicionar(mesa);
+            cancellationTokenSource.Cancel();
+
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+                unitOfWork.CommitAsync(cancellationTokenSource.Token));
+        }
+
+        var exists = await _factory.WithDomainContextAsync(context =>
+            context.Mesas.AnyAsync(item => item.Id == mesa.Id));
+
+        Assert.False(exists);
+    }
+
     [Fact(DisplayName = "Constraint de chave estrangeira e aplicada pelo SQL Server")]
     public async Task PedidoQuandoReferenciasNaoExistemDeveFalharPorConstraint()
     {

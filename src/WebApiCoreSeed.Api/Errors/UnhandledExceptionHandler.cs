@@ -22,6 +22,11 @@ namespace WebApiCoreSeed.Api.Errors
 
         public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
         {
+            if (exception is OperationCanceledException)
+            {
+                return false;
+            }
+
             _logger.LogError(exception, "Unhandled exception while handling request.");
             httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
 

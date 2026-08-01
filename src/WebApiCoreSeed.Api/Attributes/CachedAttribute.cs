@@ -37,9 +37,10 @@ namespace WebApiCoreSeed.Api.Attributes
             }
 
             var cacheService = context.HttpContext.RequestServices.GetRequiredService<IResponseCacheService>();
+            var cancellationToken = context.HttpContext.RequestAborted;
 
             var cacheKey = GenerateCacheKeyFromRequest(context.HttpContext.Request);
-            var cachedResponse = await cacheService.GetCachedResponseAsync(cacheKey);
+            var cachedResponse = await cacheService.GetCachedResponseAsync(cacheKey, cancellationToken);
 
             if (!string.IsNullOrEmpty(cachedResponse))
             {
@@ -57,7 +58,7 @@ namespace WebApiCoreSeed.Api.Attributes
 
             if (executedContext.Result is ObjectResult okObjectResult)
             {
-                await cacheService.CacheResponseAsync(cacheKey, okObjectResult.Value, TimeSpan.FromSeconds(_timeToLiveSeconds));
+                await cacheService.CacheResponseAsync(cacheKey, okObjectResult.Value, TimeSpan.FromSeconds(_timeToLiveSeconds), cancellationToken);
             }
         }
 

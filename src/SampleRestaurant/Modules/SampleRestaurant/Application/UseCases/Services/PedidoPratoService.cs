@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using WebApiCoreSeed.SampleRestaurant.Intefaces;
 using WebApiCoreSeed.SampleRestaurant.Intefaces.Service;
@@ -14,7 +15,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
         private readonly IPedidoPratoRepository _fornecedorRepository;
         private readonly ISampleRestaurantUnitOfWork _unitOfWork;
 
-        public PedidoPratoService(IPedidoPratoRepository fornecedorRepository, 
+        public PedidoPratoService(IPedidoPratoRepository fornecedorRepository,
                                  ISampleRestaurantUnitOfWork unitOfWork,
                                  INotificador notificador) : base(notificador)
         {
@@ -22,28 +23,34 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Adicionar(PedidoPrato pedidoPrato)
+        public async Task<bool> Adicionar(PedidoPrato pedidoPrato, CancellationToken cancellationToken = default)
         {
-            if (!ExecutarValidacao(new PedidoPratoValidation(), pedidoPrato) ) return false;
+            cancellationToken.ThrowIfCancellationRequested();
 
-            await _fornecedorRepository.Adicionar(pedidoPrato);
-            await _unitOfWork.CommitAsync();
-            return true;
-        }
-
-        public async Task<bool> Atualizar(PedidoPrato pedidoPrato)
-        {
             if (!ExecutarValidacao(new PedidoPratoValidation(), pedidoPrato)) return false;
 
-            await _fornecedorRepository.Atualizar(pedidoPrato);
-            await _unitOfWork.CommitAsync();
+            await _fornecedorRepository.Adicionar(pedidoPrato, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
 
-        public async Task<bool> Remover(Guid id)
+        public async Task<bool> Atualizar(PedidoPrato pedidoPrato, CancellationToken cancellationToken = default)
         {
-            await _fornecedorRepository.RemoverPorId(id);
-            await _unitOfWork.CommitAsync();
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (!ExecutarValidacao(new PedidoPratoValidation(), pedidoPrato)) return false;
+
+            await _fornecedorRepository.Atualizar(pedidoPrato, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
+            return true;
+        }
+
+        public async Task<bool> Remover(Guid id, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await _fornecedorRepository.RemoverPorId(id, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
 

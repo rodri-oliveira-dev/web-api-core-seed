@@ -19,6 +19,13 @@ var documents = args.Length == 0
     }
     : ParseDocuments(args);
 
+using var cancellationTokenSource = new CancellationTokenSource();
+Console.CancelKeyPress += (_, eventArgs) =>
+{
+    eventArgs.Cancel = true;
+    cancellationTokenSource.Cancel();
+};
+
 using var factory = new OpenApiFactory();
 using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
 {
@@ -28,7 +35,7 @@ using var client = factory.CreateClient(new WebApplicationFactoryClientOptions
 
 foreach (var document in documents)
 {
-    using var response = await client.GetAsync(document.Key);
+    using var response = await client.GetAsync(document.Key, cancellationTokenSource.Token);
     response.EnsureSuccessStatusCode();
 
     var outputPath = Path.GetFullPath(document.Value);
@@ -39,7 +46,7 @@ foreach (var document in documents)
     }
 
     await using var output = File.Create(outputPath);
-    await response.Content.CopyToAsync(output);
+    await response.Content.CopyToAsync(output, cancellationTokenSource.Token);
     Console.WriteLine($"{document.Key} -> {Path.GetRelativePath(Directory.GetCurrentDirectory(), outputPath)}");
 }
 

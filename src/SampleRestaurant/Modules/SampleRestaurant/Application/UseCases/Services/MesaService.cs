@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using WebApiCoreSeed.SampleRestaurant.Intefaces;
 using WebApiCoreSeed.SampleRestaurant.Intefaces.Service;
@@ -22,34 +23,40 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Adicionar(Mesa mesa)
+        public async Task<bool> Adicionar(Mesa mesa, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (!ExecutarValidacao(new MesaValidation(), mesa)) return false;
 
-            await _fornecedorRepository.Adicionar(mesa);
-            await _unitOfWork.CommitAsync();
+            await _fornecedorRepository.Adicionar(mesa, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
 
-        public async Task<bool> Atualizar(Mesa mesa)
+        public async Task<bool> Atualizar(Mesa mesa, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             if (!ExecutarValidacao(new MesaValidation(), mesa)) return false;
 
-            await _fornecedorRepository.Atualizar(mesa);
-            await _unitOfWork.CommitAsync();
+            await _fornecedorRepository.Atualizar(mesa, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
 
-        public async Task<bool> Remover(Guid id)
+        public async Task<bool> Remover(Guid id, CancellationToken cancellationToken = default)
         {
-            await _fornecedorRepository.RemoverPorId(id);
-            await _unitOfWork.CommitAsync();
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await _fornecedorRepository.RemoverPorId(id, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
 
-        public async Task<Mesa> ObterPorId(Guid id)
+        public async Task<Mesa> ObterPorId(Guid id, CancellationToken cancellationToken = default)
         {
-            return await _fornecedorRepository.ObterPorId(id);
+            return await _fornecedorRepository.ObterPorId(id, cancellationToken);
         }
 
         public void Dispose()

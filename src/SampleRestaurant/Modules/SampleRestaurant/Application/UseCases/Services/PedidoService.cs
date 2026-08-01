@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using WebApiCoreSeed.SampleRestaurant.Intefaces;
 using WebApiCoreSeed.SampleRestaurant.Intefaces.Service;
@@ -14,7 +15,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
         private readonly IPedidoRepository _fornecedorRepository;
         private readonly ISampleRestaurantUnitOfWork _unitOfWork;
 
-        public PedidoService(IPedidoRepository fornecedorRepository, 
+        public PedidoService(IPedidoRepository fornecedorRepository,
                                  ISampleRestaurantUnitOfWork unitOfWork,
                                  INotificador notificador) : base(notificador)
         {
@@ -22,28 +23,34 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Adicionar(Pedido pedido)
+        public async Task<bool> Adicionar(Pedido pedido, CancellationToken cancellationToken = default)
         {
-            if (!ExecutarValidacao(new PedidoValidation(), pedido) ) return false;
+            cancellationToken.ThrowIfCancellationRequested();
 
-            await _fornecedorRepository.Adicionar(pedido);
-            await _unitOfWork.CommitAsync();
-            return true;
-        }
-
-        public async Task<bool> Atualizar(Pedido pedido)
-        {
             if (!ExecutarValidacao(new PedidoValidation(), pedido)) return false;
 
-            await _fornecedorRepository.Atualizar(pedido);
-            await _unitOfWork.CommitAsync();
+            await _fornecedorRepository.Adicionar(pedido, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
 
-        public async Task<bool> Remover(Guid id)
+        public async Task<bool> Atualizar(Pedido pedido, CancellationToken cancellationToken = default)
         {
-            await _fornecedorRepository.RemoverPorId(id);
-            await _unitOfWork.CommitAsync();
+            cancellationToken.ThrowIfCancellationRequested();
+
+            if (!ExecutarValidacao(new PedidoValidation(), pedido)) return false;
+
+            await _fornecedorRepository.Atualizar(pedido, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
+            return true;
+        }
+
+        public async Task<bool> Remover(Guid id, CancellationToken cancellationToken = default)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            await _fornecedorRepository.RemoverPorId(id, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
 

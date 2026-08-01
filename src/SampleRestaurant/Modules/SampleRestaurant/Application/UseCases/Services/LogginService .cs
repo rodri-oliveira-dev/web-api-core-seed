@@ -1,3 +1,4 @@
+using System.Threading;
 using System.Threading.Tasks;
 using WebApiCoreSeed.SampleRestaurant.Intefaces;
 using WebApiCoreSeed.SampleRestaurant.Intefaces.Service;
@@ -13,7 +14,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
         private readonly ILogginRepository _logginRepository;
         private readonly ISampleRestaurantUnitOfWork _unitOfWork;
 
-        public LogginService(ILogginRepository logginRepository, 
+        public LogginService(ILogginRepository logginRepository,
                                  ISampleRestaurantUnitOfWork unitOfWork,
                                  INotificador notificador) : base(notificador)
         {
@@ -21,12 +22,14 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Adicionar(LogginEntity mesa)
+        public async Task<bool> Adicionar(LogginEntity mesa, CancellationToken cancellationToken = default)
         {
-            if (!ExecutarValidacao(new LogginValidation(), mesa) ) return false;
+            cancellationToken.ThrowIfCancellationRequested();
 
-            await _logginRepository.Registrar(mesa);
-            await _unitOfWork.CommitAsync();
+            if (!ExecutarValidacao(new LogginValidation(), mesa)) return false;
+
+            await _logginRepository.Registrar(mesa, cancellationToken);
+            await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }
 

@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using WebApiCoreSeed.SampleRestaurant.Infrastructure.Context;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Repository;
@@ -15,27 +16,30 @@ namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Repository
             _context = context;
         }
 
-        public Task Adicionar(Mesa mesa)
+        public Task Adicionar(Mesa mesa, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             _context.Mesas.Add(mesa);
             return Task.CompletedTask;
         }
 
-        public Task Atualizar(Mesa mesa)
+        public Task Atualizar(Mesa mesa, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             _context.Mesas.Update(mesa);
             return Task.CompletedTask;
         }
 
-        public Task RemoverPorId(Guid id)
+        public Task RemoverPorId(Guid id, CancellationToken cancellationToken = default)
         {
+            cancellationToken.ThrowIfCancellationRequested();
             _context.Mesas.Remove(new Mesa { Id = id });
             return Task.CompletedTask;
         }
 
-        public async Task<Mesa> ObterPorId(Guid id)
+        public async Task<Mesa> ObterPorId(Guid id, CancellationToken cancellationToken = default)
         {
-            return await _context.Mesas.FindAsync(id);
+            return await _context.Mesas.FindAsync(new object[] { id }, cancellationToken);
         }
 
         public void Dispose()

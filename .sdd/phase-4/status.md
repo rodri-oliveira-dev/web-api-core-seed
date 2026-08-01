@@ -6,7 +6,7 @@
 | 02 - Separacao do dominio de exemplo | concluido |
 | 03 - Portas de persistencia | concluido |
 | 04 - Unit of Work | concluido |
-| 05 - CancellationToken | pendente |
+| 05 - CancellationToken | concluido |
 | 06 - Migrations na infraestrutura | pendente |
 | 07 - Paginacao | pendente |
 
@@ -78,6 +78,25 @@
 - Testes unitarios/leves cobrem commit unico, ausencia de commit em validacao invalida e propagacao de excecao de commit.
 - Testes de integracao com SQL Server real cobrem criacao, atualizacao, ausencia de persistencia sem commit e rollback atomico quando o commit falha.
 - Smoke HTTP de escrita de `Mesa` adicionado.
+- Build/test final: passou.
+- OpenAPI regenerado e sem diff de contrato.
+- Push: nao realizado.
+
+## Resultado do prompt 05
+
+- Convencao adotada: `CancellationToken cancellationToken` como ultimo parametro.
+- Controllers `PratosController` e `MesasController` recebem token por action binding e propagam para helpers e services.
+- Portas de entrada e saida do modulo `SampleRestaurant` passaram a expor token explicito.
+- Services/casos de uso propagam token para repositories e Unit of Work.
+- Repositories propagam token para EF Core em `FindAsync`, `AnyAsync`, `ToListAsync` e `CountAsync`.
+- Unit of Work preserva `CommitAsync(CancellationToken cancellationToken = default)` e repassa ao `SampleRestaurantDbContext.SaveChangesAsync`.
+- `SampleRestaurantDbContext.SaveChangesAsync` usa default `default` e delega ao EF Core com token.
+- Cache Redis via `IDistributedCache` recebe `RequestAborted` pelo `CachedAttribute`.
+- Health response writers usam `HttpContext.RequestAborted` na serializacao JSON.
+- OpenAPI generator usa token cancelavel por Ctrl+C em `HttpClient.GetAsync` e `CopyToAsync`.
+- `SerilogMiddleware` e `UnhandledExceptionHandler` nao classificam `OperationCanceledException` como erro inesperado.
+- APIs de Identity usadas em Auth nao expõem token diretamente; limitacao registrada.
+- Testes adicionados: token ja cancelado, cancelamento durante operacao controlada, ausencia de commit apos cancelamento, token recebido pelo adaptador HTTP e commit cancelado sem persistencia.
 - Build/test final: passou.
 - OpenAPI regenerado e sem diff de contrato.
 - Push: nao realizado.

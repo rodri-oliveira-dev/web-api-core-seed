@@ -17,6 +17,7 @@ using WebApiCoreSeed.SampleRestaurant.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using WebApiCoreSeed.Api.Results;
 
@@ -51,6 +52,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// Método responsavel pela obtenção de lista de Pratos
         /// </summary>
         /// <param name="paginationParameter">Parametros de paginação da lista</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisição.</param>
         /// <returns></returns>
         /// <response code="200">Retorna o objeto referente a ID informada</response>
         /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
@@ -65,9 +67,11 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status404NotFound)]
         [Cached(20)]
         [ResponseCache(Duration = 10, Location = ResponseCacheLocation.Any)]
-        public async Task<ActionResult<PaginationResult<PratoViewModel>>> ObterLista([FromQuery] PaginationParameter paginationParameter)
+        public async Task<ActionResult<PaginationResult<PratoViewModel>>> ObterLista(
+            [FromQuery] PaginationParameter paginationParameter,
+            CancellationToken cancellationToken)
         {
-            var pratosViewModel = await ObterPratos(paginationParameter);
+            var pratosViewModel = await ObterPratos(paginationParameter, cancellationToken);
 
             if (pratosViewModel == null) return CustomResponse(tipoAcao: ETipoAcao.NaoEncontrado);
             if (_user.IsAuthenticated())
@@ -83,6 +87,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// Método responsavel pela obtenção do Prato
         /// </summary>
         /// <param name="id">ID de identificação do objeto a ser pesquisado</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisição.</param>
         /// <returns></returns>
         /// <response code="200">Retorna o objeto referente a ID informada</response>
         /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
@@ -93,9 +98,9 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         [ClaimsAuthorize("Pratos")]
         [ProducesResponseType(typeof(PratoViewModel), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<PratoViewModel>> ObterPorId(Guid id)
+        public async Task<ActionResult<PratoViewModel>> ObterPorId(Guid id, CancellationToken cancellationToken)
         {
-            var pratoViewModel = await ObterPrato(id);
+            var pratoViewModel = await ObterPrato(id, cancellationToken);
 
             if (pratoViewModel == null) return CustomResponse(tipoAcao: ETipoAcao.NaoEncontrado);
 
@@ -106,6 +111,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// Cadastra o novo prato no sistema.
         /// </summary>
         /// <param name="pratoViewModel">Prato a ser cadastrado</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisição.</param>
         /// <returns></returns>
         /// <response code="201">Retorna o objeto referente a ID informada</response>
         /// <response code="400">Não foi possivel executar a ação solicitada</response>
@@ -116,7 +122,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         [ClaimsAuthorize("Pratos")]
         [ProducesResponseType(typeof(PratoViewModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<PratoViewModel>> Adicionar(PratoViewModel pratoViewModel)
+        public async Task<ActionResult<PratoViewModel>> Adicionar(PratoViewModel pratoViewModel, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState, ETipoAcao.ModeloInvalido);
 
@@ -127,7 +133,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
             }
 
             pratoViewModel.Foto = imagemNome;
-            await _pratoService.Adicionar(_mapper.Map<Prato>(pratoViewModel));
+            await _pratoService.Adicionar(_mapper.Map<Prato>(pratoViewModel), cancellationToken);
 
             return CustomResponse(pratoViewModel, ETipoAcao.Adicionado);
         }
@@ -137,6 +143,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// </summary>
         /// <param name="id">ID de identificação do prato a ser atualiado</param>
         /// <param name="pratoViewModel">Prato a ser atualizado</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisição.</param>
         /// <returns></returns>
         /// <response code="204">Objeto atualizado com sucesso</response>
         /// <response code="400">Não foi possivel executar a ação solicitada</response>
@@ -148,7 +155,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         [ClaimsAuthorize("Pratos")]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Atualizar(Guid id, PratoViewModel pratoViewModel)
+        public async Task<IActionResult> Atualizar(Guid id, PratoViewModel pratoViewModel, CancellationToken cancellationToken)
         {
             if (id != pratoViewModel.Id)
             {
@@ -156,7 +163,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
                 return CustomResponse(pratoViewModel, ETipoAcao.ModeloInvalido);
             }
 
-            var pratoAtualizacao = await ObterPrato(id);
+            var pratoAtualizacao = await ObterPrato(id, cancellationToken);
 
             if (pratoAtualizacao == null) return CustomResponse(ModelState, ETipoAcao.NaoEncontrado);
 
@@ -179,7 +186,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
             pratoAtualizacao.Ativo = pratoViewModel.Ativo;
             pratoAtualizacao.TipoPrato = pratoAtualizacao.TipoPrato;
 
-            await _pratoService.Atualizar(_mapper.Map<Prato>(pratoAtualizacao));
+            await _pratoService.Atualizar(_mapper.Map<Prato>(pratoAtualizacao), cancellationToken);
 
             return CustomResponse(pratoViewModel, ETipoAcao.Atualizado);
         }
@@ -188,6 +195,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// Exclui o prato do sistema.
         /// </summary>
         /// <param name="id">ID de identificação do prato a ser atualiado</param>
+        /// <param name="cancellationToken">Token de cancelamento da requisição.</param>
         /// <returns></returns>
         /// <response code="204">Objeto excluido com sucesso</response>
         /// <response code="400">Não foi possivel executar a ação solicitada</response>
@@ -200,13 +208,13 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<PratoViewModel>> Excluir(Guid id)
+        public async Task<ActionResult<PratoViewModel>> Excluir(Guid id, CancellationToken cancellationToken)
         {
-            var prato = await ObterPrato(id);
+            var prato = await ObterPrato(id, cancellationToken);
 
             if (prato == null) return CustomResponse(null, ETipoAcao.NaoEncontrado);
 
-            await _pratoService.Remover(id);
+            await _pratoService.Remover(id, cancellationToken);
 
             return CustomResponse(prato, ETipoAcao.Excluido);
         }
@@ -240,15 +248,15 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
             return true;
         }
 
-        private async Task<PratoViewModel> ObterPrato(Guid id)
+        private async Task<PratoViewModel> ObterPrato(Guid id, CancellationToken cancellationToken)
         {
-            return _mapper.Map<PratoViewModel>(await _pratoService.ObterPorId(id));
+            return _mapper.Map<PratoViewModel>(await _pratoService.ObterPorId(id, cancellationToken));
         }
 
-        private async Task<PaginationResult<PratoViewModel>> ObterPratos(PaginationParameter paginationParameter)
+        private async Task<PaginationResult<PratoViewModel>> ObterPratos(PaginationParameter paginationParameter, CancellationToken cancellationToken)
         {
-            var pratos = _mapper.Map<List<PratoViewModel>>(await _pratoService.Paginacao(paginationParameter));
-            var totalItens = await _pratoService.TotalRegistros();
+            var pratos = _mapper.Map<List<PratoViewModel>>(await _pratoService.Paginacao(paginationParameter, cancellationToken));
+            var totalItens = await _pratoService.TotalRegistros(cancellationToken);
             var totalPaginas = totalItens / paginationParameter.PageSize;
 
             return new PaginationResult<PratoViewModel>

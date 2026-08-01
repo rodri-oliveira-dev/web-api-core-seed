@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Caching.Distributed;
 using WebApiCoreSeed.Api.Services.Interfaces;
@@ -16,7 +17,7 @@ namespace WebApiCoreSeed.Api.Services
             _distributedCache = distributedCache;
         }
 
-        public async Task CacheResponseAsync(string cacheKey, object response, TimeSpan timeTimeLive)
+        public async Task CacheResponseAsync(string cacheKey, object response, TimeSpan timeTimeLive, CancellationToken cancellationToken = default)
         {
             if (response == null)
             {
@@ -31,12 +32,12 @@ namespace WebApiCoreSeed.Api.Services
             await _distributedCache.SetStringAsync(cacheKey, serializedResponse, new DistributedCacheEntryOptions
             {
                 AbsoluteExpirationRelativeToNow = timeTimeLive
-            });
+            }, cancellationToken);
         }
 
-        public async Task<string> GetCachedResponseAsync(string cacheKey)
+        public async Task<string> GetCachedResponseAsync(string cacheKey, CancellationToken cancellationToken = default)
         {
-            var cachedResponse = await _distributedCache.GetStringAsync(cacheKey);
+            var cachedResponse = await _distributedCache.GetStringAsync(cacheKey, cancellationToken);
             return string.IsNullOrEmpty(cachedResponse) ? null : cachedResponse;
         }
     }
