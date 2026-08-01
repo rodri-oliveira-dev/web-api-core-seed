@@ -365,7 +365,7 @@ ba54463 Merge branch 'master' of https://github.com/RodrigoDotNet/web-api-core-s
 - Error found:
 
 ```text
-Erro ao analisar o arquivo de metadados nupkg C:\Users\rodrigooliveira\.nuget\packages\microsoft.netcore.targets\1.1.0\.nupkg.metadata : '0x00' is an invalid start of a value.
+Erro ao analisar o arquivo de metadados nupkg <user-home>\.nuget\packages\microsoft.netcore.targets\1.1.0\.nupkg.metadata : '0x00' is an invalid start of a value.
 ```
 
 - Interpretation: local NuGet package metadata appears corrupt for `microsoft.netcore.targets/1.1.0`.
@@ -380,7 +380,7 @@ Erro ao analisar o arquivo de metadados nupkg C:\Users\rodrigooliveira\.nuget\pa
 
 ```text
 NETSDK1138 warning: target framework 'netcoreapp3.1' is out of support.
-NuGet error: invalid metadata file C:\Users\rodrigooliveira\.nuget\packages\microsoft.netcore.targets\1.1.0\.nupkg.metadata.
+NuGet error: invalid metadata file <user-home>\.nuget\packages\microsoft.netcore.targets\1.1.0\.nupkg.metadata.
 '0x00' is an invalid start of a value.
 ```
 

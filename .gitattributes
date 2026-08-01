@@ -1,0 +1,49 @@
+* text=auto eol=lf
+
+# Source and project files
+*.cs text eol=lf diff=csharp
+*.csproj text eol=lf
+*.sln text eol=lf
+*.slnx text eol=lf
+*.props text eol=lf
+*.targets text eol=lf
+*.globalconfig text eol=lf
+*.editorconfig text eol=lf
+
+# Configuration and documentation
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.xml text eol=lf
+*.config text eol=lf
+*.md text eol=lf
+*.http text eol=lf
+*.sql text eol=lf
+
+# Scripts
+*.sh text eol=lf
+.githooks/* text eol=lf
+*.ps1 text eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+
+# Images and icons
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.svg text eol=lf
+
+# Packages and build outputs
+*.nupkg binary
+*.snupkg binary
+*.dll binary
+*.exe binary
+*.pdb binary
+*.binlog binary
+*.coverage binary
+
+# Generated API baselines are versioned but should remain normalized text.
+docs/openapi/**/*.json text eol=lf

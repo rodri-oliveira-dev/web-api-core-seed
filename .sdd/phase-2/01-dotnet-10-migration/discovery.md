@@ -37,7 +37,7 @@ No `.slnx`, `global.json`, `Directory.Build.props`, `Directory.Packages.props` o
 
 | Command | Exit code | Observed result |
 | --- | ---: | --- |
-| `dotnet restore` | 1 | Failed before migration. SDK emitted `NETSDK1138` for `netcoreapp3.1` and NuGet failed parsing `C:\Users\rodrigooliveira\.nuget\packages\microsoft.netcore.targets\1.1.0\.nupkg.metadata` because it starts with `0x00`. |
+| `dotnet restore` | 1 | Failed before migration. SDK emitted `NETSDK1138` for `netcoreapp3.1` and NuGet failed parsing `<user-home>\.nuget\packages\microsoft.netcore.targets\1.1.0\.nupkg.metadata` because it starts with `0x00`. |
 | `dotnet build --no-restore` | 1 | Failed because assets files were missing for API, Data and test projects; Business built from existing state but still targeted `netcoreapp3.1`. |
 | `dotnet test --no-build` | 0 | No output. Recorded as inconclusive because restore/build had not succeeded. |
 
