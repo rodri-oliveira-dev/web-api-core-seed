@@ -1,12 +1,12 @@
 # Handoff - Phase 4
 
-## Estado final do prompt 02
+## Estado final do prompt 03
 
 - Branch atual: `phase/4-architecture-modernization`.
 - Branch-base: `phase/3-quality-and-safety`.
 - Commit-base da fase: `18af517adab5d21ae58ac9674da411244a5379b9`.
-- Prompt atual: `02 - Separacao do dominio de exemplo` concluido.
-- Commit esperado: `refactor: separate sample domain from reusable seed`.
+- Prompt atual: `03 - Portas de persistencia` concluido.
+- Commit esperado: `refactor: replace generic repository with explicit ports`.
 - Push: nao realizado.
 - PR: nao realizado.
 
@@ -59,33 +59,59 @@
 - Rotas do sample, como `/api/v{version}/Pratos` e `/api/v{version}/Mesas`, permanecem com vocabulário do exemplo.
 - OpenAPI regenerado por `tools/OpenApiGenerator`; titulo atualizado para `Sample Restaurant API`.
 
+## Resultado do prompt 03
+
+- Repositorio generico legado removido do codigo ativo.
+- Implementacao generica legada removida da infraestrutura.
+- Portas criadas/explicitadas:
+  - `IPratoRepository`
+  - `IMesaRepository`
+  - `IAtendenteRepository`
+  - `IPedidoRepository`
+  - `IPedidoPratoRepository`
+  - `ILogginRepository`
+- Queries criadas/explicitadas:
+  - `IPratoRepository.ExisteComId`
+  - `IPratoRepository.ListarPagina`
+  - `IPratoRepository.Contar`
+  - `IPratoRepository.ObterPorId`
+  - `IMesaRepository.ObterPorId`
+- Query generica por predicado arbitrario removida.
+- `IPedidoRepository.ObterPedidoItens` removido por falta de consumidor e por nao incluir itens.
+- `Repository.ObterPorId` que engolia excecoes e retornava `null` foi removido.
+- `Console.WriteLine` de persistencia removido.
+- `PratoService.Adicionar` deixou de bloquear em `.Result` e passou a consultar existencia de forma assincrona.
+
 ## Debitos temporarios
 
-- Repositorio generico permanece como porta de saida temporaria ate o Prompt 3.
 - Unit of Work implicito permanece ate o Prompt 4.
 - CancellationToken ainda nao foi propagado de ponta a ponta; Prompt 5.
 - Migrations de Identity ainda ficam na API; Prompt 6.
 - Migrations do sample permaneceram no projeto de infraestrutura com ajuste de namespace/tipo; mover ownership definitivo fica para o Prompt 6.
 - Paginacao ainda e a implementacao legada; Prompt 7.
+- Transacao/commit: os metodos de escrita dos repositories concretos ainda chamam `SampleRestaurantDbContext.SaveChangesAsync` diretamente. Esse debito e intencional para a proxima issue.
 
 ## Validacao final
 
-- `dotnet restore WebApiCoreSeed.sln`: passou.
-- `dotnet build WebApiCoreSeed.sln --configuration Release --no-restore`: passou com 34 warnings de analyzers ja existentes.
-- `dotnet test WebApiCoreSeed.sln --configuration Release --no-build`: passou, 47 testes em `WebApiCoreSeed.Tests` e 26 em `WebApiCoreSeed.IntegrationTests`.
-- `dotnet test test/WebApiCoreSeed.Tests/WebApiCoreSeed.Tests.csproj --configuration Release --no-build --filter Architecture`: passou, 6 testes.
+- `dotnet restore`: passou.
+- `dotnet build --configuration Release --no-restore`: passou com 21 warnings de analyzers ja existentes na API.
+- `dotnet test --configuration Release --no-build`: passou, 48 testes em `WebApiCoreSeed.Tests` e 26 em `WebApiCoreSeed.IntegrationTests`.
 - `dotnet test test/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj --configuration Release --no-build --filter Category=Integration`: passou, 26 testes.
+- Grep literal da interface generica legada: vazio.
+- Grep literal da implementacao generica legada: vazio.
+- `git grep -n "Expression<Func" -- src test`: vazio.
 - `dotnet run --project tools/OpenApiGenerator/OpenApiGenerator.csproj --configuration Release --no-build`: passou e regenerou `docs/openapi/openapi-v1.json` e `docs/openapi/openapi-v2.json`.
+- `git diff -- docs/openapi/openapi-v1.json docs/openapi/openapi-v2.json`: sem diff de conteudo.
 - Smoke/regressao HTTP: cobertos pelas suites `WebApiCoreSeed.Tests`, `WebApiCoreSeed.IntegrationTests` e pela geracao OpenAPI.
-- `git grep -n -i -E "Datasul|MeuDbContext"`: apenas referencias historicas em `LEGACY.md` e SDD antigo.
+- Validacao SQL Server real e Redis: coberta pela suite de integracao `Category=Integration`; Redis nao foi alterado.
 
 ## Proxima issue
 
-- Proxima issue/prompt: `#14`, iniciando o Prompt 3 da Fase 4.
+- Proxima issue/prompt: `#15`, iniciando o Prompt 4 da Fase 4.
 
 ## Proximos prompts restantes
 
-- `03 - Portas de persistencia`: pendente.
+- `03 - Portas de persistencia`: concluido.
 - `04 - Unit of Work`: pendente.
 - `05 - CancellationToken`: pendente.
 - `06 - Migrations na infraestrutura`: pendente.

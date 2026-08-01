@@ -79,6 +79,27 @@ namespace WebApiCoreSeed.Tests.Arquitetura
             Assert.Empty(repositoryParameters);
         }
 
+        [Fact(DisplayName = "Modulo SampleRestaurant nao declara repositorio generico")]
+        [Trait("Architecture", "ModularHexagonal")]
+        public void SampleRestaurantQuandoTiposAvaliadosNaoDeveDeclararRepositorioGenerico()
+        {
+            var assemblies = new[]
+            {
+                typeof(Entity).Assembly,
+                typeof(SampleRestaurantDbContext).Assembly
+            };
+
+            var genericRepositoryTypes = assemblies
+                .SelectMany(assembly => assembly.GetTypes())
+                .Where(type => type.IsGenericTypeDefinition)
+                .Where(type => string.Equals(type.Name, "IRepository`1", StringComparison.Ordinal)
+                    || string.Equals(type.Name, "Repository`1", StringComparison.Ordinal))
+                .Select(type => type.FullName)
+                .ToArray();
+
+            Assert.Empty(genericRepositoryTypes);
+        }
+
         [Fact(DisplayName = "Controllers de dominio dependem de portas de entrada da aplicacao")]
         [Trait("Architecture", "ModularHexagonal")]
         public void DomainControllersQuandoConstrutoresAvaliadosDevemDependerDeApplicationPorts()

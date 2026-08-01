@@ -4,8 +4,10 @@ using WebApiCoreSeed.SampleRestaurant.Models;
 
 namespace WebApiCoreSeed.SampleRestaurant.Interfaces.Repository
 {
-    public interface IPedidoRepository : IRepository<Pedido>
+    public interface IPedidoRepository : IDisposable
     {
-        Task<Pedido> ObterPedidoItens(Guid id);
+        Task<int> Adicionar(Pedido pedido);
+        Task<int> Atualizar(Pedido pedido);
+        Task<int> RemoverPorId(Guid id);
     }
 }

@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -422,58 +421,57 @@ namespace WebApiCoreSeed.Tests.Integracao
             }
         }
 
-        private abstract class FakeRepository<TEntity> : IRepository<TEntity> where TEntity : Entity
+        private sealed class FakePratoRepository : IPratoRepository
         {
-            public Task<int> Adicionar(TEntity entity) => Task.FromResult(1);
+            public Task<int> Adicionar(Prato prato) => Task.FromResult(1);
 
-            public Task<TEntity> ObterPorId(Guid id) => Task.FromResult<TEntity>(null);
+            public Task<int> Atualizar(Prato prato) => Task.FromResult(1);
 
-            public Task<List<TEntity>> ObterTodos() => Task.FromResult(new List<TEntity>());
+            public Task<int> RemoverPorId(Guid id) => Task.FromResult(1);
 
-            public Task<int> TotalRegistros() => Task.FromResult(0);
+            public Task<Prato> ObterPorId(Guid id) => Task.FromResult<Prato>(null);
 
-            public Task<IEnumerable<TEntity>> Paginacao(PaginationParameter paginationParameter) => Task.FromResult<IEnumerable<TEntity>>(Array.Empty<TEntity>());
+            public Task<bool> ExisteComId(Guid id) => Task.FromResult(false);
 
-            public Task<int> Atualizar(TEntity entity) => Task.FromResult(1);
+            public Task<IEnumerable<Prato>> ListarPagina(PaginationParameter paginationParameter) => Task.FromResult<IEnumerable<Prato>>(Array.Empty<Prato>());
 
-            public Task<int> Remover(Guid id) => Task.FromResult(1);
-
-            public Task<IEnumerable<TEntity>> Buscar(Expression<Func<TEntity, bool>> predicate) => Task.FromResult<IEnumerable<TEntity>>(Array.Empty<TEntity>());
-
-            public Task<int> SaveChanges() => Task.FromResult(1);
+            public Task<int> Contar() => Task.FromResult(0);
 
             public void Dispose()
             {
             }
         }
 
-        private sealed class FakePratoRepository : FakeRepository<Prato>, IPratoRepository
+        private sealed class FakeMesaRepository : IMesaRepository
         {
-        }
+            public Task<int> Adicionar(Mesa mesa) => Task.FromResult(1);
 
-        private sealed class FakeMesaRepository : FakeRepository<Mesa>, IMesaRepository
-        {
+            public Task<int> Atualizar(Mesa mesa) => Task.FromResult(1);
+
+            public Task<int> RemoverPorId(Guid id) => Task.FromResult(1);
+
+            public Task<Mesa> ObterPorId(Guid id) => Task.FromResult<Mesa>(null);
+
+            public void Dispose()
+            {
+            }
         }
 
         private sealed class ThrowingPratoRepository : IPratoRepository
         {
-            public Task<int> Adicionar(Prato entity) => Task.FromException<int>(CreateException());
+            public Task<int> Adicionar(Prato prato) => Task.FromException<int>(CreateException());
+
+            public Task<int> Atualizar(Prato prato) => Task.FromException<int>(CreateException());
+
+            public Task<int> RemoverPorId(Guid id) => Task.FromException<int>(CreateException());
 
             public Task<Prato> ObterPorId(Guid id) => Task.FromException<Prato>(CreateException());
 
-            public Task<List<Prato>> ObterTodos() => Task.FromException<List<Prato>>(CreateException());
+            public Task<bool> ExisteComId(Guid id) => Task.FromException<bool>(CreateException());
 
-            public Task<int> TotalRegistros() => Task.FromException<int>(CreateException());
+            public Task<IEnumerable<Prato>> ListarPagina(PaginationParameter paginationParameter) => Task.FromException<IEnumerable<Prato>>(CreateException());
 
-            public Task<IEnumerable<Prato>> Paginacao(PaginationParameter paginationParameter) => Task.FromException<IEnumerable<Prato>>(CreateException());
-
-            public Task<int> Atualizar(Prato entity) => Task.FromException<int>(CreateException());
-
-            public Task<int> Remover(Guid id) => Task.FromException<int>(CreateException());
-
-            public Task<IEnumerable<Prato>> Buscar(Expression<Func<Prato, bool>> predicate) => Task.FromException<IEnumerable<Prato>>(CreateException());
-
-            public Task<int> SaveChanges() => Task.FromException<int>(CreateException());
+            public Task<int> Contar() => Task.FromException<int>(CreateException());
 
             public void Dispose()
             {

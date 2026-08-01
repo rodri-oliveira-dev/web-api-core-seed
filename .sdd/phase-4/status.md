@@ -4,7 +4,7 @@
 | --- | --- |
 | 01 - Arquitetura modular Hexagonal | concluido |
 | 02 - Separacao do dominio de exemplo | concluido |
-| 03 - Portas de persistencia | pendente |
+| 03 - Portas de persistencia | concluido |
 | 04 - Unit of Work | pendente |
 | 05 - CancellationToken | pendente |
 | 06 - Migrations na infraestrutura | pendente |
@@ -48,4 +48,18 @@
 - Rotas publicas do sample preservadas.
 - OpenAPI regenerado com titulo `Sample Restaurant API`.
 - Build/test final: passou.
+- Push: nao realizado.
+
+## Resultado do prompt 03
+
+- Repositorio generico legado removido do codigo ativo.
+- Portas especificas mantidas para `IPratoRepository`, `IMesaRepository`, `IAtendenteRepository`, `IPedidoRepository`, `IPedidoPratoRepository` e `ILogginRepository`.
+- `Repository` generico removido da infraestrutura.
+- Queries de pratos explicitadas como `ExisteComId`, `ListarPagina` e `Contar`.
+- Consulta por id de pratos e mesas preservada sem engolir excecoes de persistencia.
+- Escrita em console na persistencia removida.
+- `PratoService` deixou de usar `.Result` para consulta de existencia.
+- Teste arquitetural adicionado para impedir repositorio generico no core e na infraestrutura do sample.
+- Build/test final: passou.
+- OpenAPI regenerado e sem diff de contrato.
 - Push: nao realizado.

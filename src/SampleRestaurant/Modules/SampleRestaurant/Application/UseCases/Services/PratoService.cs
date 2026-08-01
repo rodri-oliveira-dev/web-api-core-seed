@@ -27,7 +27,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
         {
             if (!ExecutarValidacao(new PratoValidation(), prato)) return false;
 
-            if (_pratoRepository.ObterPorId(prato.Id).Result != null)
+            if (await _pratoRepository.ExisteComId(prato.Id))
             {
                 _notificador.Handle(new Notificacao($"Já existe um objeto cadastrado com a ID {prato.Id}."));
                 return false;
@@ -47,7 +47,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
 
         public async Task<bool> Remover(Guid id)
         {
-            var excluido = await _pratoRepository.Remover(id);
+            await _pratoRepository.RemoverPorId(id);
             return true;
         }
 
@@ -58,12 +58,12 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
 
         public async Task<IEnumerable<Prato>> Paginacao(PaginationParameter paginationParameter)
         {
-            return await _pratoRepository.Paginacao(paginationParameter);
+            return await _pratoRepository.ListarPagina(paginationParameter);
         }
 
         public async Task<int> TotalRegistros()
         {
-            return await _pratoRepository.TotalRegistros();
+            return await _pratoRepository.Contar();
         }
 
         public void Dispose()

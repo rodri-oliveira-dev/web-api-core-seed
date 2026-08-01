@@ -21,7 +21,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
         {
             if (!ExecutarValidacao(new LogginValidation(), mesa) ) return false;
 
-            await _logginRepository.Adicionar(mesa);
+            await _logginRepository.Registrar(mesa);
             return true;
         }
 

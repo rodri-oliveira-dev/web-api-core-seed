@@ -26,8 +26,13 @@
 - `WebApiCoreSeed.SampleRestaurant` nao referencia assemblies `Microsoft.Extensions.Logging*`.
 - `WebApiCoreSeed.SampleRestaurant.Infrastructure` referencia `WebApiCoreSeed.SampleRestaurant`.
 - `WebApiCoreSeed.Api` referencia `WebApiCoreSeed.SampleRestaurant` e `WebApiCoreSeed.SampleRestaurant.Infrastructure`.
-- Controllers de dominio nao devem injetar interfaces `IRepository<>` nem interfaces cujo nome termine em `Repository`.
+- Controllers de dominio nao devem injetar repositorios genericos nem interfaces cujo nome termine em `Repository`.
+- O modulo `SampleRestaurant` nao deve declarar repositorio generico no core nem na infraestrutura.
+- Portas de persistencia nao devem expor `IQueryable` nem receber predicados arbitrarios `Expression<Func<...>>`.
+- Repositories concretos podem usar `SampleRestaurantDbContext` somente dentro da infraestrutura.
 
 ## Testes implementados
 
 As regras verificaveis desta entrega sao cobertas por `test/WebApiCoreSeed.Tests/Arquitetura/ModularHexagonalArchitectureTest.cs`.
+
+No Prompt 03 foi adicionada verificacao para impedir a declaracao de repositorio generico no core e na infraestrutura do sample.

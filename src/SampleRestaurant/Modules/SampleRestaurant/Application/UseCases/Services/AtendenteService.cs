@@ -36,7 +36,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
 
         public async Task<bool> Remover(Guid id)
         {
-            await _atendenteRepository.Remover(id);
+            await _atendenteRepository.RemoverPorId(id);
             return true;
         }
 

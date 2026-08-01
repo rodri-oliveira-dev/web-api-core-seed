@@ -16,3 +16,8 @@
 | D012 | Renomear `MeuDbContext` para `SampleRestaurantDbContext` mantendo migrations antigas no projeto de infraestrutura do sample. | Accepted | Remove nome legado em codigo ativo e preserva ownership/movimentacao de migrations para o Prompt 6. |
 | D013 | Preservar rotas HTTP de exemplo em portugues, como `/Pratos` e `/Mesas`. | Accepted | Elas pertencem ao contrato do sample; neutraliza-las artificialmente quebraria compatibilidade sem ganho para o seed reutilizavel. |
 | D014 | Renomear a solution ativa para `WebApiCoreSeed.sln`. | Accepted | `RestauranteAPI.sln` carregava nome de negocio no tooling central do seed. |
+| D015 | Remover o repositorio generico legado em vez de criar adaptador temporario. | Accepted | A interface espelhava `DbSet`, expunha predicados arbitrarios e aumentava a superficie sem expressar intencao do dominio. |
+| D016 | Manter portas especificas por entidade persistida ate a modelagem de aggregates ser refinada. | Accepted | O modulo ainda preserva services legados; reduzir a superficie agora evita churn maior antes de Unit of Work e refinamento DDD. |
+| D017 | Manter commit implicito nos metodos de escrita dos repositories concretos ate o Prompt 4. | Accepted | O objetivo deste prompt e remover o generic repository; a fronteira transacional sera tratada separadamente para preservar comportamento observavel. |
+| D018 | Remover `IPedidoRepository.ObterPedidoItens` nesta entrega. | Accepted | O metodo nao tinha consumidor produtivo encontrado e delegava para consulta por id sem carregar itens. |
+| D019 | Manter pagina de pratos sem ordenacao deterministica por enquanto. | Accepted | A paginacao final pertence ao Prompt 7; esta entrega preserva o contrato e comportamento legado. |

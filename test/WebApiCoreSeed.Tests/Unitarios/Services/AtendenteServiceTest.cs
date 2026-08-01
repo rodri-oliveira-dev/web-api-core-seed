@@ -106,7 +106,7 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
         {
             //Arrange
             var id = Guid.Parse("6b0bb7e2-49ca-4b02-bff4-e6fed1007391");
-            _atendenteRepository.Setup(r => r.Remover(id)).ReturnsAsync(1);
+            _atendenteRepository.Setup(r => r.RemoverPorId(id)).ReturnsAsync(1);
             var atendenteService = CriarService();
 
             //Act
@@ -115,7 +115,7 @@ namespace WebApiCoreSeed.Tests.Unitarios.Services
             //Assert
             Assert.True(retorno);
             Assert.False(_notificador.TemNotificacao());
-            _atendenteRepository.Verify(r => r.Remover(id), Times.Once);
+            _atendenteRepository.Verify(r => r.RemoverPorId(id), Times.Once);
             _atendenteRepository.VerifyNoOtherCalls();
         }
 
