@@ -138,7 +138,7 @@ public sealed class ApiContractIntegrationTests
         await _factory.ResetStateAsync();
         using var client = _factory.CreateApiClient();
 
-        var response = await client.GetAsync("/hc");
+        var response = await client.GetAsync("/health/ready");
         var json = await JsonAssertions.ReadJsonAsync(response, HttpStatusCode.OK);
         var results = json.TryGetProperty("results", out var healthResults)
             ? healthResults

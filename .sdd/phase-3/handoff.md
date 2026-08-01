@@ -4,44 +4,44 @@
 
 - Branch atual: `phase/3-quality-and-safety`.
 - Branch-base: `phase/2-dotnet-10-migration`.
-- Prompt atual: `02 - Integration test baseline`.
-- Issue atual: `#12`.
+- Prompt atual: `03 - Security hardening`.
+- Issue atual: `#9`.
 - Status do prompt 01: concluido.
 - Status do prompt 02: concluido.
+- Status do prompt 03: concluido.
 - Commit do prompt 01: `test: strengthen existing unit test suite`.
 - Commit do prompt 02: `test: add API and infrastructure integration tests`.
+- Commit do prompt 03: `fix: harden API security defaults`.
 
-## Resultado do prompt 02
+## Resultado do prompt 03
 
-- Projeto criado: `test/WebApiCoreSeed.IntegrationTests`.
-- Testes adicionados: 18.
-- Fixtures/helpers:
-  - `ApiFactory`
-  - `DatabaseReset`
-  - `AuthenticationHelper`
-  - `JsonAssertions`
-  - `TestData`
-- Containers:
-  - SQL Server `mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04`
-  - Redis `redis:7.4.2-alpine`
-- Migrations:
-  - `ApplicationDbContext`: `20200817223121_InitialCreate`
-  - `MeuDbContext`: `20200817223231_InitialCreate`
-- Isolamento:
-  - collection xUnit `api-integration`
-  - sem paralelismo interno
-  - reset SQL por `DELETE` ordenado
-  - reset Redis por `FLUSHDB`
-  - seeds minimos por teste
-- Traits:
-  - `Category=Integration`
-  - `Category=Container`
-
-## Ajustes relevantes
-
-- `AtendenteMapping` ignora `Email` e `Telefone` para preservar o schema legado versionado nas migrations.
-- `Program` ja era publico; nao foi necessario adicionar `public partial class Program`.
-- O ambiente `Testing` usa variaveis de ambiente temporarias restauradas no teardown para garantir que `AddApiServices` leia as connection strings dos containers.
+- CORS:
+  - `AllowAnyOrigin` removido.
+  - `Cors:AllowedOrigins` controla origins permitidas.
+  - Producao fica fechada quando nenhuma origin e configurada.
+  - `*` e rejeitado como origin literal.
+  - Credenciais seguem desabilitadas por padrao.
+- Forwarded headers:
+  - `ForwardedHeaders:Enabled=false` por padrao.
+  - Quando habilitado, usa apenas `KnownProxies` e `KnownNetworks`.
+  - Em producao, habilitar sem proxy/rede conhecida falha no startup.
+- Headers:
+  - Removidos do middleware ativo: `X-XSS-Protection`, `Feature-Policy`.
+  - Adicionados/reforcados: `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, CSP, `X-Frame-Options`, HSTS fora de Development e no-store para respostas sensiveis.
+- Logging:
+  - Serilog request logging nao grava query string completa.
+  - Middleware customizado deixou de usar `RawTarget` e passa a registrar somente `Request.Path`.
+  - Headers sensiveis seguem fora da whitelist de logging.
+- Health:
+  - `/health/live`: status agregado.
+  - `/health/ready`: readiness com detalhes em Development/Testing, status agregado em producao.
+  - `/hc`: alias legado com status agregado.
+- Limites:
+  - `RequestLimits:TimeoutSeconds` default 30 segundos.
+  - `RequestLimits:MaxRequestBodyBytes` default 10 MB.
+- Testes:
+  - Suite completa passou com 36 testes em `Pedidos.Test` e 26 em `WebApiCoreSeed.IntegrationTests`.
+  - Novos cenarios cobrem CORS permitido/negado, headers modernos, headers obsoletos ausentes, logging sem token/query sensivel, health minimo, readiness e no-store em auth.
 
 ## Validacoes oficiais
 
@@ -49,20 +49,24 @@
 dotnet restore
 dotnet build --configuration Release --no-restore
 dotnet test --configuration Release --no-build
-dotnet test --configuration Release --no-build --filter "Category=Integration"
-dotnet test test/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj --configuration Release --no-build --filter "Category=Integration"
+dotnet list package --vulnerable
 ```
 
 Resultados:
 
 - `dotnet restore`: passou.
 - `dotnet build --configuration Release --no-restore`: passou.
-- `dotnet test --configuration Release --no-build`: passou com 36 testes existentes e 18 testes de integracao.
-- Filtro `Category=Integration`: passou com 18 testes.
-- Segunda execucao isolada do projeto de integracao: passou com 18 testes.
-- Docker estava disponivel; nenhuma limitacao de runtime foi registrada.
-- Tempo observado da suite completa com containers: cerca de 40 segundos.
+- `dotnet test --configuration Release --no-build`: passou.
+- `dotnet list package --vulnerable`: nenhum pacote vulneravel nas fontes atuais.
+- Docker estava disponivel.
+- Push: nao realizado.
+
+## Breaking changes e configuracao de producao
+
+- Aplicacoes browser precisam definir `Cors:AllowedOrigins`.
+- Ambientes atras de proxy devem configurar `ForwardedHeaders:Enabled`, `KnownProxies` ou `KnownNetworks`.
+- Valores locais de connection string/JWT em `appsettings.json` agora sao placeholders e devem ser sobrescritos fora do desenvolvimento local.
 
 ## Proxima issue
 
-`#9` - executar o Prompt 3 da Fase 3, iniciando seguranca.
+`#10` - executar o Prompt 4 da Fase 3, iniciando OpenTelemetry.

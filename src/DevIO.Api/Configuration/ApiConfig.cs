@@ -1,14 +1,21 @@
 using Asp.Versioning;
+using System;
+using System.Linq;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Restaurante.IO.Api.Settings;
 using Restaurante.IO.Api.Configuration.OpenApi;
 
 namespace Restaurante.IO.Api.Configuration
 {
     public static class ApiConfig
     {
-        public static IServiceCollection WebApiConfig(this IServiceCollection services)
+        public static IServiceCollection WebApiConfig(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddApiVersioning(options =>
             {
@@ -30,20 +37,11 @@ namespace Restaurante.IO.Api.Configuration
                 options.SuppressModelStateInvalidFilter = true;
             });
 
+            services.Configure<CorsSettings>(configuration.GetSection("Cors"));
             services.AddCors(options =>
             {
-                options.AddPolicy("Development",
-                    builder => builder.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader());
-
-                options.AddPolicy("Production",
-                    builder =>
-                        builder
-                            .WithMethods("GET", "POST", "PUT", "DELETE")
-                            .AllowAnyOrigin()
-                            .SetIsOriginAllowedToAllowWildcardSubdomains()
-                            .AllowAnyHeader());
+                options.AddPolicy("Development", builder => ConfigureCorsPolicy(builder, configuration));
+                options.AddPolicy("Production", builder => ConfigureCorsPolicy(builder, configuration));
             });
 
             return services;
@@ -54,6 +52,8 @@ namespace Restaurante.IO.Api.Configuration
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
+            app.UseCors(ResolveCorsPolicyName(app));
+            app.UseRequestTimeouts();
             app.UseCookiePolicy();
             app.UseAuthentication();
             app.UseRateLimiter();
@@ -72,24 +72,84 @@ namespace Restaurante.IO.Api.Configuration
         {
             app.Use(async (context, next) =>
             {
-                context.Response.Headers.Add("X-Xss-Protection", "1; mode=block");
-                context.Response.Headers.Add("X-Frame-Options", "DENY");
-                context.Response.Headers.Add("X-Content-Type-Options", "nosniff");
-                context.Response.Headers.Add("Content-Security-Policy", "default-src 'none';" +
-                                                                        "script-src 'self' 'unsafe-inline'; " +
-                                                                        "font-src 'self' https://fonts.gstatic.com; " +
-                                                                        "img-src 'self' https://avatars3.githubusercontent.com data:;" +
-                                                                        "connect-src 'self';style-src 'self' 'unsafe-inline' https://fonts.googleapis.com");
-                context.Response.Headers.Add("Feature-Policy", "camera 'none'; microphone 'none'; speaker 'self';" +
-                                                               "vibrate 'none'; geolocation 'none'; accelerometer 'none';" +
-                                                               "ambient-light-sensor 'none'; autoplay 'none'; encrypted-media 'none';" +
-                                                               "gyroscope 'none'; magnetometer 'none'; midi 'none'; payment 'none'; " +
-                                                               "picture-in-picture 'none'; usb 'none'; vr 'none';");
+                context.Response.Headers["X-Frame-Options"] = "DENY";
+                context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+                context.Response.Headers["Referrer-Policy"] = "no-referrer";
+                context.Response.Headers["Permissions-Policy"] =
+                    "accelerometer=(), camera=(), geolocation=(), gyroscope=(), magnetometer=(), microphone=(), payment=(), usb=()";
+                context.Response.Headers["Content-Security-Policy"] =
+                    "default-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; " +
+                    "script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; " +
+                    "img-src 'self' data: https:; font-src 'self' data:; connect-src 'self'";
+
+                context.Response.OnStarting(() =>
+                {
+                    if (IsSensitiveResponse(context))
+                    {
+                        context.Response.Headers.CacheControl = "no-store";
+                        context.Response.Headers.Pragma = "no-cache";
+                    }
+
+                    return System.Threading.Tasks.Task.CompletedTask;
+                });
 
                 await next();
             });
 
             return app;
+        }
+
+        private static void ConfigureCorsPolicy(Microsoft.AspNetCore.Cors.Infrastructure.CorsPolicyBuilder builder, IConfiguration configuration)
+        {
+            var settings = new CorsSettings();
+            configuration.GetSection("Cors").Bind(settings);
+            var origins = settings.GetAllowedOrigins()
+                .Where(origin => !string.IsNullOrWhiteSpace(origin))
+                .Select(origin => origin.Trim())
+                .ToArray();
+
+            if (origins.Any(origin => origin == "*"))
+            {
+                throw new InvalidOperationException("Cors:AllowedOrigins must not use the literal wildcard '*'. Configure explicit origins instead.");
+            }
+
+            builder.WithMethods(settings.AllowedMethods)
+                .WithHeaders(settings.AllowedHeaders);
+
+            if (origins.Length == 0)
+            {
+                builder.SetIsOriginAllowed(_ => false);
+                return;
+            }
+
+            builder.WithOrigins(origins);
+
+            if (settings.AllowWildcardSubdomains)
+            {
+                builder.SetIsOriginAllowedToAllowWildcardSubdomains();
+            }
+
+            if (settings.AllowCredentials)
+            {
+                builder.AllowCredentials();
+            }
+        }
+
+        private static string ResolveCorsPolicyName(IApplicationBuilder app)
+        {
+            var environment = app.ApplicationServices.GetRequiredService<IHostEnvironment>();
+
+            return environment.IsDevelopment() ? "Development" : "Production";
+        }
+
+        private static bool IsSensitiveResponse(HttpContext context)
+        {
+            var path = context.Request.Path;
+
+            return path.StartsWithSegments("/api/v1/entrar")
+                || path.StartsWithSegments("/api/v2/entrar")
+                || path.StartsWithSegments("/api/v1/nova-conta")
+                || context.Response.StatusCode is StatusCodes.Status401Unauthorized or StatusCodes.Status403Forbidden;
         }
     }
 }

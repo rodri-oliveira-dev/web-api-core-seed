@@ -33,10 +33,16 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
     private ConnectionMultiplexer? _redisConnection;
     private DatabaseReset? _databaseReset;
     private Dictionary<string, string?>? _previousEnvironmentValues;
+    private readonly string _serilogFilePath = Path.Combine(
+        Path.GetTempPath(),
+        "web-api-core-seed",
+        $"integration-serilog-{Guid.NewGuid():N}.log");
 
     public string SqlServerConnectionString => _sqlServerConnectionString ?? BuildSqlServerConnectionString();
 
     public string RedisConnectionString => _redisConnectionString ?? _redis.GetConnectionString();
+
+    public string SerilogFilePath => _serilogFilePath;
 
     public HttpClient CreateApiClient(params (string Type, string Value)[] claims)
     {
@@ -118,7 +124,20 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
                 ["RedisCacheSettings:DefaultSeconds"] = "5",
                 ["DatasulSeqSettings:Enabled"] = "false",
                 ["DatasulSeqSettings:Url"] = "http://127.0.0.1:65535",
-                ["DatasulSeqSettings:FilePath"] = "TestResults/integration-serilog.log",
+                ["DatasulSeqSettings:FilePath"] = SerilogFilePath,
+                ["Cors:AllowedOrigins:0"] = "https://app.example.test",
+                ["Cors:AllowedMethods:0"] = "GET",
+                ["Cors:AllowedMethods:1"] = "POST",
+                ["Cors:AllowedMethods:2"] = "PUT",
+                ["Cors:AllowedMethods:3"] = "DELETE",
+                ["Cors:AllowedMethods:4"] = "OPTIONS",
+                ["Cors:AllowedHeaders:0"] = "Authorization",
+                ["Cors:AllowedHeaders:1"] = "Content-Type",
+                ["Cors:AllowedHeaders:2"] = "X-ClientId",
+                ["Cors:AllowCredentials"] = "false",
+                ["ForwardedHeaders:Enabled"] = "false",
+                ["RequestLimits:TimeoutSeconds"] = "30",
+                ["RequestLimits:MaxRequestBodyBytes"] = "10485760",
                 ["NativeRateLimitingSettings:Public:PermitLimit"] = "2",
                 ["NativeRateLimitingSettings:Public:WindowSeconds"] = "30",
                 ["NativeRateLimitingSettings:Public:QueueLimit"] = "0",
@@ -143,6 +162,7 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
 
     async Task IAsyncLifetime.InitializeAsync()
     {
+        Directory.CreateDirectory(Path.GetDirectoryName(SerilogFilePath)!);
         await Task.WhenAll(_sqlServer.StartAsync(), _redis.StartAsync());
 
         _sqlServerConnectionString = BuildSqlServerConnectionString();
@@ -250,7 +270,20 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             ["RedisCacheSettings__DefaultSeconds"] = "5",
             ["DatasulSeqSettings__Enabled"] = "false",
             ["DatasulSeqSettings__Url"] = "http://127.0.0.1:65535",
-            ["DatasulSeqSettings__FilePath"] = "TestResults/integration-serilog.log",
+            ["DatasulSeqSettings__FilePath"] = SerilogFilePath,
+            ["Cors__AllowedOrigins__0"] = "https://app.example.test",
+            ["Cors__AllowedMethods__0"] = "GET",
+            ["Cors__AllowedMethods__1"] = "POST",
+            ["Cors__AllowedMethods__2"] = "PUT",
+            ["Cors__AllowedMethods__3"] = "DELETE",
+            ["Cors__AllowedMethods__4"] = "OPTIONS",
+            ["Cors__AllowedHeaders__0"] = "Authorization",
+            ["Cors__AllowedHeaders__1"] = "Content-Type",
+            ["Cors__AllowedHeaders__2"] = "X-ClientId",
+            ["Cors__AllowCredentials"] = "false",
+            ["ForwardedHeaders__Enabled"] = "false",
+            ["RequestLimits__TimeoutSeconds"] = "30",
+            ["RequestLimits__MaxRequestBodyBytes"] = "10485760",
             ["NativeRateLimitingSettings__Public__PermitLimit"] = "2",
             ["NativeRateLimitingSettings__Public__WindowSeconds"] = "30",
             ["NativeRateLimitingSettings__Public__QueueLimit"] = "0",

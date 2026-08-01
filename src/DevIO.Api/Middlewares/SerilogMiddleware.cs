@@ -4,7 +4,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Features;
 using Serilog;
 using Serilog.Events;
 
@@ -77,7 +76,7 @@ namespace Restaurante.IO.Api.Middlewares
 
         static string GetPath(HttpContext httpContext)
         {
-            return httpContext.Features.Get<IHttpRequestFeature>()?.RawTarget ?? httpContext.Request.Path.ToString();
+            return httpContext.Request.Path.ToString();
         }
     }
 }

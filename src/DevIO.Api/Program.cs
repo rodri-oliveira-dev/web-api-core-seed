@@ -20,6 +20,7 @@ namespace Restaurante.IO.Api
 
                 var builder = WebApplication.CreateBuilder(args);
                 builder.WebHost.UseIIS();
+                builder.WebHost.ConfigureApiKestrel(builder.Configuration);
                 builder.Host.UseApiSerilog();
 
                 builder.Services.AddApiServices(builder.Configuration);

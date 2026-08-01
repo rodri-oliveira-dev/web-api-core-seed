@@ -4,7 +4,7 @@
 | --- | --- |
 | 01 - Testes unitarios | concluido |
 | 02 - Testes de integracao | concluido |
-| 03 - Seguranca | pendente |
+| 03 - Seguranca | concluido |
 | 04 - OpenTelemetry | pendente |
 | 05 - CI e gates | pendente |
 
@@ -39,4 +39,19 @@
 - Isolamento: collection xUnit compartilhada, sem paralelismo interno, reset SQL/Redis antes de cada teste.
 - Build/test final: passou.
 - Docker: disponivel.
+- Push: nao realizado.
+
+## Resultado do prompt 03
+
+- CORS passou a usar `Cors:AllowedOrigins` e producao fica fechada quando nenhuma origin e configurada.
+- `AllowAnyOrigin` foi removido do codigo ativo.
+- Forwarded headers ficam desabilitados por padrao e so confiam em proxies/redes configurados quando `ForwardedHeaders:Enabled=true`.
+- Headers obsoletos `X-XSS-Protection` e `Feature-Policy` foram removidos do middleware ativo.
+- Foram adicionados/reforcados `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, CSP com `frame-ancestors 'none'`, `X-Frame-Options` e no-store para respostas sensiveis.
+- Request logging nao registra mais query string completa nem raw target.
+- Health foi separado em `/health/live` e `/health/ready`; `/hc` permanece como alias legado minimalista.
+- Request timeout e tamanho maximo de body ficaram explicitos por `RequestLimits`.
+- Testes de integracao finais: 26.
+- Build/test final: passou.
+- `dotnet list package --vulnerable`: nenhum pacote vulneravel nas fontes atuais.
 - Push: nao realizado.
