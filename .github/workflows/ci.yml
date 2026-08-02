@@ -81,13 +81,18 @@ jobs:
             /d:sonar.token="$SONAR_TOKEN" \
             /d:sonar.qualitygate.wait=true \
             /d:sonar.qualitygate.timeout="$SONAR_QUALITY_GATE_TIMEOUT" \
-            /d:sonar.cs.opencover.reportsPaths="TestResults/**/coverage.opencover.xml" \
-            /d:sonar.cs.vstest.reportsPaths="TestResults/**/*.trx" \
+            /d:sonar.cs.opencover.reportsPaths="TestResults/Unit/*/coverage.opencover.xml,TestResults/Integration/*/coverage.opencover.xml" \
+            /d:sonar.cs.vstest.reportsPaths="TestResults/Unit/unit-tests.trx,TestResults/Integration/integration-tests.trx" \
             /d:sonar.coverage.exclusions="tests/**,tools/**,**/Migrations/**,**/*ModelSnapshot.cs,**/*.Designer.cs" \
             /d:sonar.cpd.exclusions="**/Migrations/**,**/*ModelSnapshot.cs,**/*.Designer.cs,docs/openapi/**/*.json,**/packages.lock.json"
 
       - name: Build
         run: dotnet build "$SOLUTION" --configuration Release --no-restore
+
+      - name: Prepare test result directories
+        run: |
+          rm -rf TestResults
+          mkdir -p TestResults/Unit TestResults/Integration
 
       - name: Run unit tests with coverage
         run: >
@@ -98,6 +103,8 @@ jobs:
           --results-directory TestResults/Unit
           --collect:"XPlat Code Coverage" --
           DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover
+          "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude=[*.Test]*,[*.Tests]*,[*.UnitTests]*,[*.IntegrationTests]*"
+          "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile=**/*.generated.cs"
 
       - name: Run integration tests with coverage
         run: >
@@ -108,6 +115,8 @@ jobs:
           --results-directory TestResults/Integration
           --collect:"XPlat Code Coverage" --
           DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover
+          "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude=[*.Test]*,[*.Tests]*,[*.UnitTests]*,[*.IntegrationTests]*"
+          "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile=**/*.generated.cs"
 
       - name: End SonarCloud analysis and enforce Quality Gate
         env:
@@ -140,7 +149,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: test-results
-          path: TestResults/**/*.trx
+          path: |
+            TestResults/Unit/unit-tests.trx
+            TestResults/Integration/integration-tests.trx
           if-no-files-found: error
 
       - name: Upload coverage results
@@ -149,8 +160,10 @@ jobs:
         with:
           name: coverage-results
           path: |
-            TestResults/**/coverage.cobertura.xml
-            TestResults/**/coverage.opencover.xml
+            TestResults/Unit/*/coverage.cobertura.xml
+            TestResults/Unit/*/coverage.opencover.xml
+            TestResults/Integration/*/coverage.cobertura.xml
+            TestResults/Integration/*/coverage.opencover.xml
           if-no-files-found: error
 
       - name: Upload generated OpenAPI contracts

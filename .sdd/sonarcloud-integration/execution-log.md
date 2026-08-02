@@ -207,3 +207,157 @@ clean
 - TRX and OpenCover output discovery must be confirmed in GitHub Actions.
 - Quality Gate success, failure and timeout behavior must be confirmed after SonarCloud processing is available.
 - PR decoration must be confirmed after the SonarCloud project is imported or bound to GitHub.
+
+## Prompt 3 Coverage Validation - 2026-08-02
+
+Branch at start:
+
+```text
+phase/4-architecture-modernization
+```
+
+Branch checkout performed:
+
+```text
+no
+```
+
+Initial worktree status:
+
+```text
+clean
+```
+
+## Files Re-Inspected
+
+- `.sdd/sonarcloud-integration/context.md`
+- `.sdd/sonarcloud-integration/requirements.md`
+- `.sdd/sonarcloud-integration/design.md`
+- `.sdd/sonarcloud-integration/tasks.md`
+- `.sdd/sonarcloud-integration/decisions.md`
+- `.sdd/sonarcloud-integration/validation.md`
+- `.sdd/sonarcloud-integration/execution-log.md`
+- `.github/workflows/ci.yml`
+- `Directory.Build.props`
+- `Directory.Packages.props`
+- `WebApiCoreSeed.slnx`
+- `tests/Directory.Packages.props`
+- `tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj`
+- `tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj`
+- `.gitignore`
+
+## Files Updated
+
+- `.github/workflows/ci.yml`
+- `.sdd/sonarcloud-integration/design.md`
+- `.sdd/sonarcloud-integration/tasks.md`
+- `.sdd/sonarcloud-integration/decisions.md`
+- `.sdd/sonarcloud-integration/validation.md`
+- `.sdd/sonarcloud-integration/execution-log.md`
+
+## Commands Executed
+
+```text
+git branch --show-current
+git status --short
+dotnet restore WebApiCoreSeed.slnx
+dotnet build WebApiCoreSeed.slnx --configuration Release --no-restore
+dotnet test tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj --configuration Release --no-build --logger "trx;LogFileName=unit-tests.trx" --results-directory TestResults/Unit --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover
+dotnet test tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj --configuration Release --no-build --logger "trx;LogFileName=integration-tests.trx" --results-directory TestResults/Integration --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover
+dotnet test tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj --configuration Release --no-build --logger "trx;LogFileName=unit-tests.trx" --results-directory TestResults/Unit --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude=[*.Test]*,[*.Tests]*,[*.UnitTests]*,[*.IntegrationTests]*" "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile=**/*.generated.cs"
+dotnet test tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj --configuration Release --no-build --logger "trx;LogFileName=integration-tests.trx" --results-directory TestResults/Integration --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude=[*.Test]*,[*.Tests]*,[*.UnitTests]*,[*.IntegrationTests]*" "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile=**/*.generated.cs"
+```
+
+## Test And Coverage Results
+
+- Unit tests: `53` passed, `0` failed, `53` total.
+- Integration tests: `42` passed, `0` failed, `42` total.
+- Combined tests: `95` passed, `0` failed, `95` total.
+- TRX files:
+  - `TestResults\Unit\unit-tests.trx`
+  - `TestResults\Integration\integration-tests.trx`
+- OpenCover files from the corrected run:
+  - `TestResults\Unit\4bbb1ee6-7118-4cc9-8f82-7159ccae2e22\coverage.opencover.xml`
+  - `TestResults\Integration\7a629b8a-bd9d-40c9-8ee6-14a0cdc48a08\coverage.opencover.xml`
+- Cobertura files from the corrected run:
+  - `TestResults\Unit\4bbb1ee6-7118-4cc9-8f82-7159ccae2e22\coverage.cobertura.xml`
+  - `TestResults\Integration\7a629b8a-bd9d-40c9-8ee6-14a0cdc48a08\coverage.cobertura.xml`
+
+## Problems Found
+
+- `TestResults/` contained older local files before this prompt's final validation. A cleanup attempt through `Remove-Item` was rejected by the executor policy, so stale files remained local but ignored by Git.
+- The initial unit OpenCover report included stale test assemblies `Pedidos.Test` and `WebApiCoreSeed.Tests` from `tests/WebApiCoreSeed.UnitTests/bin/Release/net10.0`.
+- The initial OpenCover path validation found generated OpenAPI source generator paths under `obj`.
+- The previous broad `TestResults/**/coverage.opencover.xml` pattern could match VSTest attachment copies and duplicate direct Coverlet reports.
+
+## Corrections Applied
+
+- Added Coverlet Collector `Exclude` for test assembly suffixes:
+
+```text
+[*.Test]*,[*.Tests]*,[*.UnitTests]*,[*.IntegrationTests]*
+```
+
+- Added Coverlet Collector `ExcludeByFile`:
+
+```text
+**/*.generated.cs
+```
+
+- Changed `sonar.cs.opencover.reportsPaths` to:
+
+```text
+TestResults/Unit/*/coverage.opencover.xml,TestResults/Integration/*/coverage.opencover.xml
+```
+
+- Changed `sonar.cs.vstest.reportsPaths` to:
+
+```text
+TestResults/Unit/unit-tests.trx,TestResults/Integration/integration-tests.trx
+```
+
+- Added a workflow step to recreate `TestResults/Unit` and `TestResults/Integration` before test execution.
+- Updated coverage artifact paths to the real suite-scoped Cobertura and OpenCover report locations.
+
+## XML Validation Results
+
+- Corrected unit OpenCover XML:
+  - Modules: `4`.
+  - Classes: `178`.
+  - Sequence points: `3772`.
+  - Covered sequence points: `1205`.
+  - Uncovered sequence points: `2567`.
+  - Missing source paths: `0`.
+- Corrected integration OpenCover XML:
+  - Modules: `4`.
+  - Classes: `178`.
+  - Sequence points: `3772`.
+  - Covered sequence points: `2731`.
+  - Uncovered sequence points: `1041`.
+  - Missing source paths: `0`.
+
+## Exclusion Review
+
+- Kept narrow SonarCloud coverage exclusions for tests, tools, migrations, model snapshots and designer files.
+- Kept narrow SonarCloud duplication exclusions for migrations, model snapshots, designer files, generated OpenAPI JSON and lock files.
+- Did not configure `sonar.exclusions`.
+- Did not configure `sonar.test.inclusions`.
+- Did not configure `sonar.test.exclusions`.
+- Did not exclude hand-written production code such as controllers, services, repositories, domain models, value objects or infrastructure.
+
+## Remaining External Items
+
+- Confirm the SonarCloud project and project key in the SonarCloud UI.
+- Configure `SONAR_TOKEN` in GitHub secrets without exposing its value.
+- Run the workflow in GitHub Actions and confirm SonarCloud import, Quality Gate behavior, branch analysis support and PR decoration.
+
+## Final Validation Before Commit
+
+- `git diff --check`: passed.
+- Python YAML parser validation for `.github/workflows/ci.yml`: passed.
+- `actionlint .github/workflows/ci.yml`: not executed because `actionlint` is not installed.
+- `dotnet restore WebApiCoreSeed.slnx`: passed.
+- `dotnet build WebApiCoreSeed.slnx --configuration Release --no-restore`: passed with `0` warnings and `0` errors.
+- Unit tests with TRX and OpenCover: `53` passed, `0` failed.
+- Integration tests with TRX and OpenCover: `42` passed, `0` failed.
+- `git status --short --ignored=matching TestResults`: returned `!! TestResults/`, confirming generated reports remain ignored.

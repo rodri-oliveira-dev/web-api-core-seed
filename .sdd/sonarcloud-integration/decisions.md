@@ -181,3 +181,85 @@ Consequences: The active modernization branch can run the same CI and SonarCloud
 Risks: SonarCloud branch analysis for non-main branches can depend on the SonarCloud plan and project configuration.
 
 Mitigation: Register this as an external limitation and keep the trigger limited to the one active modernization branch instead of all branches.
+
+## D014 - Filter Test Assemblies During Coverage Collection
+
+Context: Local validation of OpenCover reports found stale test assemblies (`Pedidos.Test` and `WebApiCoreSeed.Tests`) in the unit coverage XML because old DLLs remained in the test output directory. Test assemblies are not production coverage targets and can inflate or distort metrics.
+
+Decision: Configure Coverlet Collector with `DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude=[*.Test]*,[*.Tests]*,[*.UnitTests]*,[*.IntegrationTests]*`.
+
+Alternatives considered: Exclude test projects only in SonarCloud; clean only the local workspace; switch to another coverage strategy.
+
+Consequences: Coverage reports sent to SonarCloud contain production assemblies only.
+
+Risks: A production assembly with a name matching one of these test suffixes would be excluded from coverage collection.
+
+Mitigation: Current production assemblies do not use these suffixes. Static analysis still covers production code, and this exclusion targets assembly names rather than production paths.
+
+## D015 - Exclude Generated Source Files During Coverage Collection
+
+Context: Local XML validation found `OpenApiXmlCommentSupport.generated.cs` from `Microsoft.AspNetCore.OpenApi.SourceGenerators` in OpenCover file paths. Generated source should not influence product coverage metrics.
+
+Decision: Configure Coverlet Collector with `DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile=**/*.generated.cs`.
+
+Alternatives considered: Leave generated source in reports and rely only on SonarCloud exclusions; add broad `obj/**` exclusions.
+
+Consequences: Generated source files are removed before coverage import and coverage XML path validation no longer reports missing generated files.
+
+Risks: Hand-written files intentionally named `*.generated.cs` would be excluded from coverage.
+
+Mitigation: The repository treats this naming pattern as generated-source convention. Static analysis exclusions remain narrow and do not exclude hand-written production directories.
+
+## D016 - Use Suite-Scoped Report Paths
+
+Context: VSTest can copy coverage attachments under run-specific `In/...` folders in addition to the direct Coverlet output folder. A broad `TestResults/**/coverage.opencover.xml` pattern can import duplicate OpenCover files.
+
+Decision: Use suite-scoped report paths:
+
+```text
+TestResults/Unit/*/coverage.opencover.xml
+TestResults/Integration/*/coverage.opencover.xml
+```
+
+TRX import uses the stable file names:
+
+```text
+TestResults/Unit/unit-tests.trx
+TestResults/Integration/integration-tests.trx
+```
+
+Alternatives considered: Keep broad recursive globs; manually post-process reports; add another coverage tool.
+
+Consequences: SonarCloud imports the direct Coverlet reports without depending on concrete GUID directory names and without matching VSTest attachment copies.
+
+Risks: Multiple stale direct coverage directories could still match on reused runners.
+
+Mitigation: The workflow now recreates `TestResults/Unit` and `TestResults/Integration` immediately before tests, so stale artifacts are removed before report generation.
+
+## D017 - Keep SonarCloud Exclusions Narrow And Evidence-Based
+
+Context: Prompt 3 required reviewing SonarCloud exclusions without shrinking analysis scope artificially.
+
+Decision: Keep `sonar.exclusions`, `sonar.test.inclusions` and `sonar.test.exclusions` unset. Keep only coverage and duplication exclusions for generated, generated-like, test or auxiliary files.
+
+Accepted exclusions:
+
+| Pattern | Type | Justification | Expected impact | Risk of masking problems |
+| --- | --- | --- | --- | --- |
+| `tests/**` | `sonar.coverage.exclusions` | Test projects are not production coverage targets. | Prevents test code from changing product coverage. | Low; static analysis still sees files unless Sonar classifies them as tests. |
+| `tools/**` | `sonar.coverage.exclusions` | `tools/OpenApiGenerator` is an auxiliary build tool, not API runtime behavior. | Keeps product coverage focused on shipped API/modules. | Medium; coverage debt in tooling is not represented in product coverage. |
+| `**/Migrations/**` | `sonar.coverage.exclusions`, `sonar.cpd.exclusions` | EF migrations are generated-like schema history. | Removes low-signal coverage and duplication noise. | Medium; hand edits inside migrations could be less visible in coverage/duplication metrics. |
+| `**/*ModelSnapshot.cs` | `sonar.coverage.exclusions`, `sonar.cpd.exclusions` | EF model snapshots are generated metadata. | Removes generated metadata noise. | Low; snapshots should be reviewed through migration diffs. |
+| `**/*.Designer.cs` | `sonar.coverage.exclusions`, `sonar.cpd.exclusions` | Designer files are generated or generated-like code. | Removes generated code noise. | Low; no hand-written production logic should use this suffix. |
+| `docs/openapi/**/*.json` | `sonar.cpd.exclusions` | OpenAPI contracts are generated and validated separately by diff. | Avoids duplication noise in generated JSON. | Low; JSON sync remains enforced by CI. |
+| `**/packages.lock.json` | `sonar.cpd.exclusions` | Lock files are dependency metadata. | Avoids duplication noise in lock metadata. | Low; package audit commands remain in CI. |
+
+Rejected exclusions:
+
+| Pattern or category | Reason |
+| --- | --- |
+| `sonar.exclusions` for production paths | Would reduce static analysis scope without a concrete false-positive pattern. |
+| `sonar.test.inclusions` | Not needed because scanner/test report paths already identify tests. |
+| `sonar.test.exclusions` | Not needed; no evidence that tests are being misclassified for analysis. |
+| Controllers, handlers, services, repositories, domain models, value objects, infrastructure | These are hand-written product code and must remain visible to coverage and static analysis. |
+| Low-coverage or hard-to-test classes | Excluding them would artificially improve metrics. |

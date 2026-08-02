@@ -202,16 +202,27 @@ If the existing `coverage-results` artifact must keep Cobertura, use both format
 --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover
 ```
 
+Filter coverage collection to production assemblies and generated source exclusions:
+
+```text
+DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude=[*.Test]*,[*.Tests]*,[*.UnitTests]*,[*.IntegrationTests]*
+DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile=**/*.generated.cs
+```
+
+The workflow prepares `TestResults/Unit` and `TestResults/Integration` immediately before test execution so stale local or self-hosted runner artifacts cannot be imported or uploaded.
+
 Planned TRX scanner path:
 
 ```text
-TestResults/**/*.trx
+TestResults/Unit/unit-tests.trx
+TestResults/Integration/integration-tests.trx
 ```
 
 Planned OpenCover scanner path:
 
 ```text
-TestResults/**/coverage.opencover.xml
+TestResults/Unit/*/coverage.opencover.xml
+TestResults/Integration/*/coverage.opencover.xml
 ```
 
 ## Scanner Properties
@@ -223,8 +234,8 @@ Planned `begin` properties:
 /o:"rodri-oliveira-dev"
 /d:sonar.host.url="https://sonarcloud.io"
 /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
-/d:sonar.cs.vstest.reportsPaths="TestResults/**/*.trx"
-/d:sonar.cs.opencover.reportsPaths="TestResults/**/coverage.opencover.xml"
+/d:sonar.cs.vstest.reportsPaths="TestResults/Unit/unit-tests.trx,TestResults/Integration/integration-tests.trx"
+/d:sonar.cs.opencover.reportsPaths="TestResults/Unit/*/coverage.opencover.xml,TestResults/Integration/*/coverage.opencover.xml"
 /d:sonar.qualitygate.wait=true
 /d:sonar.qualitygate.timeout=300
 /d:sonar.coverage.exclusions="tests/**,tools/**,**/Migrations/**,**/*ModelSnapshot.cs,**/*.Designer.cs"

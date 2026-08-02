@@ -25,11 +25,15 @@
   - [x] Referenciar apenas `secrets.SONAR_TOKEN`, sem versionar ou imprimir o valor.
   - [x] Envolver build e testes entre `sonarscanner begin` e `sonarscanner end`.
 
-- [-] Geracao de cobertura
+- [x] Geracao de cobertura
   - [x] Ajustar Coverlet Collector no workflow para gerar OpenCover.
   - [x] Preservar o artefato de cobertura existente com Cobertura.
   - [x] Incluir OpenCover no artefato de cobertura.
-  - [!] Confirmar em CI que os arquivos `coverage.opencover.xml` sao gerados em `TestResults/**`.
+  - [x] Filtrar assemblies de teste no Coverlet Collector para evitar cobertura artificial de projetos de teste.
+  - [x] Excluir arquivos `*.generated.cs` na coleta de cobertura para remover codigo gerado pelo source generator.
+  - [x] Usar globs suite-scoped para OpenCover e TRX no SonarCloud.
+  - [x] Confirmar localmente que os arquivos `coverage.opencover.xml` sao gerados em `TestResults/Unit/*/` e `TestResults/Integration/*/`.
+  - [!] Confirmar em CI que os arquivos `coverage.opencover.xml` sao gerados nos mesmos caminhos com `SONAR_TOKEN` configurado.
 
 - [x] Configuracao de exclusoes
   - [x] Aplicar exclusoes estreitas para cobertura e duplicacao.
@@ -43,6 +47,10 @@
   - [x] Executar `dotnet --info`.
   - [x] Executar `dotnet restore WebApiCoreSeed.slnx`.
   - [x] Executar `dotnet build WebApiCoreSeed.slnx --configuration Release --no-restore`.
+  - [x] Executar testes unitarios com TRX e OpenCover.
+  - [x] Executar testes de integracao com TRX e OpenCover.
+  - [x] Validar XMLs OpenCover quanto a tamanho, XML valido, modulos, classes, linhas cobertas e nao cobertas.
+  - [x] Confirmar que `TestResults/` esta ignorado pelo `.gitignore`.
   - [!] Confirmar geracao de TRX e OpenCover em CI com `SONAR_TOKEN` configurado.
 
 - [ ] Documentacao externa
