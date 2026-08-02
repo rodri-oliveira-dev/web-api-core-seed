@@ -5,6 +5,6 @@
     }
   ],
   "settings": {
-    "dotnet.defaultSolution": "WebApiCoreSeed.sln"
+    "dotnet.defaultSolution": "WebApiCoreSeed.slnx"
   }
 }

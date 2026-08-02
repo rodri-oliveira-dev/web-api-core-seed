@@ -16,7 +16,7 @@ concurrency:
 env:
   DOTNET_NOLOGO: true
   DOTNET_CLI_TELEMETRY_OPTOUT: true
-  SOLUTION: WebApiCoreSeed.sln
+  SOLUTION: WebApiCoreSeed.slnx
   UNIT_TEST_PROJECT: tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj
   INTEGRATION_TEST_PROJECT: tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj
   OPENAPI_GENERATOR_PROJECT: tools/OpenApiGenerator/OpenApiGenerator.csproj

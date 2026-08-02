@@ -46,8 +46,8 @@ Apoiar refatoracoes seguras em C# preservando comportamento observavel e respeit
 Procure comandos existentes antes de assumir. Quando nao houver instrucao especifica:
 
 ```bash
-dotnet restore WebApiCoreSeed.sln
-dotnet build WebApiCoreSeed.sln --no-restore
+dotnet restore WebApiCoreSeed.slnx
+dotnet build WebApiCoreSeed.slnx --no-restore
 dotnet test tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj --no-build
 ```
 

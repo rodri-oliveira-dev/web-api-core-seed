@@ -4,5 +4,5 @@
 02 - Layout e namespaces: concluido
 03 - Central Package Management: concluido
 04 - Build e estilo: concluido
-05 - Migracao SLNX: pendente
+05 - Migracao SLNX: concluido
 06 - CSF.Analyzers: pendente

@@ -82,14 +82,12 @@
         "type": "object",
         "properties": {
           "email": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "password": {
             "maxLength": 100,
             "minLength": 6,
-            "type": "string",
-            "nullable": true
+            "type": "string"
           }
         }
       },

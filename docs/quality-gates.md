@@ -13,14 +13,14 @@ Recommended branch protection checks for Phase 3:
 ## Local Reproduction
 
 ```bash
-dotnet restore WebApiCoreSeed.sln
-dotnet build WebApiCoreSeed.sln --configuration Release --no-restore
+dotnet restore WebApiCoreSeed.slnx
+dotnet build WebApiCoreSeed.slnx --configuration Release --no-restore
 dotnet test tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory TestResults/Unit
 dotnet test tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj --configuration Release --no-build --collect:"XPlat Code Coverage" --results-directory TestResults/Integration
 dotnet run --project tools/OpenApiGenerator/OpenApiGenerator.csproj --configuration Release --no-build
 git diff --exit-code -- docs/openapi/openapi-v1.json docs/openapi/openapi-v2.json
-dotnet list WebApiCoreSeed.sln package --vulnerable
-dotnet list WebApiCoreSeed.sln package --deprecated
+dotnet list WebApiCoreSeed.slnx package --vulnerable
+dotnet list WebApiCoreSeed.slnx package --deprecated
 ```
 
 ## Artifacts
@@ -40,7 +40,7 @@ The GitHub-hosted Ubuntu runner provides Docker. No duplicate workflow `services
 
 ## Formatting
 
-`dotnet format WebApiCoreSeed.sln --verify-no-changes` is not a blocking CI gate yet because the current repository has existing whitespace debt. Keep formatting local and enable the gate only after a dedicated cleanup commit.
+`dotnet format WebApiCoreSeed.slnx --verify-no-changes` is not a blocking CI gate yet because the current repository has existing whitespace debt. Keep formatting local and enable the gate only after a dedicated cleanup commit.
 
 ## Failure Behavior
 

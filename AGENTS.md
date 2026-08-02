@@ -13,7 +13,7 @@ Leia somente o que for relevante para a tarefa, com prioridade para:
 1. `README.md`
 2. `LEGACY.md`
 3. `.sdd/`
-4. `WebApiCoreSeed.sln`
+4. `WebApiCoreSeed.slnx`
 5. `src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj`
 6. `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant/WebApiCoreSeed.SampleRestaurant.csproj`
 7. `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.Infrastructure/WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj`
@@ -26,7 +26,7 @@ Leia somente o que for relevante para a tarefa, com prioridade para:
 
 ## Estado Atual
 
-- A solution atual e `WebApiCoreSeed.sln`.
+- A solution atual e `WebApiCoreSeed.slnx`.
 - Todos os projetos ativos miram `net10.0`.
 - O projeto da API e `src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj`.
 - Existem bibliotecas Business e Data em `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant/` e `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.Infrastructure/`.

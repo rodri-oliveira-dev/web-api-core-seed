@@ -1,0 +1,26 @@
+<Solution>
+  <Configurations>
+    <Platform Name="Any CPU" />
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/Identity/">
+    <Project Path="src/Modules/Identity/WebApiCoreSeed.Identity.Infrastructure/WebApiCoreSeed.Identity.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/SampleRestaurant/">
+    <Project Path="src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.Infrastructure/WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj" />
+    <Project Path="src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant/WebApiCoreSeed.SampleRestaurant.csproj" />
+  </Folder>
+  <Folder Name="/src/WebApiCoreSeed.Api/">
+    <Project Path="src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj" />
+    <Project Path="tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/OpenApiGenerator/OpenApiGenerator.csproj" />
+  </Folder>
+</Solution>

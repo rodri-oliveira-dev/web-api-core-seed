@@ -1,112 +1,45 @@
 # Handoff
 
-## Estado entregue pelo Prompt 4
+## Estado entregue pelo Prompt 5
 
-- `.editorconfig` modernizado com `root = true`, convencoes portaveis, secoes por extensao e regras C# explicitas como sugestao.
-- `Directory.Build.props` centraliza:
-  - `TargetFramework=net10.0`
-  - `Nullable=enable`
-  - `ImplicitUsings=enable`
-  - `AnalysisLevel=latest-recommended`
-  - `EnforceCodeStyleInBuild=true`
-  - `Deterministic=true`
-  - `GenerateDocumentationFile=true`
-- Propriedades comuns removidas dos `.csproj`; `IsPackable=false` permanece somente em testes/tooling.
-- Supressao local `NoWarn` de `CS1591` removida da API; decisao mantida somente em `.editorconfig`.
-- Nullable habilitado sem warnings `CS*` no build final.
-- `Directory.Build.targets` nao foi criado, por ausencia de target tardio necessario.
-- Validacoes:
-  - `dotnet restore WebApiCoreSeed.sln` passou;
-  - `dotnet build WebApiCoreSeed.sln --configuration Release --no-restore --no-incremental` passou com 30 warnings `CA*`;
-  - `dotnet test WebApiCoreSeed.sln --configuration Release --no-build` passou com 95 testes;
-  - `dotnet format WebApiCoreSeed.sln --verify-no-changes` falhou por divida historica de EOL/charset/whitespace, registrada em `04-build-and-code-style/validation.md`.
+- Solution ativa migrada para `WebApiCoreSeed.slnx` pelo comando oficial do SDK.
+- O arquivo de solution anterior foi removido somente depois da equivalencia entre as listas de projetos da solution antiga e da nova.
+- A `.slnx` preserva 7 projetos ativos:
+  - API;
+  - SampleRestaurant business;
+  - SampleRestaurant infrastructure;
+  - Identity infrastructure;
+  - unit tests;
+  - integration tests;
+  - OpenApiGenerator.
+- Folders logicos preservados: `/src/`, `/src/WebApiCoreSeed.Api/`, `/src/Modules/`, `/src/Modules/SampleRestaurant/`, `/src/Modules/Identity/`, `/tests/` e `/tools/`.
+- Referencias ativas atualizadas em `AGENTS.md`, `README.md`, VS Code, workspace, GitHub workflows, CODEOWNERS, template de PR, hooks, docs operacionais, skills locais e factories EF design-time.
+- `ApplicationDbContextFactory` e `SampleRestaurantDbContextFactory` agora localizam a raiz pelo arquivo SLNX.
+- OpenAPI generator atualizou `docs/openapi/openapi-v1.json` e `docs/openapi/openapi-v2.json`; os contratos foram mantidos sincronizados com a saida atual do gerador.
 
-## Proximo prompt
+## Validacoes do Prompt 5
 
-Prompt 5 deve migrar a solution para SLNX sem misturar a correcao ampla de formatacao descoberta aqui. Antes de migrar, validar que o novo formato preserva todos os projetos ativos, referencias e comandos de restore/build/test.
-
-## Riscos para acompanhar
-
-- Nao rodar formatacao global automatica junto da migracao SLNX; a divida de `dotnet format` e grande e merece prompt proprio.
-- Nullable esta habilitado globalmente; novas APIs devem usar contratos nulos explicitos em vez de `NoWarn`.
-- Migrations EF devem permanecer sem pending model changes; propriedades opcionais historicas foram preservadas para evitar migration artificial.
-
-## Estado entregue pelo Prompt 3
-
-- Central Package Management hierarquico adotado:
-  - `Directory.Packages.props`
-  - `src/Directory.Packages.props`
-  - `tests/Directory.Packages.props`
-  - `tools/Directory.Packages.props`
-- Arquivos filhos importam explicitamente o arquivo raiz.
-- `ManagePackageVersionsCentrally`, `RestorePackagesWithLockFile` e `RestoreUseStaticGraphEvaluation` foram habilitados na raiz.
-- `PackageReference` em `.csproj` nao possui mais `Version`; `PrivateAssets` e `IncludeAssets` foram preservados nos projetos.
-- `packages.lock.json` foi gerado e deve ser mantido por projeto ativo.
-- Divergencias de teste resolvidas:
-  - `coverlet.collector` -> `10.0.1`
-  - `Microsoft.NET.Test.Sdk` -> `18.8.1`
-  - `xunit.runner.visualstudio` -> `3.1.5`
-- Validacoes executadas com sucesso:
-  - `dotnet restore WebApiCoreSeed.sln --force-evaluate`
-  - `dotnet build WebApiCoreSeed.sln --configuration Release --no-restore`
-  - `dotnet test WebApiCoreSeed.sln --configuration Release --no-build`
-  - `dotnet list WebApiCoreSeed.sln package --include-transitive`
-- Saude de pacotes:
-  - nenhum pacote vulneravel reportado;
-  - `xunit` `2.9.3` segue deprecated como `Legacy`;
-  - `OpenTelemetry.Instrumentation.EntityFrameworkCore` `1.17.0-beta.1` segue reportado como `Nao encontrado nas fontes` pelo outdated.
+- `dotnet restore WebApiCoreSeed.slnx`: passou.
+- `dotnet build WebApiCoreSeed.slnx --configuration Release --no-restore`: passou com 30 warnings `CA*` historicos e 0 erros.
+- `dotnet test WebApiCoreSeed.slnx --configuration Release --no-build`: passou com 95 testes.
+- Testes unitarios isolados: 53 aprovados.
+- Testes de integracao isolados com `Category=Integration`: 42 aprovados.
+- Testes arquiteturais com `Architecture=ModularHexagonal`: 7 aprovados.
+- OpenAPI generator: passou e regenerou contratos.
+- JSON OpenAPI: sintaticamente valido.
+- Workflow YAML: sintaticamente valido com PyYAML.
+- `scripts/setup/configure-git-hooks.ps1 -Check`: passou.
+- `.githooks/pre-push`: passou usando SLNX via Git for Windows shell.
+- `git diff --check`: passou; manteve apenas aviso de normalizacao LF para `README.md`.
+- Varredura final: nenhuma referencia ativa ao arquivo antigo fora de SDD historico ou documentacao do proprio Prompt 5.
 
 ## Proximo prompt
 
-Prompt 4 deve padronizar build e estilo considerando que CPM e lock files agora fazem parte do contrato de restore. Antes de alterar CI/build, validar se `RestoreLockedMode` deve ser habilitado para ambientes de integracao continua e se warnings de analisadores existentes devem permanecer informativos ou virar erro.
+Prompt 6 deve adotar CSF.Analyzers sem reverter a migracao SLNX. Use `WebApiCoreSeed.slnx` em restore, build, test, `dotnet list` e qualquer novo gate.
 
 ## Riscos para acompanhar
 
-- Nao remover `packages.lock.json` sem decisao explicita, pois agora fazem parte da reproducibilidade do restore.
-- Nao voltar a declarar `Version` em `PackageReference`; novas versoes devem entrar no `Directory.Packages.props` do escopo correto.
-- `tools/Directory.Packages.props` esta vazio por desenho porque o tooling atual usa apenas pacotes compartilhados na raiz.
-- Migracao para `xunit.v3` permanece pendente e deve ser tratada separadamente.
-
-## Estado entregue pelo Prompt 2
-
-- Layout produtivo normalizado:
-  - `src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj`
-  - `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant/WebApiCoreSeed.SampleRestaurant.csproj`
-  - `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.Infrastructure/WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj`
-  - `src/Modules/Identity/WebApiCoreSeed.Identity.Infrastructure/WebApiCoreSeed.Identity.Infrastructure.csproj`
-- Layout de testes normalizado:
-  - `tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj`
-  - `tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj`
-- Namespaces de testes atualizados para `WebApiCoreSeed.UnitTests.*`.
-- Solution, project references, CI, CODEOWNERS, hook de pre-push, docs de quality gates, AGENTS e skills locais foram atualizados para os novos caminhos.
-- `tools/OpenApiGenerator` foi mantido e validado.
-- Migrations permaneceram nos mesmos assemblies e sem pending model changes.
-- OpenAPI foi regenerado e permaneceu sem diff.
-- Smoke da API respondeu `/openapi/v1.json` e `/hc` com HTTP 200.
-
-## Estado entregue pelo Prompt 1
-
-- `.gitignore` modernizado e ajustado para a solution atual.
-- `.gitattributes` criado com normalizacao de texto, finais de linha e classificacao de binarios.
-- `.dockerignore` criado para futuro build containerizado sem excluir arquivos de restore/build.
-- Artefatos ativos de Sonar removidos de `src/`.
-- Caminhos pessoais historicos sanitizados.
-- Inventario operacional documentado em `repository-inventory.md`.
-- Baseline de validacao registrada em `validation-baseline.md` e `01-repository-hygiene/validation.md`.
-
-## Proximo prompt
-
-Prompt 3 deve adotar Central Package Management sem reintroduzir arquivos de analise removidos nos prompts anteriores. Antes de consolidar pacotes, validar:
-
-- `git status --short`
-- `git ls-files src tests tools`
-- todos os `.csproj` ativos e `Directory.Build.props`
-- versoes duplicadas de `PackageReference`
-- impactos em `.sln`, `.csproj`, testes, CI, docs e SDD
-
-## Riscos para acompanhar
-
-- `src/WebApiCoreSeed.Api/Properties/launchSettings.json` nao existe hoje; se for criado em prompt futuro, nao sera bloqueado pelo `.gitignore`.
-- A pasta `tests/` foi adotada no Prompt 2; nao voltar a usar `test/` para projetos ativos.
-- Ocorrencias restantes de caminhos antigos em `.sdd/phase-*` e `LEGACY.md` sao historicas; nao usa-las como comandos atuais.
-- Dockerfile da API ainda nao existe; `.dockerignore` foi preparado de forma portavel e conservadora.
+- Nao recriar o arquivo antigo da solution ao usar ferramentas antigas de IDE.
+- Alguns SDDs de prompts anteriores ainda citam comandos e estados antigos; trate-os como historico, nao como instrucao operacional atual.
+- Os 30 warnings `CA*` permanecem divida conhecida para prompt proprio.
+- O aviso de normalizacao de `README.md` vem da politica de LF e nao bloqueou `git diff --check`.

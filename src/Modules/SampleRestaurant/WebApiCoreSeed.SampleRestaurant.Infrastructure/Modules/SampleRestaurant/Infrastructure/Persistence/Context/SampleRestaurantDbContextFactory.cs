@@ -53,7 +53,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Context
 
             while (current != null)
             {
-                if (File.Exists(Path.Combine(current.FullName, "WebApiCoreSeed.sln")))
+                if (File.Exists(Path.Combine(current.FullName, "WebApiCoreSeed.slnx")))
                 {
                     return current.FullName;
                 }
@@ -61,7 +61,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Context
                 current = current.Parent;
             }
 
-            throw new InvalidOperationException("Could not locate repository root containing WebApiCoreSeed.sln.");
+            throw new InvalidOperationException("Could not locate repository root containing WebApiCoreSeed.slnx.");
         }
     }
 }

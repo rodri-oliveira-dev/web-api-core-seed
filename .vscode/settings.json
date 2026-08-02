@@ -1,5 +1,5 @@
 {
-  "dotnet.defaultSolution": "WebApiCoreSeed.sln",
+  "dotnet.defaultSolution": "WebApiCoreSeed.slnx",
   "dotnet.server.useOmnisharp": false,
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {

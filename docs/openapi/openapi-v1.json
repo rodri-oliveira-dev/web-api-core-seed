@@ -988,14 +988,12 @@
         "type": "object",
         "properties": {
           "email": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "password": {
             "maxLength": 100,
             "minLength": 6,
-            "type": "string",
-            "nullable": true
+            "type": "string"
           }
         }
       },
@@ -1009,8 +1007,7 @@
           "numero": {
             "maxLength": 50,
             "minLength": 1,
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "lugares": {
             "maximum": 2147483647,
@@ -1037,8 +1034,7 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/PratoViewModel"
-            },
-            "nullable": true
+            }
           },
           "page": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
@@ -1075,22 +1071,19 @@
           "titulo": {
             "maxLength": 200,
             "minLength": 2,
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "descricao": {
             "maxLength": 800,
             "minLength": 2,
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "fotoUpload": {
             "type": "string",
             "nullable": true
           },
           "foto": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "preco": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
@@ -1142,18 +1135,15 @@
         "type": "object",
         "properties": {
           "email": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "password": {
             "maxLength": 100,
             "minLength": 6,
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "confirmPassword": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           }
         }
       }

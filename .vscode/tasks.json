@@ -7,7 +7,7 @@
       "command": "dotnet",
       "args": [
         "restore",
-        "${workspaceFolder}/WebApiCoreSeed.sln"
+        "${workspaceFolder}/WebApiCoreSeed.slnx"
       ],
       "problemMatcher": "$msCompile"
     },
@@ -17,7 +17,7 @@
       "command": "dotnet",
       "args": [
         "build",
-        "${workspaceFolder}/WebApiCoreSeed.sln",
+        "${workspaceFolder}/WebApiCoreSeed.slnx",
         "--no-restore"
       ],
       "group": {
@@ -32,7 +32,7 @@
       "command": "dotnet",
       "args": [
         "test",
-        "${workspaceFolder}/WebApiCoreSeed.sln",
+        "${workspaceFolder}/WebApiCoreSeed.slnx",
         "--no-build"
       ],
       "group": {

@@ -18,3 +18,4 @@
 | RH-D014 | Nao criar `Directory.Build.targets` no Prompt 4. | Aceita | A discovery nao encontrou target tardio real; props, `.editorconfig` e analyzers nativos cobrem o cenario atual. |
 | RH-D015 | Manter `CA2007` silencioso para codigo ASP.NET Core. | Aceita | Exigir `ConfigureAwait` no pipeline de request adicionaria ruido sem beneficio pratico neste repositorio. |
 | RH-D016 | Tratar `CS1591` apenas em `.editorconfig`. | Aceita | Evita supressao simultanea por `NoWarn` em projetos e preserva uma decisao unica para XML docs. |
+| RH-D017 | Adotar SLNX como arquivo de solution ativo. | Aceita | O SDK 10 suporta o formato, a migracao oficial preservou projetos/folders e os gates passaram usando o novo arquivo. |

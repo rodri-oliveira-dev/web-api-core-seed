@@ -39,9 +39,9 @@ git config --local --unset core.hooksPath
 O `pre-push` identifica alteracoes documentais e ignora validacoes .NET quando nao ha impacto tecnico. Quando arquivos .NET ou da solution forem impactados, executa no maximo:
 
 ```bash
-dotnet restore WebApiCoreSeed.sln
-dotnet build WebApiCoreSeed.sln --no-restore
-dotnet test WebApiCoreSeed.sln --no-build
+dotnet restore WebApiCoreSeed.slnx
+dotnet build WebApiCoreSeed.slnx --no-restore
+dotnet test WebApiCoreSeed.slnx --no-build
 ```
 
 O hook nao executa containers, cobertura completa nem ferramentas externas pesadas. Gates completos permanecem no CI.

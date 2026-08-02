@@ -11,9 +11,9 @@
 ## Validation
 
 - [ ] `git diff --check`
-- [ ] `dotnet restore WebApiCoreSeed.sln`
-- [ ] `dotnet build WebApiCoreSeed.sln --no-restore`
-- [ ] `dotnet test WebApiCoreSeed.sln --no-build`
+- [ ] `dotnet restore WebApiCoreSeed.slnx`
+- [ ] `dotnet build WebApiCoreSeed.slnx --no-restore`
+- [ ] `dotnet test WebApiCoreSeed.slnx --no-build`
 
 ## Notes
 
