@@ -56,6 +56,10 @@ OpenTelemetry is configured by the `OpenTelemetry` section and is vendor-neutral
 
 Serilog remains the structured logging pipeline. Console and file logs include `TraceId` and `SpanId` when a request activity is active. Seq is optional through `SeqSettings:Enabled`.
 
+## Quality
+
+Operational notes for SonarCloud setup and Quality Gate protection are documented in [docs/quality/sonarcloud.md](docs/quality/sonarcloud.md).
+
 ## Architecture:
 
 - Full architecture with responsibility separation concerns, SOLID and Clean Code

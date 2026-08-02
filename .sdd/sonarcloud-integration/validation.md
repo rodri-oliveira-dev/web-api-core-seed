@@ -18,9 +18,9 @@
 - Reviewed `.gitignore` for generated coverage, test result and scanner outputs.
 - Ran `git diff --check`; no whitespace errors were reported.
 
-## Implementation Stage Validations - 2026-08-02
+## Validado localmente - 2026-08-02
 
-### Branch And Worktree
+### Branch and worktree
 
 - `git branch --show-current`: passed.
   - Result: `phase/4-architecture-modernization`.
@@ -30,16 +30,23 @@
 - Branch comparison result: matched.
 - Branch checkout performed: no.
 
-### Workflow Syntax
+### Workflow review
 
-- `actionlint .github/workflows/ci.yml`: not executed because `actionlint` is not installed in the local environment.
-- Python YAML parser validation: passed.
-  - Command used: `python -c "import yaml; yaml.safe_load(open('.github/workflows/ci.yml', encoding='utf-8')); print('PYTHON_YAML_OK')"`
-  - Result: `PYTHON_YAML_OK`.
+- Confirmed `push` events for `main` and `phase/4-architecture-modernization`.
+- Confirmed `pull_request` events targeting `main`.
+- Confirmed `workflow_dispatch`.
+- Confirmed `actions/checkout@v4` with `fetch-depth: 0`.
+- Confirmed SDK setup based on `global.json`.
+- Confirmed NuGet cache and separate SonarCloud cache.
+- Confirmed reproducible SonarScanner installation with explicit version `11.2.1`.
+- Confirmed use of `secrets.SONAR_TOKEN` only in scanner steps.
+- Confirmed no secret values are versioned in the workflow.
+- Confirmed `sonarscanner begin`, build after `begin`, tests before `end`, OpenCover/TRX paths, `sonarscanner end`, Quality Gate wait and explicit timeout.
+- Confirmed artifact upload steps use `if: always()`.
+- No workflow correction was required in Prompt 4.
 
-### Required Commands
+### Commands
 
-- `git diff --check`: passed.
 - `dotnet --info`: passed.
   - SDK selected by `global.json`: `10.0.302`.
   - Host runtime: `10.0.10`.
@@ -47,135 +54,93 @@
   - Result: all projects were up to date for restore.
 - `dotnet build WebApiCoreSeed.slnx --configuration Release --no-restore`: passed.
   - Result: build succeeded with `30` warnings and `0` errors.
-  - Warnings were pre-existing analyzer warnings in application projects and were not changed in this prompt.
+  - Warnings were analyzer warnings in existing application code and were not changed in this prompt.
+- Unit tests with TRX and OpenCover: passed.
+  - Command used the same Coverlet settings as the workflow.
+  - Result: `53` passed, `0` failed, `53` total.
+  - TRX: `TestResults\Unit\unit-tests.trx`.
+  - OpenCover: `TestResults\Unit\d84f6056-cf8f-44cd-aed6-86f7c86ebe04\coverage.opencover.xml`.
+- Integration tests with TRX and OpenCover: passed.
+  - Command used the same Coverlet settings as the workflow.
+  - Result: `42` passed, `0` failed, `42` total.
+  - TRX: `TestResults\Integration\integration-tests.trx`.
+  - OpenCover: `TestResults\Integration\fbb6d855-bef7-4b37-ae26-ed0eb8fc197c\coverage.opencover.xml`.
+- OpenCover XML inspection: passed.
+  - Unit report: `1093730` bytes, `4` modules, `178` classes, `3772` sequence points, `1205` covered sequence points.
+  - Integration report: `1093421` bytes, `4` modules, `178` classes, `3772` sequence points, `2731` covered sequence points.
+- OpenAPI generation: passed.
+  - Command: `dotnet run --project tools/OpenApiGenerator/OpenApiGenerator.csproj --configuration Release --no-build`.
+  - Generated `docs\openapi\openapi-v1.json` and `docs\openapi\openapi-v2.json`.
+- OpenAPI JSON validation: passed.
+  - `openapi-v1.json`: parsed successfully.
+  - `openapi-v2.json`: parsed successfully.
+- OpenAPI synchronization: passed.
+  - `git diff --exit-code -- docs/openapi/openapi-v1.json docs/openapi/openapi-v2.json` returned exit code `0`.
+- Vulnerable package audit: passed.
+  - `dotnet list WebApiCoreSeed.slnx package --vulnerable` found no vulnerable packages from the configured sources.
+- Deprecated package report: passed with findings.
+  - `dotnet list WebApiCoreSeed.slnx package --deprecated` found `xunit 2.9.3` marked as `Legacy` in unit and integration test projects.
+  - The command returned exit code `0`; package migration is outside this prompt.
+- YAML validation with local parser: passed.
+  - Command: `python -c "import yaml; yaml.safe_load(open('.github/workflows/ci.yml', encoding='utf-8')); print('PYTHON_YAML_OK')"`
+  - Result: `PYTHON_YAML_OK`.
+- `actionlint .github/workflows/ci.yml`: not executed because `actionlint` is not installed locally.
+- `TestResults/` ignore status: passed.
+  - `git status --short --ignored=matching TestResults` returned `!! TestResults/`.
+- Final diff review: passed.
+  - `git diff --check` returned exit code `0`.
+  - `git diff -- .github/workflows/ci.yml` produced no output because Prompt 4 made no workflow changes.
+  - `git diff -- docs/quality/sonarcloud.md`, `git diff -- README.md` and `git diff -- .sdd/sonarcloud-integration` were reviewed.
+- Secret review: passed.
+  - Diff search found only secret names and documentation text such as `SONAR_TOKEN`; no token value was added.
+- Branch review: passed.
+  - Final branch remained `phase/4-architecture-modernization`.
 
-## Not Executed Locally
+### Local limitations
 
-- SonarScanner was not executed locally because no real `SONAR_TOKEN` should be used in the local environment for this implementation prompt.
-- Unit and integration tests were not executed locally in this prompt because the mandatory validation set requested restore and build; CI is configured to run both test suites with TRX and OpenCover after `sonarscanner begin`.
-- OpenCover and TRX discovery were not confirmed locally; they must be confirmed in GitHub Actions after the workflow runs with the configured secret.
-- Quality Gate success, Quality Gate failure behavior, PR decoration and analysis visibility were not confirmed locally because they depend on SonarCloud and GitHub external configuration.
+- A local attempt to remove and recreate `TestResults/` was blocked by the executor policy, so tests were run without forced cleanup. The workflow itself still removes and recreates `TestResults` before tests on Linux.
+- SonarScanner was not executed locally because no real `SONAR_TOKEN` should be used in this workspace.
+
+## Dependente de execucao no GitHub
+
+- Runner initialization on `ubuntu-latest`.
+- Availability of `secrets.SONAR_TOKEN`.
+- NuGet cache restore/save behavior.
+- SonarCloud cache restore/save behavior.
+- Artifact publication for test results, coverage results and OpenAPI contracts.
+- Actual workflow check publication in GitHub.
+- Exact check names available for branch protection selection.
+- Linux execution of the PowerShell OpenAPI JSON validation step.
+
+## Dependente do SonarCloud
+
+- Project import or repository binding under organization `rodri-oliveira-dev`.
+- Analysis receipt by SonarCloud.
+- OpenCover coverage import.
+- TRX test report import.
+- Branch analysis for `phase/4-architecture-modernization`, subject to plan/configuration.
+- Pull request analysis.
+- Quality Gate processing result.
+- Quality Gate failure behavior in a real run.
+- Pull request decoration.
+
+## Dependente de configuracao administrativa
+
+- Import the project in SonarCloud.
+- Confirm project key `rodri-oliveira-dev_web-api-core-seed`.
+- Keep `main` as the SonarCloud main branch.
+- Disable SonarCloud automatic analysis.
+- Create or rotate the SonarCloud analysis token.
+- Create GitHub secret `SONAR_TOKEN`.
+- Associate the chosen Quality Gate.
+- Configure New Code definition.
+- Configure GitHub branch protection rulesets for `main`.
+- Select required GitHub status checks after the first workflow execution.
 
 ## External Validation Still Pending
 
-- Confirm SonarCloud project import or binding for `rodri-oliveira-dev/web-api-core-seed`.
-- Confirm project key `rodri-oliveira-dev_web-api-core-seed`.
-- Configure GitHub secret `SONAR_TOKEN`.
-- Disable SonarCloud automatic analysis.
-- Run the GitHub Actions workflow on `main`, `phase/4-architecture-modernization` or a pull request targeting `main`.
-- Confirm `TestResults/**/*.trx` and `TestResults/**/coverage.opencover.xml` are produced in CI.
-- Confirm `dotnet sonarscanner begin` accepts the configured properties.
-- Confirm `dotnet sonarscanner end` uploads analysis and waits for the Quality Gate.
+- Confirm analysis is visible in SonarCloud.
+- Confirm a green Quality Gate lets the workflow pass.
 - Confirm a red Quality Gate or Quality Gate timeout fails the job.
-- Confirm existing OpenAPI and package validations still run after a successful Quality Gate.
-- Configure branch protection and required status checks after the first successful workflow run.
-
-## Prompt 3 Coverage Validation - 2026-08-02
-
-### Branch And Worktree
-
-- `git branch --show-current`: passed.
-  - Result: `phase/4-architecture-modernization`.
-- `git status --short`: passed before changes.
-  - Result: no entries.
-- Branch in `.sdd/sonarcloud-integration/context.md`: `phase/4-architecture-modernization`.
-- Branch comparison result: matched.
-- Branch checkout performed: no.
-
-### Test Project Review
-
-- `tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj` uses `Microsoft.NET.Test.Sdk`, `coverlet.collector`, `xunit` and `xunit.runner.visualstudio`.
-- `tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj` uses `Microsoft.NET.Test.Sdk`, `coverlet.collector`, `xunit` and `xunit.runner.visualstudio`.
-- Both test projects inherit `TargetFramework=net10.0` from `Directory.Build.props`.
-- Package versions are centralized in `tests/Directory.Packages.props`, which imports root `Directory.Packages.props`.
-- No duplicate package versions were added to the test projects.
-
-### Commands Executed
-
-```text
-dotnet restore WebApiCoreSeed.slnx
-dotnet build WebApiCoreSeed.slnx --configuration Release --no-restore
-dotnet test tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj --configuration Release --no-build --logger "trx;LogFileName=unit-tests.trx" --results-directory TestResults/Unit --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover
-dotnet test tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj --configuration Release --no-build --logger "trx;LogFileName=integration-tests.trx" --results-directory TestResults/Integration --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover
-dotnet test tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj --configuration Release --no-build --logger "trx;LogFileName=unit-tests.trx" --results-directory TestResults/Unit --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude=[*.Test]*,[*.Tests]*,[*.UnitTests]*,[*.IntegrationTests]*" "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile=**/*.generated.cs"
-dotnet test tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj --configuration Release --no-build --logger "trx;LogFileName=integration-tests.trx" --results-directory TestResults/Integration --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude=[*.Test]*,[*.Tests]*,[*.UnitTests]*,[*.IntegrationTests]*" "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile=**/*.generated.cs"
-```
-
-### Test Results
-
-- Unit tests: `53` total, `53` passed, `0` failed, `0` skipped.
-- Integration tests: `42` total, `42` passed, `0` failed, `0` skipped.
-- Combined result: `95` total, `95` passed, `0` failed.
-
-### Reports Found
-
-Latest direct reports generated after the corrected commands:
-
-```text
-TestResults\Unit\unit-tests.trx
-TestResults\Integration\integration-tests.trx
-TestResults\Unit\4bbb1ee6-7118-4cc9-8f82-7159ccae2e22\coverage.cobertura.xml
-TestResults\Unit\4bbb1ee6-7118-4cc9-8f82-7159ccae2e22\coverage.opencover.xml
-TestResults\Integration\7a629b8a-bd9d-40c9-8ee6-14a0cdc48a08\coverage.cobertura.xml
-TestResults\Integration\7a629b8a-bd9d-40c9-8ee6-14a0cdc48a08\coverage.opencover.xml
-```
-
-`TestResults/` also contained older local artifacts because a local cleanup attempt was rejected by the executor policy. The workflow now removes and recreates `TestResults` before test execution to avoid stale report import in CI or reused workspaces.
-
-### OpenCover XML Validation
-
-- Unit OpenCover:
-  - File: `TestResults\Unit\4bbb1ee6-7118-4cc9-8f82-7159ccae2e22\coverage.opencover.xml`
-  - Size: `1093730` bytes.
-  - Modules: `4`.
-  - Module names: `WebApiCoreSeed.Api`, `WebApiCoreSeed.Identity.Infrastructure`, `WebApiCoreSeed.SampleRestaurant`, `WebApiCoreSeed.SampleRestaurant.Infrastructure`.
-  - Classes: `178`.
-  - Sequence points: `3772`.
-  - Covered sequence points: `1205`.
-  - Uncovered sequence points: `2567`.
-  - Missing source paths: `0`.
-- Integration OpenCover:
-  - File: `TestResults\Integration\7a629b8a-bd9d-40c9-8ee6-14a0cdc48a08\coverage.opencover.xml`
-  - Size: `1093421` bytes.
-  - Modules: `4`.
-  - Module names: `WebApiCoreSeed.Api`, `WebApiCoreSeed.Identity.Infrastructure`, `WebApiCoreSeed.SampleRestaurant`, `WebApiCoreSeed.SampleRestaurant.Infrastructure`.
-  - Classes: `178`.
-  - Sequence points: `3772`.
-  - Covered sequence points: `2731`.
-  - Uncovered sequence points: `1041`.
-  - Missing source paths: `0`.
-
-### Issues Found And Corrections
-
-- Initial local OpenCover reports were generated successfully but unit coverage included stale test assemblies `Pedidos.Test` and `WebApiCoreSeed.Tests` from the output directory.
-- Initial local OpenCover path validation also found generated OpenAPI source paths under `obj` that were not useful coverage targets.
-- Corrected the workflow test commands to pass Coverlet Collector filters for test assemblies and `**/*.generated.cs`.
-- Corrected `sonar.cs.opencover.reportsPaths` from broad recursive matching to suite-scoped direct report matching.
-- Corrected `sonar.cs.vstest.reportsPaths` to the stable TRX file names.
-- Corrected artifact upload paths to use the same real unit/integration output structure.
-- Added a workflow step to recreate `TestResults/Unit` and `TestResults/Integration` before tests.
-
-### Exclusions Review
-
-- Adopted SonarCloud coverage exclusions remain limited to `tests/**`, `tools/**`, `**/Migrations/**`, `**/*ModelSnapshot.cs` and `**/*.Designer.cs`.
-- Adopted SonarCloud duplication exclusions remain limited to `**/Migrations/**`, `**/*ModelSnapshot.cs`, `**/*.Designer.cs`, `docs/openapi/**/*.json` and `**/packages.lock.json`.
-- Added Coverlet Collector exclusions for test assemblies and `**/*.generated.cs` at coverage collection time.
-- Rejected broad `sonar.exclusions`, `sonar.test.inclusions` and `sonar.test.exclusions` because there was no evidence requiring them.
-- Rejected exclusions for controllers, handlers, services, repositories, entities, value objects, infrastructure and low-coverage code.
-
-### Not Executed
-
-- SonarScanner `begin` and `end` were not executed locally because no real `SONAR_TOKEN` should be used in the local environment.
-- SonarCloud upload, Quality Gate result, branch analysis and PR decoration remain external validations.
-
-### Final Validation Before Commit
-
-- `git status --short`: showed only `.github/workflows/ci.yml` and SDD files modified; `TestResults/` was not listed.
-- `git diff --check`: passed.
-- Python YAML parser validation for `.github/workflows/ci.yml`: passed with `PYTHON_YAML_OK`.
-- `actionlint .github/workflows/ci.yml`: not executed because `actionlint` is not installed.
-- `dotnet restore WebApiCoreSeed.slnx`: passed.
-- `dotnet build WebApiCoreSeed.slnx --configuration Release --no-restore`: passed with `0` warnings and `0` errors in the final run.
-- Final unit test run with TRX and OpenCover: `53` passed, `0` failed.
-- Final integration test run with TRX and OpenCover: `42` passed, `0` failed.
-- `git status --short --ignored=matching TestResults`: returned `!! TestResults/`, confirming the generated reports are ignored.
+- Confirm PR decoration.
+- Confirm branch protection blocks merge when required checks or the Quality Gate fail.

@@ -361,3 +361,127 @@ TestResults/Unit/unit-tests.trx,TestResults/Integration/integration-tests.trx
 - Unit tests with TRX and OpenCover: `53` passed, `0` failed.
 - Integration tests with TRX and OpenCover: `42` passed, `0` failed.
 - `git status --short --ignored=matching TestResults`: returned `!! TestResults/`, confirming generated reports remain ignored.
+
+## Prompt 4 Final Documentation And Quality Gate Protection - 2026-08-02
+
+Branch at start:
+
+```text
+phase/4-architecture-modernization
+```
+
+Branch checkout performed:
+
+```text
+no
+```
+
+Initial worktree status:
+
+```text
+clean
+```
+
+## Files Re-Inspected
+
+- `.sdd/sonarcloud-integration/context.md`
+- `.sdd/sonarcloud-integration/requirements.md`
+- `.sdd/sonarcloud-integration/design.md`
+- `.sdd/sonarcloud-integration/tasks.md`
+- `.sdd/sonarcloud-integration/decisions.md`
+- `.sdd/sonarcloud-integration/validation.md`
+- `.sdd/sonarcloud-integration/execution-log.md`
+- `.github/workflows/ci.yml`
+- `README.md`
+- `global.json`
+- `Directory.Build.props`
+- `Directory.Packages.props`
+- `WebApiCoreSeed.slnx`
+- `docs/quality-gates.md`
+
+## Technical Review Result
+
+- Confirmed workflow events: `push`, `pull_request` and `workflow_dispatch`.
+- Confirmed checkout uses `fetch-depth: 0`.
+- Confirmed .NET SDK setup uses `global.json`.
+- Confirmed NuGet and SonarCloud caches are separate.
+- Confirmed SonarScanner installation is pinned to `11.2.1`.
+- Confirmed `SONAR_TOKEN` is referenced only through `secrets.SONAR_TOKEN` on scanner steps.
+- Confirmed no secret values were present in the workflow.
+- Confirmed scanner begin/build/test/end order.
+- Confirmed OpenCover and TRX report paths.
+- Confirmed `sonar.qualitygate.wait=true` and explicit timeout `300`.
+- Confirmed artifact upload steps use `if: always()`.
+- No technical correction to `.github/workflows/ci.yml` was required in this prompt.
+
+## Local Validation Commands
+
+```text
+git branch --show-current
+git status --short
+dotnet --info
+dotnet restore WebApiCoreSeed.slnx
+dotnet build WebApiCoreSeed.slnx --configuration Release --no-restore
+dotnet test tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj --configuration Release --no-build --logger "trx;LogFileName=unit-tests.trx" --results-directory TestResults/Unit --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude=[*.Test]*,[*.Tests]*,[*.UnitTests]*,[*.IntegrationTests]*" "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile=**/*.generated.cs"
+dotnet test tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj --configuration Release --no-build --logger "trx;LogFileName=integration-tests.trx" --results-directory TestResults/Integration --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude=[*.Test]*,[*.Tests]*,[*.UnitTests]*,[*.IntegrationTests]*" "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile=**/*.generated.cs"
+python -c "import yaml; yaml.safe_load(open('.github/workflows/ci.yml', encoding='utf-8')); print('PYTHON_YAML_OK')"
+dotnet run --project tools/OpenApiGenerator/OpenApiGenerator.csproj --configuration Release --no-build
+git diff --exit-code -- docs/openapi/openapi-v1.json docs/openapi/openapi-v2.json
+dotnet list WebApiCoreSeed.slnx package --vulnerable
+dotnet list WebApiCoreSeed.slnx package --deprecated
+```
+
+## Local Validation Results
+
+- `dotnet --info`: SDK `10.0.302`, host runtime `10.0.10`.
+- Restore: passed.
+- Build: passed with `30` existing analyzer warnings and `0` errors.
+- Unit tests: `53` passed, `0` failed.
+- Integration tests: `42` passed, `0` failed.
+- Unit TRX: `TestResults\Unit\unit-tests.trx`.
+- Integration TRX: `TestResults\Integration\integration-tests.trx`.
+- Unit OpenCover: `TestResults\Unit\d84f6056-cf8f-44cd-aed6-86f7c86ebe04\coverage.opencover.xml`.
+- Integration OpenCover: `TestResults\Integration\fbb6d855-bef7-4b37-ae26-ed0eb8fc197c\coverage.opencover.xml`.
+- OpenCover XML inspection: passed for unit and integration reports.
+- YAML parser validation: passed with `PYTHON_YAML_OK`.
+- `actionlint`: not executed because it is not installed locally.
+- OpenAPI generation: passed.
+- OpenAPI JSON validation: passed for `openapi-v1.json` and `openapi-v2.json`.
+- OpenAPI synchronization diff: passed.
+- Vulnerable package audit: no vulnerable packages found.
+- Deprecated package report: `xunit 2.9.3` is reported as `Legacy` in unit and integration test projects.
+
+## Files Updated
+
+- `docs/quality/sonarcloud.md`
+- `docs/quality-gates.md`
+- `README.md`
+- `.sdd/sonarcloud-integration/tasks.md`
+- `.sdd/sonarcloud-integration/decisions.md`
+- `.sdd/sonarcloud-integration/validation.md`
+- `.sdd/sonarcloud-integration/execution-log.md`
+
+## External Items Still Pending
+
+- Import or confirm the project in SonarCloud.
+- Confirm project key `rodri-oliveira-dev_web-api-core-seed`.
+- Disable SonarCloud automatic analysis.
+- Create and configure GitHub secret `SONAR_TOKEN`.
+- Run GitHub Actions with the real secret.
+- Confirm SonarCloud receives analysis, TRX and OpenCover reports.
+- Confirm Quality Gate pass/fail behavior and timeout behavior.
+- Confirm pull request decoration.
+- Configure branch protection rulesets and required status checks after checks exist.
+
+## Final Review Before Commit
+
+- `git status --short`: showed only Prompt 4 documentation and SDD files.
+- `git diff --check`: passed with exit code `0`.
+- `git diff -- .github/workflows/ci.yml`: no output; no workflow changes were made in Prompt 4.
+- `git diff -- docs/quality/sonarcloud.md`: reviewed after marking the new file with intent-to-add.
+- `git diff -- README.md`: reviewed.
+- `git diff -- docs/quality-gates.md`: reviewed.
+- `git diff -- .sdd/sonarcloud-integration`: reviewed.
+- `git status --short --ignored=matching TestResults`: returned `!! TestResults/`, confirming generated reports remain ignored.
+- Diff search for token/secret terms found only documentation text and secret names, with no secret value.
+- Final branch check remained `phase/4-architecture-modernization`.

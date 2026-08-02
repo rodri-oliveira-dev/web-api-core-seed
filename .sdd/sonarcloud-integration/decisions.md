@@ -263,3 +263,17 @@ Rejected exclusions:
 | `sonar.test.exclusions` | Not needed; no evidence that tests are being misclassified for analysis. |
 | Controllers, handlers, services, repositories, domain models, value objects, infrastructure | These are hand-written product code and must remain visible to coverage and static analysis. |
 | Low-coverage or hard-to-test classes | Excluding them would artificially improve metrics. |
+
+## D018 - Keep External SonarCloud And GitHub Administration Manual
+
+Context: Prompt 4 validates local behavior and documents operational setup, but the repository does not have access to SonarCloud administrative state or GitHub repository rulesets from the local workspace.
+
+Decision: Keep SonarCloud import, automatic analysis disablement, token creation, secret creation, Quality Gate association and branch protection as documented manual tasks until evidence exists from GitHub/SonarCloud.
+
+Alternatives considered: Mark external tasks complete based on intended configuration; add placeholder secrets or check names.
+
+Consequences: SDD status remains honest about local validation versus external validation.
+
+Risks: The first GitHub Actions execution can still fail if an administrator has not completed the external setup.
+
+Mitigation: Document setup steps, troubleshooting and the need to select exact status checks only after the first workflow execution.

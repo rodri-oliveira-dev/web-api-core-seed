@@ -40,7 +40,7 @@
   - [x] Confirmar por revisao do YAML que codigo de producao escrito manualmente continua analisado.
   - [x] Registrar exclusoes sem adicionar exclusao ampla de codigo-fonte.
 
-- [-] Validacao local
+- [x] Validacao local
   - [x] Validar YAML com parser local disponivel.
   - [!] Executar `actionlint .github/workflows/ci.yml` quando a ferramenta estiver disponivel.
   - [x] Executar `git diff --check`.
@@ -50,22 +50,31 @@
   - [x] Executar testes unitarios com TRX e OpenCover.
   - [x] Executar testes de integracao com TRX e OpenCover.
   - [x] Validar XMLs OpenCover quanto a tamanho, XML valido, modulos, classes, linhas cobertas e nao cobertas.
+  - [x] Executar geracao de OpenAPI local.
+  - [x] Validar JSON dos contratos OpenAPI.
+  - [x] Verificar sincronizacao dos contratos OpenAPI com `git diff --exit-code`.
+  - [x] Executar auditoria de pacotes vulneraveis.
+  - [x] Executar relatorio de pacotes obsoletos.
   - [x] Confirmar que `TestResults/` esta ignorado pelo `.gitignore`.
   - [!] Confirmar geracao de TRX e OpenCover em CI com `SONAR_TOKEN` configurado.
 
-- [ ] Documentacao externa
-  - Documentar importacao do projeto no SonarCloud.
-  - Documentar desativacao da analise automatica do SonarCloud.
-  - Documentar criacao do secret `SONAR_TOKEN`.
-  - Documentar configuracao de New Code e Quality Gate.
+- [x] Documentacao externa
+  - [x] Documentar importacao do projeto no SonarCloud.
+  - [x] Documentar desativacao da analise automatica do SonarCloud.
+  - [x] Documentar criacao do secret `SONAR_TOKEN`.
+  - [x] Documentar configuracao de New Code e Quality Gate.
+  - [x] Documentar protecao de branch e selecao de checks apos primeira execucao.
+  - [x] Documentar limitacoes de branch analysis, pull requests e forks.
+  - [x] Documentar troubleshooting e execucao local.
 
-- [ ] Protecao da branch
-  - Executar o workflow ao menos uma vez.
-  - Configurar status checks obrigatorios em `main`.
-  - Incluir o status do Quality Gate quando disponivel.
+- [!] Protecao da branch
+  - [!] Executar o workflow ao menos uma vez.
+  - [!] Configurar status checks obrigatorios em `main`.
+  - [!] Incluir o status do Quality Gate quando disponivel.
 
-- [ ] Validacao final
-  - Confirmar analise visivel no SonarCloud.
-  - Confirmar PR analysis.
-  - Confirmar falha do workflow quando o Quality Gate reprovar.
-  - Registrar pendencias e riscos remanescentes.
+- [-] Validacao final
+  - [x] Registrar validacoes locais executadas.
+  - [x] Registrar pendencias e riscos remanescentes.
+  - [!] Confirmar analise visivel no SonarCloud.
+  - [!] Confirmar PR analysis.
+  - [!] Confirmar falha do workflow quando o Quality Gate reprovar.
