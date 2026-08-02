@@ -38,3 +38,4 @@
 | D034 | Rejeitar `PageSize > 50` em vez de truncar silenciosamente. | Accepted | Erro explicito torna o contrato previsivel e evita que clientes acreditem ter recebido o tamanho solicitado. |
 | D035 | Trocar o envelope paginado para `items/page/pageSize/totalItems/totalPages/hasNextPage/hasPreviousPage`. | Accepted | A metadata fica consistente e autoexplicativa; a mudanca de formato foi documentada como breaking change. |
 | D036 | Adicionar indice `IX_Pratos_Titulo_Id`. | Accepted | O indice apoia a ordenacao estavel usada antes de `Skip` e `Take`. |
+| D037 | Remover dados controlados pelo request de caminhos de upload e logs estruturados do middleware. | Accepted | O check de Code Scanning do PR 24 apontou path traversal em upload de pratos e log injection no middleware; nomes de imagem agora usam GUID com extensao permitida e logs usam metodo/endpoint seguros em vez de path, headers, host e protocolo enviados pelo cliente. |

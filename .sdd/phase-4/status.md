@@ -99,6 +99,25 @@ Push: pendente
 PR: pendente
 ```
 
+## Correcao pos-PR - CodeQL
+
+- Check analisado: `CodeQL` / GitHub Advanced Security no PR 24, check run `91557430544`.
+- Alertas corrigidos:
+  - `Uncontrolled data used in path expression` em `PratosController`.
+  - `Log entries created from user input` em `SerilogMiddleware`.
+- Ajuste aplicado:
+  - Upload de imagens de pratos usa nome gerado por GUID e apenas extensoes permitidas por constantes.
+  - Caminho final de upload e normalizado e validado dentro do diretorio esperado.
+  - Middleware de Serilog nao registra mais path, headers, host ou protocolo controlados pelo cliente.
+  - Logs HTTP usam metodo conhecido e nome de endpoint.
+- Validacao local:
+  - `dotnet restore WebApiCoreSeed.slnx`: passou.
+  - `dotnet build WebApiCoreSeed.slnx --configuration Release --no-restore`: passou com warnings existentes.
+  - `dotnet test tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj --configuration Release --no-build`: passou, `53` testes.
+  - `dotnet test tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj --configuration Release --no-build`: passou, `42` testes.
+- Validacao pendente:
+  - Reexecutar CodeQL/GitHub Advanced Security no PR para confirmar fechamento dos alertas.
+
 ## Resultado do prompt 06
 
 - Projeto `WebApiCoreSeed.Identity.Infrastructure` criado para persistencia de Identity.

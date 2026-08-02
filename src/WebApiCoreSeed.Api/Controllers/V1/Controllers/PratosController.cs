@@ -128,8 +128,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState, ETipoAcao.ModeloInvalido);
 
-            var imagemNome = Guid.NewGuid() + "_" + pratoViewModel.Foto;
-            if (!UploadArquivo(pratoViewModel.FotoUpload, imagemNome))
+            if (!UploadArquivo(pratoViewModel.FotoUpload, pratoViewModel.Foto, out var imagemNome))
             {
                 return CustomResponse(pratoViewModel, ETipoAcao.ModeloInvalido);
             }
@@ -174,8 +173,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
 
             if (pratoViewModel.FotoUpload != null)
             {
-                var imagemNome = Guid.NewGuid() + "_" + pratoViewModel.Foto;
-                if (!UploadArquivo(pratoViewModel.FotoUpload, imagemNome))
+                if (!UploadArquivo(pratoViewModel.FotoUpload, pratoViewModel.Foto, out var imagemNome))
                 {
                     return CustomResponse(ModelState, ETipoAcao.ModeloInvalido);
                 }
@@ -221,8 +219,10 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
             return CustomResponse(prato, ETipoAcao.Excluido);
         }
 
-        private bool UploadArquivo(string? arquivo, string imgNome)
+        private bool UploadArquivo(string? arquivo, string? nomeOriginal, out string imgNome)
         {
+            imgNome = string.Empty;
+
             if (string.IsNullOrEmpty(arquivo))
             {
                 NotificarErro("Forneça uma imagem para este Prato!");
@@ -236,8 +236,17 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
             }
 
             var imageDataByteArray = Convert.FromBase64String(arquivo);
+            imgNome = GerarNomeImagem(nomeOriginal);
 
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/app/demo-webapi/src/assets", imgNome);
+            var diretorioUpload = Path.GetFullPath(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/app/demo-webapi/src/assets"));
+            Directory.CreateDirectory(diretorioUpload);
+
+            var filePath = Path.GetFullPath(Path.Combine(diretorioUpload, imgNome));
+            if (!EstaDentroDoDiretorio(filePath, diretorioUpload))
+            {
+                NotificarErro("Nome de arquivo invalido!");
+                return false;
+            }
 
             if (System.IO.File.Exists(filePath))
             {
@@ -248,6 +257,33 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
             System.IO.File.WriteAllBytes(filePath, imageDataByteArray);
 
             return true;
+        }
+
+        private static string GerarNomeImagem(string? nomeOriginal)
+        {
+            return $"{Guid.NewGuid():N}{ObterExtensaoPermitida(nomeOriginal)}";
+        }
+
+        private static string ObterExtensaoPermitida(string? nomeOriginal)
+        {
+            var extensao = Path.GetExtension(Path.GetFileName(nomeOriginal));
+
+            if (string.Equals(extensao, ".gif", StringComparison.OrdinalIgnoreCase)) return ".gif";
+            if (string.Equals(extensao, ".jpeg", StringComparison.OrdinalIgnoreCase)) return ".jpeg";
+            if (string.Equals(extensao, ".jpg", StringComparison.OrdinalIgnoreCase)) return ".jpg";
+            if (string.Equals(extensao, ".png", StringComparison.OrdinalIgnoreCase)) return ".png";
+            if (string.Equals(extensao, ".webp", StringComparison.OrdinalIgnoreCase)) return ".webp";
+
+            return string.Empty;
+        }
+
+        private static bool EstaDentroDoDiretorio(string filePath, string diretorio)
+        {
+            var diretorioComSeparador = diretorio.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal)
+                ? diretorio
+                : diretorio + Path.DirectorySeparatorChar;
+
+            return filePath.StartsWith(diretorioComSeparador, StringComparison.OrdinalIgnoreCase);
         }
 
         private async Task<PratoViewModel?> ObterPrato(Guid id, CancellationToken cancellationToken)

@@ -1,7 +1,5 @@
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Serilog;
@@ -11,11 +9,9 @@ namespace WebApiCoreSeed.Api.Middlewares
 {
     public class SerilogMiddleware
     {
-        const string MessageTemplate = "HTTP {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
+        const string MessageTemplate = "HTTP {RequestMethod} {RequestEndpoint} responded {StatusCode} in {Elapsed:0.0000} ms";
 
         static readonly Serilog.ILogger Log = Serilog.Log.ForContext<SerilogMiddleware>();
-
-        static readonly HashSet<string> HeaderWhitelist = new HashSet<string> { "Content-Type", "Content-Length", "User-Agent" };
 
         readonly RequestDelegate _next;
 
@@ -39,7 +35,7 @@ namespace WebApiCoreSeed.Api.Middlewares
                 var level = statusCode > 499 ? LogEventLevel.Error : LogEventLevel.Information;
 
                 var log = level == LogEventLevel.Error ? LogForErrorContext(httpContext) : Log;
-                log.Write(level, MessageTemplate, httpContext.Request.Method, GetPath(httpContext), statusCode, elapsedMs);
+                log.Write(level, MessageTemplate, GetKnownHttpMethod(httpContext), GetEndpointName(httpContext), statusCode, elapsedMs);
             }
             // Never caught, because `LogException()` returns false.
             catch (Exception ex) when (ex is not OperationCanceledException && LogException(httpContext, GetElapsedMilliseconds(start, Stopwatch.GetTimestamp()), ex)) { }
@@ -48,25 +44,14 @@ namespace WebApiCoreSeed.Api.Middlewares
         static bool LogException(HttpContext httpContext, double elapsedMs, Exception ex)
         {
             LogForErrorContext(httpContext)
-                .Error(ex, MessageTemplate, httpContext.Request.Method, GetPath(httpContext), 500, elapsedMs);
+                .Error(ex, MessageTemplate, GetKnownHttpMethod(httpContext), GetEndpointName(httpContext), 500, elapsedMs);
 
             return false;
         }
 
         static Serilog.ILogger LogForErrorContext(HttpContext httpContext)
         {
-            var request = httpContext.Request;
-
-            var loggedHeaders = request.Headers
-                .Where(h => HeaderWhitelist.Contains(h.Key))
-                .ToDictionary(h => h.Key, h => h.Value.ToString());
-
-            var result = Log
-                .ForContext("RequestHeaders", loggedHeaders, destructureObjects: true)
-                .ForContext("RequestHost", request.Host)
-                .ForContext("RequestProtocol", request.Protocol);
-
-            return result;
+            return Log.ForContext("RequestEndpoint", GetEndpointName(httpContext));
         }
 
         static double GetElapsedMilliseconds(long start, long stop)
@@ -74,9 +59,24 @@ namespace WebApiCoreSeed.Api.Middlewares
             return (stop - start) * 1000 / (double)Stopwatch.Frequency;
         }
 
-        static string GetPath(HttpContext httpContext)
+        static string GetKnownHttpMethod(HttpContext httpContext)
         {
-            return httpContext.Request.Path.ToString();
+            var method = httpContext.Request.Method;
+
+            if (HttpMethods.IsGet(method)) return "GET";
+            if (HttpMethods.IsPost(method)) return "POST";
+            if (HttpMethods.IsPut(method)) return "PUT";
+            if (HttpMethods.IsDelete(method)) return "DELETE";
+            if (HttpMethods.IsPatch(method)) return "PATCH";
+            if (HttpMethods.IsOptions(method)) return "OPTIONS";
+            if (HttpMethods.IsHead(method)) return "HEAD";
+
+            return "OTHER";
+        }
+
+        static string GetEndpointName(HttpContext httpContext)
+        {
+            return httpContext.GetEndpoint()?.DisplayName ?? "Unmatched endpoint";
         }
     }
 }

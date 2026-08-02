@@ -208,6 +208,15 @@
 - Os projetos ativos miram `net10.0`.
 - As skills DDD citadas no prompt nao estavam instaladas nesta sessao; foram usadas as skills locais aplicaveis de SDD, mudanca .NET, integracao .NET e refatoracao .NET.
 
+## Correcao pos-PR de CodeQL
+
+- PR 24 apresentou falha no check externo `CodeQL` / GitHub Advanced Security com alertas em `PratosController` e `SerilogMiddleware`.
+- `PratosController` deixou de compor caminho de upload com nome original enviado pelo cliente; agora gera nome por GUID e preserva somente extensoes permitidas.
+- O caminho de upload e normalizado com `Path.GetFullPath` e validado contra o diretorio esperado antes da escrita.
+- `SerilogMiddleware` deixou de registrar path, headers, host e protocolo controlados pelo request; logs usam metodo HTTP conhecido e nome de endpoint.
+- Validado localmente com restore, build, testes unitarios e testes de integracao.
+- Reexecucao do check CodeQL no GitHub ainda e necessaria para confirmar fechamento dos alertas.
+
 ## Estado final da Fase 4
 
 - Branch atual: `phase/4-architecture-modernization`.
