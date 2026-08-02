@@ -1,45 +1,85 @@
 # Handoff
 
-## Estado entregue pelo Prompt 5
+## Estado apos Prompt 6
 
-- Solution ativa migrada para `WebApiCoreSeed.slnx` pelo comando oficial do SDK.
-- O arquivo de solution anterior foi removido somente depois da equivalencia entre as listas de projetos da solution antiga e da nova.
-- A `.slnx` preserva 7 projetos ativos:
-  - API;
-  - SampleRestaurant business;
-  - SampleRestaurant infrastructure;
-  - Identity infrastructure;
-  - unit tests;
-  - integration tests;
-  - OpenApiGenerator.
-- Folders logicos preservados: `/src/`, `/src/WebApiCoreSeed.Api/`, `/src/Modules/`, `/src/Modules/SampleRestaurant/`, `/src/Modules/Identity/`, `/tests/` e `/tools/`.
-- Referencias ativas atualizadas em `AGENTS.md`, `README.md`, VS Code, workspace, GitHub workflows, CODEOWNERS, template de PR, hooks, docs operacionais, skills locais e factories EF design-time.
-- `ApplicationDbContextFactory` e `SampleRestaurantDbContextFactory` agora localizam a raiz pelo arquivo SLNX.
-- OpenAPI generator atualizou `docs/openapi/openapi-v1.json` e `docs/openapi/openapi-v2.json`; os contratos foram mantidos sincronizados com a saida atual do gerador.
+- Layout final permanece em `src/`, `src/Modules/`, `tests/` e `tools/`.
+- Solution ativa permanece `WebApiCoreSeed.slnx`.
+- Projetos ativos permanecem:
+  - `src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj`;
+  - `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant/WebApiCoreSeed.SampleRestaurant.csproj`;
+  - `src/Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.Infrastructure/WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj`;
+  - `src/Modules/Identity/WebApiCoreSeed.Identity.Infrastructure/WebApiCoreSeed.Identity.Infrastructure.csproj`;
+  - `tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj`;
+  - `tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj`;
+  - `tools/OpenApiGenerator/OpenApiGenerator.csproj`.
+- Namespaces do core SampleRestaurant ainda preservam compatibilidade legada: `Models`, `Services`, `Interfaces`, `Intefaces`, `Notificacoes` e `Application.Contracts`.
+- CPM permanece ativo por `Directory.Packages.props` raiz e arquivos por escopo em `src/`, `tests/` e `tools/`.
+- Arquivos MSBuild consolidados permanecem `Directory.Build.props`, `Directory.Packages.props` e respectivos arquivos por escopo.
+- Nenhum package CSF.Analyzers foi instalado.
+- Nenhuma regra CSF.Analyzers esta ativa.
+- Nenhuma supressao global foi adicionada.
 
-## Validacoes do Prompt 5
+## Bloqueio de analyzers
 
-- `dotnet restore WebApiCoreSeed.slnx`: passou.
-- `dotnet build WebApiCoreSeed.slnx --configuration Release --no-restore`: passou com 30 warnings `CA*` historicos e 0 erros.
-- `dotnet test WebApiCoreSeed.slnx --configuration Release --no-build`: passou com 95 testes.
-- Testes unitarios isolados: 53 aprovados.
-- Testes de integracao isolados com `Category=Integration`: 42 aprovados.
-- Testes arquiteturais com `Architecture=ModularHexagonal`: 7 aprovados.
-- OpenAPI generator: passou e regenerou contratos.
-- JSON OpenAPI: sintaticamente valido.
-- Workflow YAML: sintaticamente valido com PyYAML.
-- `scripts/setup/configure-git-hooks.ps1 -Check`: passou.
-- `.githooks/pre-push`: passou usando SLNX via Git for Windows shell.
-- `git diff --check`: passou; manteve apenas aviso de normalizacao LF para `README.md`.
-- Varredura final: nenhuma referencia ativa ao arquivo antigo fora de SDD historico ou documentacao do proprio Prompt 5.
+- `CSF.Analyzers.Architecture`: indisponivel no NuGet.org.
+- `CSF.Analyzers.Reliability`: indisponivel no NuGet.org.
+- `CSF.Analyzers.Testing`: indisponivel no NuGet.org.
+- O repositorio nao possui `NuGet.Config` com feed publico/privado alternativo.
+- A documentacao do repositorio `rodri-oliveira-dev/CSF.Analyzers` confirma que a publicacao no NuGet.org ainda nao esta habilitada.
 
-## Proximo prompt
+## Regras avaliadas
 
-Prompt 6 deve adotar CSF.Analyzers sem reverter a migracao SLNX. Use `WebApiCoreSeed.slnx` em restore, build, test, `dotnet list` e qualquer novo gate.
+- Reliability: `REL001`, `REL002`, `REL003`, `REL004`, `REL005`, `REL006`.
+- Architecture: `ARC001`, `ARC002`, `ARC003`, `ARC004`, `ARC005`, `ARC006`.
+- Testing: `TST001`, `TST002`.
+- Matriz completa em `.sdd/repository-hardening/06-csf-analyzers/rule-applicability.md`.
 
-## Riscos para acompanhar
+## Warnings conhecidos
 
-- Nao recriar o arquivo antigo da solution ao usar ferramentas antigas de IDE.
-- Alguns SDDs de prompts anteriores ainda citam comandos e estados antigos; trate-os como historico, nao como instrucao operacional atual.
-- Os 30 warnings `CA*` permanecem divida conhecida para prompt proprio.
-- O aviso de normalizacao de `README.md` vem da politica de LF e nao bloqueou `git diff --check`.
+- O ultimo build completo registrado no Prompt 5 passou com 30 warnings `CA*` historicos.
+- O Prompt 6 nao executou novo build porque foi bloqueado antes de alterar packages.
+
+## Commands oficiais
+
+Quando o bloqueio for resolvido, retomar com:
+
+```bash
+dotnet restore WebApiCoreSeed.slnx
+dotnet build WebApiCoreSeed.slnx --configuration Release --no-restore --no-incremental
+dotnet test WebApiCoreSeed.slnx --configuration Release --no-build
+dotnet test tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj --configuration Release --no-build --filter "Architecture=ModularHexagonal"
+dotnet test tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj --configuration Release --no-build --filter "Category=Integration"
+dotnet run --project tools/OpenApiGenerator/OpenApiGenerator.csproj --configuration Release --no-build
+```
+
+## Commits da padronizacao
+
+Esperados seis commits semanticos na Fase 4 hardening:
+
+1. `chore: harden repository metadata`
+2. `refactor: standardize repository layout`
+3. `build: adopt central package management`
+4. `build: standardize dotnet build settings`
+5. `build: migrate solution to slnx`
+6. `docs: record CSF analyzer adoption blocker`
+
+## Limitacoes
+
+- A Fase 4 hardening nao esta concluida funcionalmente porque a adocao dos analyzers depende de publicacao/feed reproduzivel.
+- `CSF.Analyzers.Testing` continua fora do desenho inicial ate o projeto adotar NSubstitute ou FluentAssertions como politica de teste.
+- `ARC002` deve usar namespaces reais, nao somente nomes de pastas.
+- `REL003` deve permanecer desabilitada ate a politica de `AsNoTracking` ser confirmada.
+
+## Proxima branch
+
+Nao iniciar `phase/5-open-source-productization` ate o proprietario decidir se:
+
+1. publica os pacotes CSF.Analyzers em NuGet.org;
+2. configura feed reproduzivel documentado;
+3. aceita seguir para a Fase 5 com esse bloqueio explicitamente pendente.
+
+Branch seguinte planejada quando liberada:
+
+```text
+phase/5-open-source-productization
+```

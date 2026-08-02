@@ -5,4 +5,8 @@
 03 - Central Package Management: concluido
 04 - Build e estilo: concluido
 05 - Migracao SLNX: concluido
-06 - CSF.Analyzers: pendente
+06 - CSF.Analyzers: bloqueado por indisponibilidade dos pacotes em fonte NuGet reproduzivel
+
+Padronizacao pos-Fase 4: bloqueada pelo Prompt 6
+Push: pendente
+PR: pendente
