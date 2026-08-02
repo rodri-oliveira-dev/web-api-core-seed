@@ -153,3 +153,31 @@ Consequences: Regressions are blocked consistently.
 Risks: Required checks can block emergency fixes if SonarCloud is unavailable.
 
 Mitigation: Document administrative override expectations and keep checks limited to meaningful gates.
+
+## D012 - Keep Secrets Scoped To Scanner Steps
+
+Context: The workflow needs `SONAR_TOKEN` for `dotnet sonarscanner begin` and `dotnet sonarscanner end`, but secrets should not be global workflow values.
+
+Decision: Reference `secrets.SONAR_TOKEN` only as step-level environment data on the two scanner steps, and pass it to the scanner through `$SONAR_TOKEN`.
+
+Alternatives considered: Store the token in global workflow `env`; write the token directly in scanner command arguments with GitHub expression interpolation.
+
+Consequences: The scanner receives the required token while the workflow keeps non-secret Sonar identity values separate from secret material.
+
+Risks: The workflow still depends on the external GitHub secret being configured before the first successful CI analysis.
+
+Mitigation: Keep `SONAR_TOKEN` documented as an external setup item and never write its value to versioned files or logs.
+
+## D013 - Include The Active Modernization Branch In Push Analysis
+
+Context: The SDD context registered `phase/4-architecture-modernization` as the active modernization branch to consider, and the implementation prompt asked to configure the pushes defined in the SDD without broadening to all branches.
+
+Decision: Configure push analysis for `main` and `phase/4-architecture-modernization`, while keeping pull request analysis limited to PRs targeting `main`.
+
+Alternatives considered: Keep pushes restricted to `main`; broaden pushes to all branches.
+
+Consequences: The active modernization branch can run the same CI and SonarCloud analysis when branch analysis is available.
+
+Risks: SonarCloud branch analysis for non-main branches can depend on the SonarCloud plan and project configuration.
+
+Mitigation: Register this as an external limitation and keep the trigger limited to the one active modernization branch instead of all branches.

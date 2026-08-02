@@ -4,10 +4,12 @@ on:
   pull_request:
     branches: ["main"]
   push:
-    branches: ["main"]
+    branches: ["main", "phase/4-architecture-modernization"]
+  workflow_dispatch:
 
 permissions:
   contents: read
+  pull-requests: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -20,6 +22,11 @@ env:
   UNIT_TEST_PROJECT: tests/WebApiCoreSeed.UnitTests/WebApiCoreSeed.UnitTests.csproj
   INTEGRATION_TEST_PROJECT: tests/WebApiCoreSeed.IntegrationTests/WebApiCoreSeed.IntegrationTests.csproj
   OPENAPI_GENERATOR_PROJECT: tools/OpenApiGenerator/OpenApiGenerator.csproj
+  SONAR_SCANNER_VERSION: 11.2.1
+  SONAR_ORGANIZATION: rodri-oliveira-dev
+  SONAR_PROJECT_KEY: rodri-oliveira-dev_web-api-core-seed
+  SONAR_HOST_URL: https://sonarcloud.io
+  SONAR_QUALITY_GATE_TIMEOUT: 300
 
 jobs:
   build-test-quality:
@@ -30,6 +37,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
@@ -44,8 +53,38 @@ jobs:
           restore-keys: |
             nuget-${{ runner.os }}-
 
+      - name: Cache SonarCloud
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: sonar-${{ runner.os }}-dotnet-sonarscanner-${{ env.SONAR_SCANNER_VERSION }}
+          restore-keys: |
+            sonar-${{ runner.os }}-dotnet-sonarscanner-
+
+      - name: Install SonarScanner for .NET
+        run: |
+          dotnet tool install --global dotnet-sonarscanner --version "$SONAR_SCANNER_VERSION"
+          echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
+
       - name: Restore
         run: dotnet restore "$SOLUTION"
+
+      - name: Begin SonarCloud analysis
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet sonarscanner begin \
+            /k:"$SONAR_PROJECT_KEY" \
+            /o:"$SONAR_ORGANIZATION" \
+            /d:sonar.host.url="$SONAR_HOST_URL" \
+            /d:sonar.token="$SONAR_TOKEN" \
+            /d:sonar.qualitygate.wait=true \
+            /d:sonar.qualitygate.timeout="$SONAR_QUALITY_GATE_TIMEOUT" \
+            /d:sonar.cs.opencover.reportsPaths="TestResults/**/coverage.opencover.xml" \
+            /d:sonar.cs.vstest.reportsPaths="TestResults/**/*.trx" \
+            /d:sonar.coverage.exclusions="tests/**,tools/**,**/Migrations/**,**/*ModelSnapshot.cs,**/*.Designer.cs" \
+            /d:sonar.cpd.exclusions="**/Migrations/**,**/*ModelSnapshot.cs,**/*.Designer.cs,docs/openapi/**/*.json,**/packages.lock.json"
 
       - name: Build
         run: dotnet build "$SOLUTION" --configuration Release --no-restore
@@ -57,16 +96,24 @@ jobs:
           --no-build
           --logger "trx;LogFileName=unit-tests.trx"
           --results-directory TestResults/Unit
-          --collect:"XPlat Code Coverage"
+          --collect:"XPlat Code Coverage" --
+          DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover
 
-      - name: Run integration and container tests with coverage
+      - name: Run integration tests with coverage
         run: >
           dotnet test "$INTEGRATION_TEST_PROJECT"
           --configuration Release
           --no-build
           --logger "trx;LogFileName=integration-tests.trx"
           --results-directory TestResults/Integration
-          --collect:"XPlat Code Coverage"
+          --collect:"XPlat Code Coverage" --
+          DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover
+
+      - name: End SonarCloud analysis and enforce Quality Gate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
 
       - name: Generate OpenAPI contracts
         run: dotnet run --project "$OPENAPI_GENERATOR_PROJECT" --configuration Release --no-build
@@ -101,7 +148,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: coverage-results
-          path: TestResults/**/coverage.cobertura.xml
+          path: |
+            TestResults/**/coverage.cobertura.xml
+            TestResults/**/coverage.opencover.xml
           if-no-files-found: error
 
       - name: Upload generated OpenAPI contracts
