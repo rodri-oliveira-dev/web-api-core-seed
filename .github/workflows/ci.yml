@@ -24,7 +24,7 @@ env:
   OPENAPI_GENERATOR_PROJECT: tools/OpenApiGenerator/OpenApiGenerator.csproj
   SONAR_SCANNER_VERSION: 11.2.1
   SONAR_ORGANIZATION: rodri-oliveira-dev
-  SONAR_PROJECT_KEY: rodri-oliveira-dev_web-api-core-seed
+  SONAR_PROJECT_KEY: rodri-oliveira-dev_web-api-core-seed2
   SONAR_HOST_URL: https://sonarcloud.io
   SONAR_QUALITY_GATE_TIMEOUT: 300
 

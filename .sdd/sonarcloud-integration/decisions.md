@@ -277,3 +277,17 @@ Consequences: SDD status remains honest about local validation versus external v
 Risks: The first GitHub Actions execution can still fail if an administrator has not completed the external setup.
 
 Mitigation: Document setup steps, troubleshooting and the need to select exact status checks only after the first workflow execution.
+
+## D019 - Align Project Key With Existing SonarCloud Project
+
+Context: The maintainer provided the SonarCloud configuration URL `https://sonarcloud.io/project/configuration/AutoScan?id=rodri-oliveira-dev_web-api-core-seed2`, which identifies the imported project key as `rodri-oliveira-dev_web-api-core-seed2`.
+
+Decision: Update the workflow, operational documentation and SDD references to use `rodri-oliveira-dev_web-api-core-seed2`.
+
+Alternatives considered: Rename or reimport the SonarCloud project to the previously expected key; keep repository files pointing to the old expected key.
+
+Consequences: GitHub Actions analysis will target the SonarCloud project that currently exists.
+
+Risks: If the SonarCloud project is later renamed, the workflow key must be updated again.
+
+Mitigation: Keep the key documented in one visible workflow variable and in the SonarCloud operational guide.

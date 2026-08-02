@@ -41,10 +41,10 @@ rodri-oliveira-dev
 Expected project key:
 
 ```text
-rodri-oliveira-dev_web-api-core-seed
+rodri-oliveira-dev_web-api-core-seed2
 ```
 
-The project key is not a secret, but it must be confirmed in the SonarCloud UI before the implementation commit.
+The project key is not a secret. It was aligned with the maintainer-provided SonarCloud configuration URL and should be updated only if the SonarCloud project is renamed later.
 
 SonarCloud URL:
 
@@ -230,7 +230,7 @@ TestResults/Integration/*/coverage.opencover.xml
 Planned `begin` properties:
 
 ```text
-/k:"rodri-oliveira-dev_web-api-core-seed"
+/k:"rodri-oliveira-dev_web-api-core-seed2"
 /o:"rodri-oliveira-dev"
 /d:sonar.host.url="https://sonarcloud.io"
 /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
@@ -303,7 +303,7 @@ The implementation prompt should also document, outside the workflow, how to:
 
 - import the project in SonarCloud;
 - disable SonarCloud automatic analysis;
-- confirm project key `rodri-oliveira-dev_web-api-core-seed`;
+- confirm project key `rodri-oliveira-dev_web-api-core-seed2`;
 - create `SONAR_TOKEN` with the minimum required scope;
 - store `SONAR_TOKEN` as a GitHub secret;
 - confirm PR decoration is enabled;

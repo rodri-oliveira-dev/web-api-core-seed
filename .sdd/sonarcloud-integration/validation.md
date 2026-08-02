@@ -45,6 +45,13 @@
 - Confirmed artifact upload steps use `if: always()`.
 - No workflow correction was required in Prompt 4.
 
+### Project key alignment
+
+- SonarCloud project key updated to `rodri-oliveira-dev_web-api-core-seed2`.
+- Evidence: maintainer-provided SonarCloud configuration URL `https://sonarcloud.io/project/configuration/AutoScan?id=rodri-oliveira-dev_web-api-core-seed2`.
+- Workflow YAML parser validation after the key update: passed with `PYTHON_YAML_OK`.
+- `git diff --check` after the key update: passed.
+
 ### Commands
 
 - `dotnet --info`: passed.
@@ -127,7 +134,7 @@
 ## Dependente de configuracao administrativa
 
 - Import the project in SonarCloud.
-- Confirm project key `rodri-oliveira-dev_web-api-core-seed`.
+- Keep project key `rodri-oliveira-dev_web-api-core-seed2` aligned with the SonarCloud project if the project is renamed later.
 - Keep `main` as the SonarCloud main branch.
 - Disable SonarCloud automatic analysis.
 - Create or rotate the SonarCloud analysis token.

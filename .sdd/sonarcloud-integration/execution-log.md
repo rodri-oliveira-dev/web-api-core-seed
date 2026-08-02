@@ -155,7 +155,7 @@ clean
 - Installed `dotnet-sonarscanner` with explicit version `11.2.1`.
 - Added non-secret Sonar values:
   - `SONAR_ORGANIZATION=rodri-oliveira-dev`
-  - `SONAR_PROJECT_KEY=rodri-oliveira-dev_web-api-core-seed`
+  - `SONAR_PROJECT_KEY=rodri-oliveira-dev_web-api-core-seed2`
   - `SONAR_HOST_URL=https://sonarcloud.io`
 - Scoped `secrets.SONAR_TOKEN` to the scanner `begin` and `end` steps.
 - Added `dotnet sonarscanner begin` before the existing build.
@@ -180,7 +180,7 @@ clean
 ## External Dependencies Still Pending
 
 - Confirm the SonarCloud project exists or import it from GitHub.
-- Confirm project key `rodri-oliveira-dev_web-api-core-seed` in the SonarCloud UI.
+- Confirm project key `rodri-oliveira-dev_web-api-core-seed2` in the SonarCloud UI.
 - Disable SonarCloud automatic analysis after enabling CI analysis.
 - Configure GitHub secret `SONAR_TOKEN` without exposing its value.
 - Confirm branch analysis support for `phase/4-architecture-modernization`.
@@ -464,7 +464,6 @@ dotnet list WebApiCoreSeed.slnx package --deprecated
 ## External Items Still Pending
 
 - Import or confirm the project in SonarCloud.
-- Confirm project key `rodri-oliveira-dev_web-api-core-seed`.
 - Disable SonarCloud automatic analysis.
 - Create and configure GitHub secret `SONAR_TOKEN`.
 - Run GitHub Actions with the real secret.
@@ -485,3 +484,35 @@ dotnet list WebApiCoreSeed.slnx package --deprecated
 - `git status --short --ignored=matching TestResults`: returned `!! TestResults/`, confirming generated reports remain ignored.
 - Diff search for token/secret terms found only documentation text and secret names, with no secret value.
 - Final branch check remained `phase/4-architecture-modernization`.
+
+## Project Key Alignment - 2026-08-02
+
+The maintainer provided the SonarCloud configuration URL:
+
+```text
+https://sonarcloud.io/project/configuration/AutoScan?id=rodri-oliveira-dev_web-api-core-seed2
+```
+
+The project key was aligned from the previously expected value to:
+
+```text
+rodri-oliveira-dev_web-api-core-seed2
+```
+
+Files updated:
+
+- `.github/workflows/ci.yml`
+- `docs/quality/sonarcloud.md`
+- `.sdd/sonarcloud-integration/context.md`
+- `.sdd/sonarcloud-integration/design.md`
+- `.sdd/sonarcloud-integration/tasks.md`
+- `.sdd/sonarcloud-integration/decisions.md`
+- `.sdd/sonarcloud-integration/validation.md`
+- `.sdd/sonarcloud-integration/execution-log.md`
+
+Validation:
+
+- Python YAML parser validation for `.github/workflows/ci.yml`: passed with `PYTHON_YAML_OK`.
+- `git diff --check`: passed.
+- No token value was added.
+- Branch checkout performed: no.

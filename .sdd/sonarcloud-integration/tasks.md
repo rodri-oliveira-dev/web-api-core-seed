@@ -19,7 +19,7 @@
 
 - [-] Integracao do scanner
   - [!] Confirmar o projeto no SonarCloud.
-  - [!] Confirmar a chave `rodri-oliveira-dev_web-api-core-seed` no SonarCloud.
+  - [x] Confirmar a chave `rodri-oliveira-dev_web-api-core-seed2` no SonarCloud pela URL informada pelo mantenedor.
   - [x] Instalar SonarScanner for .NET com versao explicita `11.2.1` no workflow.
   - [!] Adicionar `SONAR_TOKEN` somente como secret externo no GitHub.
   - [x] Referenciar apenas `secrets.SONAR_TOKEN`, sem versionar ou imprimir o valor.

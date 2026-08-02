@@ -283,10 +283,16 @@ rodri-oliveira-dev
 Expected project key:
 
 ```text
-rodri-oliveira-dev_web-api-core-seed
+rodri-oliveira-dev_web-api-core-seed2
 ```
 
-The project key is not a secret, but it must be confirmed in the SonarCloud UI before implementation.
+This key was aligned after the maintainer provided the SonarCloud configuration URL:
+
+```text
+https://sonarcloud.io/project/configuration/AutoScan?id=rodri-oliveira-dev_web-api-core-seed2
+```
+
+The project key is not a secret. It was confirmed for this repository state by the maintainer-provided SonarCloud URL and should be rechecked if the SonarCloud project is renamed later.
 
 Expected SonarCloud URL:
 

@@ -39,7 +39,7 @@ O Quality Gate e avaliado no SonarCloud. Como o workflow usa `sonar.qualitygate.
 4. Confirme a chave do projeto:
 
    ```text
-   rodri-oliveira-dev_web-api-core-seed
+   rodri-oliveira-dev_web-api-core-seed2
    ```
 
 5. Mantenha `main` como branch principal do projeto.
@@ -146,7 +146,7 @@ Pull requests vindos de forks podem nao receber secrets do repositorio. Nesses c
 
 `SONAR_TOKEN` ausente: confirme que o secret existe em `Settings -> Secrets and variables -> Actions` e que o nome esta exatamente `SONAR_TOKEN`.
 
-Chave do projeto incorreta: confirme no SonarCloud se a chave e `rodri-oliveira-dev_web-api-core-seed` e ajuste o workflow apenas se a chave real for diferente.
+Chave do projeto incorreta: confirme no SonarCloud se a chave e `rodri-oliveira-dev_web-api-core-seed2` e ajuste o workflow apenas se a chave real for diferente.
 
 Organizacao incorreta: confirme se o projeto esta na organizacao `rodri-oliveira-dev`.
 
