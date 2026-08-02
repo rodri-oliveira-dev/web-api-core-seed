@@ -9,7 +9,8 @@ Esta etapa padroniza metadados e arquivos operacionais apos a Fase 4, sem altera
 3. Adotar Central Package Management.
 4. Padronizar build e estilo.
 5. Migrar solution para SLNX.
-6. Adotar CSF.Analyzers.
+6. Ambiente local com Docker e User Secrets.
+7. Adotar CSF.Analyzers.
 
 ## Escopo
 
@@ -19,3 +20,4 @@ Esta etapa padroniza metadados e arquivos operacionais apos a Fase 4, sem altera
 - Criar `.dockerignore`.
 - Inventariar arquivos operacionais.
 - Preparar uma baseline limpa para os prompts seguintes.
+- Definir ambiente local reproduzivel com Docker Compose e User Secrets.

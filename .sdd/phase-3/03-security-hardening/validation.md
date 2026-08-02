@@ -35,6 +35,6 @@ Covered by integration tests:
 ## Sensitive Terms Review
 
 - `password` remains in Identity models, validation, tests and OpenAPI schemas as field names, not logged secrets.
-- `src/DevIO.Api/appsettings.json` now uses `CHANGE-ME-LOCAL-ONLY` and a local-development JWT placeholder.
+- `src/DevIO.Api/appsettings.json` used non-production local placeholders after that phase.
 - `test/WebApiCoreSeed.IntegrationTests/Infrastructure/ApiFactory.cs` contains a Testcontainers SQL password used only for ephemeral integration tests.
 - `docker/SqlServer.dockerfile_` still contains a legacy fixed SQL password outside the active .NET 10 runtime path; this was not changed because production infrastructure and secret rotation are outside this prompt.

@@ -72,6 +72,14 @@ sealed class OpenApiFactory : WebApplicationFactory<WebApiCoreSeed.Api.Program>
 {
     private readonly string _databaseName = Guid.NewGuid().ToString();
 
+    public OpenApiFactory()
+    {
+        Environment.SetEnvironmentVariable(
+            "ConnectionStrings__DefaultConnection",
+            "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebApiCoreSeedBootstrapOpenApi;Integrated Security=True;");
+        Environment.SetEnvironmentVariable("AppSettings__Secret", "X-BURGUER@COCA-2-OPENAPI-GENERATOR-TEST-SECRET-2026");
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.UseEnvironment("Testing");

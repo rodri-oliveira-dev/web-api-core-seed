@@ -144,6 +144,7 @@ namespace WebApiCoreSeed.UnitTests.Integracao
             public ObservabilityApiFactory(IReadOnlyDictionary<string, string>? configurationOverrides = null)
             {
                 _configurationOverrides = configurationOverrides ?? new Dictionary<string, string>();
+                EnsureBootstrapConfiguration();
             }
 
             public HttpClient CreateApiClient()
@@ -221,6 +222,14 @@ namespace WebApiCoreSeed.UnitTests.Integracao
                     services.RemoveAll<IPratoRepository>();
                     services.AddScoped<IPratoRepository, FakePratoRepository>();
                 });
+            }
+
+            private static void EnsureBootstrapConfiguration()
+            {
+                Environment.SetEnvironmentVariable(
+                    "ConnectionStrings__DefaultConnection",
+                    "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebApiCoreSeedBootstrapTests;Integrated Security=True;");
+                Environment.SetEnvironmentVariable("AppSettings__Secret", "X-BURGUER@COCA-2-OBSERVABILITY-TEST-SECRET-2026");
             }
         }
 

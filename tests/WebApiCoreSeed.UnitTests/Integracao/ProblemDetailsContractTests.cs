@@ -355,6 +355,7 @@ namespace WebApiCoreSeed.UnitTests.Integracao
             {
                 _configureServices = configureServices;
                 _configureRateLimits = configureRateLimits;
+                EnsureBootstrapConfiguration();
             }
 
             public HttpClient CreateApiClient(params (string Type, string Value)[] claims)
@@ -445,6 +446,14 @@ namespace WebApiCoreSeed.UnitTests.Integracao
                     signingCredentials: new SigningCredentials(key, SecurityAlgorithms.HmacSha384Signature));
 
                 return new JwtSecurityTokenHandler().WriteToken(token);
+            }
+
+            private static void EnsureBootstrapConfiguration()
+            {
+                Environment.SetEnvironmentVariable(
+                    "ConnectionStrings__DefaultConnection",
+                    "Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog=WebApiCoreSeedBootstrapTests;Integrated Security=True;");
+                Environment.SetEnvironmentVariable("AppSettings__Secret", TestSecret);
             }
         }
 

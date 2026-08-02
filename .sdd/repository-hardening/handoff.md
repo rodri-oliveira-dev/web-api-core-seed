@@ -1,6 +1,6 @@
 # Handoff
 
-## Estado apos Prompt 6
+## Estado apos Prompt 6 adicional
 
 - Layout final permanece em `src/`, `src/Modules/`, `tests/` e `tools/`.
 - Solution ativa permanece `WebApiCoreSeed.slnx`.
@@ -15,9 +15,57 @@
 - Namespaces do core SampleRestaurant ainda preservam compatibilidade legada: `Models`, `Services`, `Interfaces`, `Intefaces`, `Notificacoes` e `Application.Contracts`.
 - CPM permanece ativo por `Directory.Packages.props` raiz e arquivos por escopo em `src/`, `tests/` e `tools/`.
 - Arquivos MSBuild consolidados permanecem `Directory.Build.props`, `Directory.Packages.props` e respectivos arquivos por escopo.
+- Prompt 6 agora e `Ambiente local com Docker e User Secrets`.
+- O registro anterior de CSF.Analyzers foi preservado em `.sdd/repository-hardening/07-csf-analyzers`.
 - Nenhum package CSF.Analyzers foi instalado.
 - Nenhuma regra CSF.Analyzers esta ativa.
 - Nenhuma supressao global foi adicionada.
+
+## Ambiente local conteinerizado
+
+- Root `Dockerfile` criado com stages `runtime`, `restore`, `build`, `publish`, `migrations` e `final`.
+- SDK image: `mcr.microsoft.com/dotnet/sdk:10.0`.
+- Runtime image: `mcr.microsoft.com/dotnet/aspnet:10.0`.
+- Final image expõe `8080` e executa como usuario `app`.
+- Root `compose.yaml` criado com `api`, `migrations`, `sqlserver` e `redis`.
+- SQL Server: `mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04`.
+- Redis: `redis:7.4.2-alpine`.
+- Volumes nomeados: `sqlserver-data` e `redis-data`.
+- UserSecretsId preservado no projeto da API: `c52dbe85-d94e-4cc2-9856-529f22712174`.
+- User Secrets sao usados somente para `dotnet run` no host.
+- Compose usa `.env.local` ou variaveis do host; User Secrets nao sao montados em containers.
+- A API nao aplica migrations no startup; o servico `migrations` aplica `ApplicationDbContext` e `SampleRestaurantDbContext` antes da API.
+- Dockerfiles legados em `docker/` foram removidos por conterem senha fixa/tag flutuante e nao serem a stack oficial.
+- Validacao usou `API_HTTP_PORT=18080` porque a porta local `8080` estava ocupada.
+- Containers, rede e volumes de validacao foram removidos ao final.
+
+## Validacao do Prompt 6 adicional
+
+- `dotnet restore WebApiCoreSeed.slnx`: passou.
+- `dotnet build WebApiCoreSeed.slnx --configuration Release --no-restore`: passou.
+- `dotnet test WebApiCoreSeed.slnx --configuration Release --no-build`: passou com 53 testes unitarios/leves e 42 testes de integracao/container.
+- OpenAPI generator: passou.
+- `docker build --pull --tag web-api-core-seed:local .`: passou.
+- Compose config/build/up com project name `web-api-core-seed-validation`: passou apos alterar a porta temporaria para `18080`.
+- SQL Server e Redis ficaram saudaveis.
+- Migrations concluiram com exit code `0`.
+- HTTP smoke: health, OpenAPI, endpoint publico, Problem Details e endpoint protegido sem token validados.
+- Persistencia: dado SQL e chave Redis sobreviveram a restart da API e das dependencias.
+- Logs e image history nao exibiram senha, JWT secret nem connection string completa.
+- Imagem final nao contem SDK, source, `.env.local`, `.git` ou User Secrets.
+
+## Commands oficiais de ambiente local
+
+```bash
+cp .env.local.example .env.local
+docker compose --env-file .env.local config
+docker compose --env-file .env.local build
+docker compose --env-file .env.local up -d
+docker compose --env-file .env.local up -d sqlserver redis
+docker compose --env-file .env.local logs -f api
+docker compose --env-file .env.local down
+docker compose --env-file .env.local down --volumes
+```
 
 ## Bloqueio de analyzers
 

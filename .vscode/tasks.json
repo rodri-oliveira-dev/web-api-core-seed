@@ -67,6 +67,91 @@
       "problemMatcher": []
     },
     {
+      "label": "setup: configure user secrets",
+      "type": "shell",
+      "command": "./scripts/setup/configure-user-secrets.sh",
+      "windows": {
+        "command": "./scripts/setup/configure-user-secrets.ps1"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "docker: validate compose",
+      "type": "process",
+      "command": "docker",
+      "args": [
+        "compose",
+        "--env-file",
+        ".env.local",
+        "config"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "docker: build",
+      "type": "process",
+      "command": "docker",
+      "args": [
+        "compose",
+        "--env-file",
+        ".env.local",
+        "build"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "docker: up",
+      "type": "process",
+      "command": "docker",
+      "args": [
+        "compose",
+        "--env-file",
+        ".env.local",
+        "up",
+        "-d"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "docker: logs api",
+      "type": "process",
+      "command": "docker",
+      "args": [
+        "compose",
+        "--env-file",
+        ".env.local",
+        "logs",
+        "-f",
+        "api"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "docker: down",
+      "type": "process",
+      "command": "docker",
+      "args": [
+        "compose",
+        "--env-file",
+        ".env.local",
+        "down"
+      ],
+      "problemMatcher": []
+    },
+    {
+      "label": "docker: reset local data",
+      "type": "process",
+      "command": "docker",
+      "args": [
+        "compose",
+        "--env-file",
+        ".env.local",
+        "down",
+        "--volumes"
+      ],
+      "problemMatcher": []
+    },
+    {
       "label": "setup: check git hooks",
       "type": "shell",
       "command": "./scripts/setup/configure-git-hooks.sh --check",

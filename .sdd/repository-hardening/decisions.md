@@ -21,3 +21,8 @@
 | RH-D017 | Adotar SLNX como arquivo de solution ativo. | Aceita | O SDK 10 suporta o formato, a migracao oficial preservou projetos/folders e os gates passaram usando o novo arquivo. |
 | RH-D018 | Bloquear a adocao de `CSF.Analyzers` ate existir fonte NuGet reproduzivel para os pacotes v2. | Aceita | `CSF.Analyzers.Architecture`, `CSF.Analyzers.Reliability` e `CSF.Analyzers.Testing` retornaram 404/sem resultados no NuGet.org, e o repositorio nao configura outro feed. |
 | RH-D019 | Nao instalar `CSF.Analyzers.Testing` na primeira adocao. | Aceita | Os testes atuais usam Moq e nao adotam politica baseada em NSubstitute ou FluentAssertions. |
+| RH-D020 | Renumerar `CSF.Analyzers` para Prompt 07 e inserir `Ambiente local com Docker e User Secrets` como Prompt 06. | Aceita | O prompt adicional define a nova sequencia obrigatoria; o historico do bloqueio de analyzers foi preservado em `.sdd/repository-hardening/07-csf-analyzers`. |
+| RH-D021 | Remover Dockerfiles legados sob `docker/`. | Aceita | Eles continham senha fixa, tags flutuantes e health check invalido; a stack oficial passa a usar o root `Dockerfile` e imagens oficiais no Compose. |
+| RH-D022 | Usar servico one-shot `migrations` em vez de aplicar migrations no startup da API. | Aceita | A API nao aplica migrations hoje; manter essa responsabilidade fora do startup evita concorrencia e falhas silenciosas. |
+| RH-D023 | Nao adicionar `HEALTHCHECK` ao Dockerfile da API. | Aceita | A imagem ASP.NET final nao possui cliente HTTP; instalar `curl` ou `wget` aumentaria superficie apenas para health check. |
+| RH-D024 | Publicar SQL Server e Redis no host por padrao no Compose local. | Aceita | O Compose tambem suporta o modo host `dotnet run`, que usa `localhost` para as dependencias. |

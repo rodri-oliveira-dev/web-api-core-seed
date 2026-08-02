@@ -34,7 +34,10 @@ coverage*.info
 .env.*
 !.env.example
 !.env.local.example
+secrets/
 *.pfx
+*.key
+*.pem
 *.publishsettings
 *.pubxml
 *.azurePubxml

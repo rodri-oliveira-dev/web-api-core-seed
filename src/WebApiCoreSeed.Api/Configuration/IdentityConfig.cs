@@ -54,6 +54,11 @@ namespace WebApiCoreSeed.Api.Configuration
 
             var appSettings = appSettingsSection.Get<AppSettings>()
                 ?? throw new InvalidOperationException("Configuration section 'AppSettings' is required.");
+            if (string.IsNullOrWhiteSpace(appSettings.Secret))
+            {
+                throw new InvalidOperationException("Configuration value 'AppSettings:Secret' is required.");
+            }
+
             var key = Encoding.ASCII.GetBytes(appSettings.Secret);
 
             services.AddAuthentication(x =>
