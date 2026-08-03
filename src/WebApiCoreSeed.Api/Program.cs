@@ -1,17 +1,18 @@
 using System;
+using System.Globalization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using WebApiCoreSeed.Api.Configuration;
 using Serilog;
+using WebApiCoreSeed.Api.Configuration;
 
 namespace WebApiCoreSeed.Api
 {
-    public class Program
+    public static class Program
     {
         public static async System.Threading.Tasks.Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
+                .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
                 .CreateBootstrapLogger();
 
             try
@@ -37,7 +38,7 @@ namespace WebApiCoreSeed.Api
             }
             finally
             {
-                Log.CloseAndFlush();
+                await Log.CloseAndFlushAsync();
             }
         }
     }
