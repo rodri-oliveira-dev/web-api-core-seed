@@ -7,8 +7,12 @@ using WebApiCoreSeed.Api.Configuration;
 
 namespace WebApiCoreSeed.Api
 {
-    public static class Program
+    public sealed class Program
     {
+        private Program()
+        {
+        }
+
         public static async System.Threading.Tasks.Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
