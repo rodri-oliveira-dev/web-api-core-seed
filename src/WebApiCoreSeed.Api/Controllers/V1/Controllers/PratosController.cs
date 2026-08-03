@@ -78,9 +78,12 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
             if (pratosViewModel == null) return CustomResponse(tipoAcao: ETipoAcao.NaoEncontrado);
             if (_user.IsAuthenticated())
             {
-                _logger.LogInformation($"{_user.GetUserId()} chamou o metodo");
+                _logger.LogInformation("Usuário {UserId} chamou o método", _user.GetUserId());
             }
-            _logger.LogInformation("usuario anonimo chamou o metodo");
+            else
+            {
+                _logger.LogInformation("Usuário anônimo chamou o método");
+            }
 
             return pratosViewModel;
         }
@@ -184,7 +187,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
             pratoAtualizacao.Descricao = pratoViewModel.Descricao;
             pratoAtualizacao.Preco = pratoViewModel.Preco;
             pratoAtualizacao.Ativo = pratoViewModel.Ativo;
-            pratoAtualizacao.TipoPrato = pratoAtualizacao.TipoPrato;
+            pratoAtualizacao.TipoPrato = pratoViewModel.TipoPrato;
 
             await _pratoService.Atualizar(_mapper.Map<Prato>(pratoAtualizacao), cancellationToken);
 
