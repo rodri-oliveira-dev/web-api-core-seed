@@ -114,8 +114,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
             mesaAtualizada.Numero = mesaViewModel.Numero;
             mesaAtualizada.Lugares = mesaViewModel.Lugares;
             mesaAtualizada.Ativo = mesaViewModel.Ativo;
-            mesaAtualizada.Ativo = mesaViewModel.Ativo;
-            mesaAtualizada.LocalizacaoMesa = mesaAtualizada.LocalizacaoMesa;
+            mesaAtualizada.LocalizacaoMesa = mesaViewModel.LocalizacaoMesa;
 
             await _mesaService.Atualizar(_mapper.Map<Mesa>(mesaAtualizada), cancellationToken);
 
