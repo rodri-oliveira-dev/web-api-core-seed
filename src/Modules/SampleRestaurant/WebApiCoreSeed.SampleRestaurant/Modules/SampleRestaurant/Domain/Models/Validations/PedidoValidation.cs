@@ -4,7 +4,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Models.Validations
 {
     public class PedidoValidation : AbstractValidator<Pedido>
     {
-        private const string MensagemCampoObrigatorio = "O campo {PropertyName} é obrigatório";
+        private const string MensagemCampoObrigatorio = "O campo {PropertyName} Ã© obrigatÃ³rio";
 
         public PedidoValidation()
         {
@@ -22,7 +22,6 @@ namespace WebApiCoreSeed.SampleRestaurant.Models.Validations
                 .Cascade(CascadeMode.Stop)
                 .NotNull().WithMessage(MensagemCampoObrigatorio)
                 .NotEmpty().WithMessage(MensagemCampoObrigatorio);
-                //.Must(p => p.Count < 1).WithMessage("O pedido precisa ter ao menos um prato.");
 
             RuleForEach(c => c.PedidoPrato).SetValidator(new PedidoPratoValidation());
 
