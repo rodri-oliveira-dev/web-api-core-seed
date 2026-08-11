@@ -6,6 +6,8 @@ using WebApiCoreSeed.Api;
 using WebApiCoreSeed.Api.Controllers.V1.Controllers;
 using WebApiCoreSeed.SampleRestaurant.Models;
 using WebApiCoreSeed.SampleRestaurant.Infrastructure.Context;
+using WebApiCoreSeed.SampleRestaurant.Intefaces.Service;
+using WebApiCoreSeed.SampleRestaurant.Interfaces.Repository;
 using Xunit;
 
 namespace WebApiCoreSeed.UnitTests.Arquitetura
@@ -144,6 +146,41 @@ namespace WebApiCoreSeed.UnitTests.Arquitetura
                 .ToArray();
 
             Assert.Empty(sharedKernelTypes);
+        }
+
+        [Fact(DisplayName = "Portas e adaptadores do SampleRestaurant nao possuem ownership descartavel")]
+        [Trait("Architecture", "ModularHexagonal")]
+        public void SampleRestaurantPortsQuandoAvaliadasNaoDevemImplementarDisposable()
+        {
+            var contracts = new[]
+            {
+                typeof(IAtendenteService),
+                typeof(ILogginService),
+                typeof(IMesaService),
+                typeof(IPedidoPratoService),
+                typeof(IPedidoService),
+                typeof(IPratoService),
+                typeof(IAtendenteRepository),
+                typeof(ILogginRepository),
+                typeof(IMesaRepository),
+                typeof(IPedidoPratoRepository),
+                typeof(IPedidoRepository),
+                typeof(IPratoRepository)
+            };
+
+            var disposableContracts = contracts
+                .Where(type => typeof(IDisposable).IsAssignableFrom(type))
+                .Select(type => type.FullName)
+                .ToArray();
+
+            var disposableAdapters = typeof(SampleRestaurantDbContext).Assembly.GetTypes()
+                .Where(type => type.Namespace?.Contains("Persistence.Repositories", StringComparison.Ordinal) == true)
+                .Where(type => typeof(IDisposable).IsAssignableFrom(type))
+                .Select(type => type.FullName)
+                .ToArray();
+
+            Assert.Empty(disposableContracts);
+            Assert.Empty(disposableAdapters);
         }
     }
 }

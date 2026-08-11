@@ -33,9 +33,5 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
             return true;
         }
 
-        public void Dispose()
-        {
-            _logginRepository?.Dispose();
-        }
     }
 }

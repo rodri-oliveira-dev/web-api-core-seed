@@ -249,9 +249,6 @@ namespace WebApiCoreSeed.UnitTests.Integracao
 
             public Task<int> Contar(CancellationToken cancellationToken = default) => Task.FromResult(0);
 
-            public void Dispose()
-            {
-            }
         }
     }
 }

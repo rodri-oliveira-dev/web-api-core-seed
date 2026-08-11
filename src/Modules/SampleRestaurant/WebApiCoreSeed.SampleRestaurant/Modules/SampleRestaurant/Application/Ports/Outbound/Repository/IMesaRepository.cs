@@ -5,7 +5,7 @@ using WebApiCoreSeed.SampleRestaurant.Models;
 
 namespace WebApiCoreSeed.SampleRestaurant.Interfaces.Repository
 {
-    public interface IMesaRepository : IDisposable
+    public interface IMesaRepository
     {
         Task Adicionar(Mesa mesa, CancellationToken cancellationToken = default);
         Task Atualizar(Mesa mesa, CancellationToken cancellationToken = default);

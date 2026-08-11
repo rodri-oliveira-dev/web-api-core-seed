@@ -59,9 +59,5 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
             return await _fornecedorRepository.ObterPorId(id, cancellationToken);
         }
 
-        public void Dispose()
-        {
-            _fornecedorRepository?.Dispose();
-        }
     }
 }

@@ -42,10 +42,5 @@ namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Repository
             return await _context.Mesas.FindAsync(new object[] { id }, cancellationToken);
         }
 
-        public void Dispose()
-        {
-            _context.Dispose();
-            GC.SuppressFinalize(this);
-        }
     }
 }

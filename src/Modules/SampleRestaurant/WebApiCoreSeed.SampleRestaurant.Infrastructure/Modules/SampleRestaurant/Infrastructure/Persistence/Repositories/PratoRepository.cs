@@ -77,10 +77,5 @@ namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Repository
             return await _context.Pratos.CountAsync(cancellationToken);
         }
 
-        public void Dispose()
-        {
-            _context.Dispose();
-            GC.SuppressFinalize(this);
-        }
     }
 }

@@ -37,10 +37,5 @@ namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Repository
             return Task.CompletedTask;
         }
 
-        public void Dispose()
-        {
-            _context.Dispose();
-            GC.SuppressFinalize(this);
-        }
     }
 }

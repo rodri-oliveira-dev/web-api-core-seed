@@ -8,7 +8,7 @@ using WebApiCoreSeed.SampleRestaurant.Models;
 
 namespace WebApiCoreSeed.SampleRestaurant.Interfaces.Repository
 {
-    public interface IPratoRepository : IDisposable
+    public interface IPratoRepository
     {
         Task Adicionar(Prato prato, CancellationToken cancellationToken = default);
         Task Atualizar(Prato prato, CancellationToken cancellationToken = default);

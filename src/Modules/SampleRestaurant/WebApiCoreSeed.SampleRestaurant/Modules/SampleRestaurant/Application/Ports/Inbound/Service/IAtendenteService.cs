@@ -5,7 +5,7 @@ using WebApiCoreSeed.SampleRestaurant.Models;
 
 namespace WebApiCoreSeed.SampleRestaurant.Intefaces.Service
 {
-    public interface IAtendenteService : IDisposable
+    public interface IAtendenteService
     {
         Task<bool> Adicionar(Atendente atendente, CancellationToken cancellationToken = default);
         Task<bool> Atualizar(Atendente atendente, CancellationToken cancellationToken = default);

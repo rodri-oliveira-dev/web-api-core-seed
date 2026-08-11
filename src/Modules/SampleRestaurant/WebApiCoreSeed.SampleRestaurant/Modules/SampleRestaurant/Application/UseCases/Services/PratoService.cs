@@ -81,9 +81,5 @@ namespace WebApiCoreSeed.SampleRestaurant.Services
             return await _pratoRepository.Contar(cancellationToken);
         }
 
-        public void Dispose()
-        {
-            _pratoRepository?.Dispose();
-        }
     }
 }

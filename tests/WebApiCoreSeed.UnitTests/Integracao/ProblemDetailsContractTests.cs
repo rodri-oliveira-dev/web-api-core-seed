@@ -473,9 +473,6 @@ namespace WebApiCoreSeed.UnitTests.Integracao
 
             public Task<int> Contar(CancellationToken cancellationToken = default) => Task.FromResult(0);
 
-            public void Dispose()
-            {
-            }
         }
 
         private sealed class FakeMesaRepository : IMesaRepository
@@ -488,9 +485,6 @@ namespace WebApiCoreSeed.UnitTests.Integracao
 
             public Task<Mesa?> ObterPorId(Guid id, CancellationToken cancellationToken = default) => Task.FromResult<Mesa?>(null);
 
-            public void Dispose()
-            {
-            }
         }
 
         private sealed class ThrowingPratoRepository : IPratoRepository
@@ -508,10 +502,6 @@ namespace WebApiCoreSeed.UnitTests.Integracao
             public Task<IReadOnlyList<PratoListItem>> ListarPagina(PaginationParameter paginationParameter, CancellationToken cancellationToken = default) => Task.FromException<IReadOnlyList<PratoListItem>>(CreateException());
 
             public Task<int> Contar(CancellationToken cancellationToken = default) => Task.FromException<int>(CreateException());
-
-            public void Dispose()
-            {
-            }
 
             private static InvalidOperationException CreateException()
             {
@@ -548,9 +538,6 @@ namespace WebApiCoreSeed.UnitTests.Integracao
 
             public Task<int> Contar(CancellationToken cancellationToken = default) => Task.FromResult(0);
 
-            public void Dispose()
-            {
-            }
         }
 
         private sealed class CancellationProbe

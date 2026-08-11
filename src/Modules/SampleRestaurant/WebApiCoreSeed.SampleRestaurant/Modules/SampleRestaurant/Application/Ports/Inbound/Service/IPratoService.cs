@@ -8,7 +8,7 @@ using WebApiCoreSeed.SampleRestaurant.Models;
 
 namespace WebApiCoreSeed.SampleRestaurant.Intefaces.Service
 {
-    public interface IPratoService : IDisposable
+    public interface IPratoService
     {
         Task<bool> Adicionar(Prato prato, CancellationToken cancellationToken = default);
         Task<bool> Atualizar(Prato prato, CancellationToken cancellationToken = default);
