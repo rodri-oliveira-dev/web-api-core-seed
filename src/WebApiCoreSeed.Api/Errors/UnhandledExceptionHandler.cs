@@ -13,6 +13,11 @@ namespace WebApiCoreSeed.Api.Errors
     {
         private readonly IHostEnvironment _environment;
         private readonly ILogger<UnhandledExceptionHandler> _logger;
+        private static readonly Action<ILogger, Exception?> LogUnhandledException =
+            LoggerMessage.Define(
+                LogLevel.Error,
+                new EventId(1000, nameof(LogUnhandledException)),
+                "Unhandled exception while handling request.");
 
         public UnhandledExceptionHandler(IHostEnvironment environment, ILogger<UnhandledExceptionHandler> logger)
         {
@@ -27,7 +32,7 @@ namespace WebApiCoreSeed.Api.Errors
                 return false;
             }
 
-            _logger.LogError(exception, "Unhandled exception while handling request.");
+            LogUnhandledException(_logger, exception);
             httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
             var detail = _environment.IsDevelopment()

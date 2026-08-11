@@ -36,6 +36,11 @@ namespace WebApiCoreSeed.Api.Configuration
     {
         private const string SerilogOutputTemplate =
             "[{Timestamp:HH:mm:ss} {Level:u3} TraceId={TraceId} SpanId={SpanId}] {Message:lj} {Properties:j}{NewLine}{Exception}";
+        private static readonly Action<Microsoft.Extensions.Logging.ILogger, string, Exception?> LogStatusCodeProblem =
+            LoggerMessage.Define<string>(
+                LogLevel.Warning,
+                new EventId(1000, nameof(LogStatusCodeProblem)),
+                "Status code page generated ProblemDetails: {ProblemDetail}");
 
         public static ConfigureHostBuilder UseApiSerilog(this ConfigureHostBuilder host)
         {
@@ -188,8 +193,9 @@ namespace WebApiCoreSeed.Api.Configuration
                 var httpContext = context.HttpContext;
                 var statusCode = httpContext.Response.StatusCode;
                 var problemDetailsService = httpContext.RequestServices.GetRequiredService<IProblemDetailsService>();
+                var detail = ApiProblemDetails.DetailForStatusCode(statusCode);
 
-                logger.LogWarning(ApiProblemDetails.DetailForStatusCode(statusCode));
+                LogStatusCodeProblem(logger, detail, null);
 
                 await problemDetailsService.WriteAsync(new ProblemDetailsContext
                 {
@@ -199,7 +205,7 @@ namespace WebApiCoreSeed.Api.Configuration
                         statusCode,
                         ApiProblemDetails.TypeForStatusCode(statusCode),
                         ApiProblemDetails.TitleForStatusCode(statusCode),
-                        ApiProblemDetails.DetailForStatusCode(statusCode))
+                        detail)
                 });
             });
 

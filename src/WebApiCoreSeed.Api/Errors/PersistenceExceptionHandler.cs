@@ -12,6 +12,17 @@ namespace WebApiCoreSeed.Api.Errors
     public sealed class PersistenceExceptionHandler : IExceptionHandler
     {
         private readonly ILogger<PersistenceExceptionHandler> _logger;
+        private static readonly Action<ILogger, Exception?> LogPersistenceConcurrencyConflict =
+            LoggerMessage.Define(
+                LogLevel.Warning,
+                new EventId(1000, nameof(LogPersistenceConcurrencyConflict)),
+                "Persistence concurrency conflict while handling request.");
+
+        private static readonly Action<ILogger, Exception?> LogPersistenceFailure =
+            LoggerMessage.Define(
+                LogLevel.Error,
+                new EventId(1001, nameof(LogPersistenceFailure)),
+                "Persistence failure while handling request.");
 
         public PersistenceExceptionHandler(ILogger<PersistenceExceptionHandler> logger)
         {
@@ -22,7 +33,7 @@ namespace WebApiCoreSeed.Api.Errors
         {
             if (exception is DbUpdateConcurrencyException)
             {
-                _logger.LogWarning(exception, "Persistence concurrency conflict while handling request.");
+                LogPersistenceConcurrencyConflict(_logger, exception);
                 httpContext.Response.StatusCode = StatusCodes.Status409Conflict;
 
                 return await WriteAsync(
@@ -38,7 +49,7 @@ namespace WebApiCoreSeed.Api.Errors
                 return false;
             }
 
-            _logger.LogError(exception, "Persistence failure while handling request.");
+            LogPersistenceFailure(_logger, exception);
             httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
 
             return await WriteAsync(

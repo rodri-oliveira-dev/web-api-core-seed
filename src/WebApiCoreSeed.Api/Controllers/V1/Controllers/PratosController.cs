@@ -35,6 +35,17 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         private readonly IMapper _mapper;
         private readonly ILogger<PratosController> _logger;
         private readonly IUser _user;
+        private static readonly Action<ILogger, Guid, Exception?> LogAuthenticatedUserCalledMethod =
+            LoggerMessage.Define<Guid>(
+                LogLevel.Information,
+                new EventId(1000, nameof(LogAuthenticatedUserCalledMethod)),
+                "Usuario autenticado {UserId} chamou o metodo");
+
+        private static readonly Action<ILogger, Exception?> LogAnonymousUserCalledMethod =
+            LoggerMessage.Define(
+                LogLevel.Information,
+                new EventId(1001, nameof(LogAnonymousUserCalledMethod)),
+                "Usuario anonimo chamou o metodo");
 
         public PratosController(INotificador notificador,
                                   IPratoService pratoService,
@@ -78,9 +89,9 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
             if (pratosViewModel == null) return CustomResponse(tipoAcao: ETipoAcao.NaoEncontrado);
             if (_user.IsAuthenticated())
             {
-                _logger.LogInformation($"{_user.GetUserId()} chamou o metodo");
+                LogAuthenticatedUserCalledMethod(_logger, _user.GetUserId(), null);
             }
-            _logger.LogInformation("usuario anonimo chamou o metodo");
+            LogAnonymousUserCalledMethod(_logger, null);
 
             return pratosViewModel;
         }

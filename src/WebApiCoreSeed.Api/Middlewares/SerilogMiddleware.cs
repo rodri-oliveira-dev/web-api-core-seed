@@ -17,13 +17,15 @@ namespace WebApiCoreSeed.Api.Middlewares
 
         public SerilogMiddleware(RequestDelegate next)
         {
-            _next = next ?? throw new ArgumentNullException(nameof(next));
+            ArgumentNullException.ThrowIfNull(next);
+
+            _next = next;
         }
 
         // ReSharper disable once UnusedMember.Global
         public async Task Invoke(HttpContext httpContext)
         {
-            if (httpContext == null) throw new ArgumentNullException(nameof(httpContext));
+            ArgumentNullException.ThrowIfNull(httpContext);
 
             var start = Stopwatch.GetTimestamp();
             try
@@ -37,16 +39,17 @@ namespace WebApiCoreSeed.Api.Middlewares
                 var log = level == LogEventLevel.Error ? LogForErrorContext(httpContext) : Log;
                 log.Write(level, MessageTemplate, GetKnownHttpMethod(httpContext), GetEndpointName(httpContext), statusCode, elapsedMs);
             }
-            // Never caught, because `LogException()` returns false.
-            catch (Exception ex) when (ex is not OperationCanceledException && LogException(httpContext, GetElapsedMilliseconds(start, Stopwatch.GetTimestamp()), ex)) { }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                LogException(httpContext, GetElapsedMilliseconds(start, Stopwatch.GetTimestamp()), ex);
+                throw;
+            }
         }
 
-        static bool LogException(HttpContext httpContext, double elapsedMs, Exception ex)
+        static void LogException(HttpContext httpContext, double elapsedMs, Exception ex)
         {
             LogForErrorContext(httpContext)
                 .Error(ex, MessageTemplate, GetKnownHttpMethod(httpContext), GetEndpointName(httpContext), 500, elapsedMs);
-
-            return false;
         }
 
         static Serilog.ILogger LogForErrorContext(HttpContext httpContext)
