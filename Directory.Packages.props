@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+    <RestoreUseStaticGraphEvaluation>true</RestoreUseStaticGraphEvaluation>
+    <MicrosoftDotNetPackageVersion>10.0.10</MicrosoftDotNetPackageVersion>
+    <OpenTelemetryPackageVersion>1.17.0</OpenTelemetryPackageVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.AspNetCore.Mvc.Testing" Version="$(MicrosoftDotNetPackageVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.InMemory" Version="$(MicrosoftDotNetPackageVersion)" />
+  </ItemGroup>
+</Project>

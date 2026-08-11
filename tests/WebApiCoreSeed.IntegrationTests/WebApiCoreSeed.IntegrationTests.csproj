@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="StackExchange.Redis" />
+    <PackageReference Include="Testcontainers.MsSql" />
+    <PackageReference Include="Testcontainers.Redis" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Using Include="Xunit" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\WebApiCoreSeed.Api\WebApiCoreSeed.Api.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Identity\WebApiCoreSeed.Identity.Infrastructure\WebApiCoreSeed.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Modules\SampleRestaurant\WebApiCoreSeed.SampleRestaurant.Infrastructure\WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>

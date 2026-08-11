@@ -1,0 +1,81 @@
+name: web-api-core-seed
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-CU14-ubuntu-22.04
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: Developer
+      MSSQL_SA_PASSWORD: ${SQLSERVER_SA_PASSWORD:?SQLSERVER_SA_PASSWORD is required}
+    ports:
+      - "${SQLSERVER_HOST_PORT:-1433}:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$${MSSQL_SA_PASSWORD}\" -C -Q \"SELECT 1\" -b -o /dev/null"]
+      interval: 10s
+      timeout: 10s
+      retries: 12
+      start_period: 30s
+
+  redis:
+    image: redis:7.4.2-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "${REDIS_HOST_PORT:-7001}:6379"
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+
+  migrations:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: migrations
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DOTNET_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=${SQLSERVER_DATABASE:-SampleRestaurantDb};User Id=sa;Password=${SQLSERVER_SA_PASSWORD:?SQLSERVER_SA_PASSWORD is required};Encrypt=True;TrustServerCertificate=True;MultipleActiveResultSets=true;Application Name=WebApiCoreSeed.Migrations;"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: final
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DOTNET_ENVIRONMENT: Development
+      ASPNETCORE_HTTP_PORTS: 8080
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=${SQLSERVER_DATABASE:-SampleRestaurantDb};User Id=sa;Password=${SQLSERVER_SA_PASSWORD:?SQLSERVER_SA_PASSWORD is required};Encrypt=True;TrustServerCertificate=True;MultipleActiveResultSets=true;Application Name=WebApiCoreSeed.Api;"
+      AppSettings__Secret: ${JWT_SECRET:?JWT_SECRET is required}
+      AppSettings__ExpiracaoHoras: 2
+      AppSettings__Emissor: WebApiCoreSeed
+      AppSettings__ValidoEm: "http://localhost:${API_HTTP_PORT:-8080}"
+      RedisCacheSettings__Enabled: "true"
+      RedisCacheSettings__ConnectionString: redis:6379
+      RedisCacheSettings__InstanceName: web-api-core-seed
+      RedisCacheSettings__DefaultSeconds: 60
+      SeqSettings__Enabled: "false"
+      SeqSettings__FilePath: ""
+    ports:
+      - "${API_HTTP_PORT:-8080}:8080"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+    restart: unless-stopped
+
+volumes:
+  sqlserver-data:
+  redis-data:

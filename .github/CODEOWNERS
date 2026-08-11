@@ -1,0 +1,18 @@
+# Simple ownership for the public seed repository.
+
+* @rodri-oliveira-dev
+
+/src/ @rodri-oliveira-dev
+/tests/ @rodri-oliveira-dev
+/docker/ @rodri-oliveira-dev
+/sql/ @rodri-oliveira-dev
+/.sdd/ @rodri-oliveira-dev
+/.agents/ @rodri-oliveira-dev
+/.github/ @rodri-oliveira-dev
+/.githooks/ @rodri-oliveira-dev
+/.vscode/ @rodri-oliveira-dev
+/scripts/ @rodri-oliveira-dev
+/AGENTS.md @rodri-oliveira-dev
+/LEGACY.md @rodri-oliveira-dev
+/README.md @rodri-oliveira-dev
+/WebApiCoreSeed.slnx @rodri-oliveira-dev

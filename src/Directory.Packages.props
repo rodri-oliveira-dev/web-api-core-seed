@@ -1,0 +1,38 @@
+<Project>
+  <Import Project="..\Directory.Packages.props" />
+
+  <ItemGroup>
+    <PackageVersion Include="AspNetCore.HealthChecks.Redis" Version="9.0.0" />
+    <PackageVersion Include="AspNetCore.HealthChecks.SqlServer" Version="9.0.0" />
+    <PackageVersion Include="AspNetCore.HealthChecks.UI.Client" Version="9.0.0" />
+    <PackageVersion Include="AspNetCore.HealthChecks.Uris" Version="9.0.0" />
+    <PackageVersion Include="Asp.Versioning.Mvc" Version="10.0.1" />
+    <PackageVersion Include="Asp.Versioning.Mvc.ApiExplorer" Version="10.0.1" />
+    <PackageVersion Include="Asp.Versioning.OpenApi" Version="10.0.1" />
+    <PackageVersion Include="AutoMapper" Version="16.2.0" />
+    <PackageVersion Include="FluentValidation" Version="12.1.1" />
+    <PackageVersion Include="KubernetesClient" Version="19.0.2" />
+    <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(MicrosoftDotNetPackageVersion)" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="$(MicrosoftDotNetPackageVersion)" />
+    <PackageVersion Include="Microsoft.AspNetCore.Identity.UI" Version="$(MicrosoftDotNetPackageVersion)" />
+    <PackageVersion Include="Microsoft.AspNetCore.OpenApi" Version="$(MicrosoftDotNetPackageVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore" Version="$(MicrosoftDotNetPackageVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Design" Version="$(MicrosoftDotNetPackageVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.SqlServer" Version="$(MicrosoftDotNetPackageVersion)" />
+    <PackageVersion Include="Microsoft.EntityFrameworkCore.Tools" Version="$(MicrosoftDotNetPackageVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="$(MicrosoftDotNetPackageVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="$(MicrosoftDotNetPackageVersion)" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.Json" Version="$(MicrosoftDotNetPackageVersion)" />
+    <PackageVersion Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" Version="$(OpenTelemetryPackageVersion)" />
+    <PackageVersion Include="OpenTelemetry.Extensions.Hosting" Version="$(OpenTelemetryPackageVersion)" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.AspNetCore" Version="$(OpenTelemetryPackageVersion)" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.17.0-beta.1" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="$(OpenTelemetryPackageVersion)" />
+    <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="$(OpenTelemetryPackageVersion)" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.16.17" />
+    <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
+    <PackageVersion Include="Serilog.Expressions" Version="5.0.0" />
+    <PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1" />
+    <PackageVersion Include="Serilog.Sinks.Seq" Version="9.1.0" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,55 @@
+{
+  "dotnet.defaultSolution": "WebApiCoreSeed.slnx",
+  "dotnet.server.useOmnisharp": false,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "files.exclude": {
+    "**/bin": true,
+    "**/obj": true,
+    "**/.vs": true,
+    "**/.git": true,
+    "**/.nuget": true,
+    "**/TestResults": true,
+    "**/coverage": true
+  },
+  "search.exclude": {
+    "**/bin": true,
+    "**/obj": true,
+    "**/.vs": true,
+    "**/.git": true,
+    "**/.nuget": true,
+    "**/TestResults": true,
+    "**/coverage": true
+  },
+  "files.watcherExclude": {
+    "**/bin/**": true,
+    "**/obj/**": true,
+    "**/.vs/**": true,
+    "**/.nuget/**": true,
+    "**/TestResults/**": true,
+    "**/coverage/**": true
+  },
+  "search.useIgnoreFiles": true,
+  "search.useGlobalIgnoreFiles": true,
+  "markdown.preview.mermaid": true,
+  "markdown.preview.experimental.useMermaid": true,
+  "trivy.binaryPath": "trivy",
+  "trivy.debug": false,
+  "trivy.vulnScanning": true,
+  "trivy.misconfigScanning": true,
+  "trivy.secretScanning": true,
+  "trivy.dotnetProjScanning": true,
+  "trivy.ignoreFilesInGitIgnore": true,
+  "trivy.minimumReportedSeverity": "MEDIUM",
+  "trivy.skipDirList": [
+    ".git",
+    ".vs",
+    ".nuget",
+    "bin",
+    "obj",
+    "TestResults",
+    "coverage"
+  ]
+}

@@ -1,0 +1,33 @@
+version: 2
+updates:
+  - package-ecosystem: "nuget"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:00"
+      timezone: "America/Sao_Paulo"
+    groups:
+      dotnet-dependencies:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "dotnet"
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "09:30"
+      timezone: "America/Sao_Paulo"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "github-actions"

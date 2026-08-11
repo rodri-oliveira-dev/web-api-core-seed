@@ -1,0 +1,116 @@
+#!/usr/bin/env sh
+set -eu
+
+SOLUTION="WebApiCoreSeed.slnx"
+
+repo_root="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+cd "$repo_root"
+
+tmp_files="$(mktemp "${TMPDIR:-/tmp}/web-api-core-seed-pre-push.XXXXXX")"
+trap 'rm -f "$tmp_files"' EXIT
+
+zero_sha="0000000000000000000000000000000000000000"
+
+collect_from_stdin=false
+while read local_ref local_sha remote_ref remote_sha
+do
+  collect_from_stdin=true
+
+  if [ "$local_sha" = "$zero_sha" ]; then
+    continue
+  fi
+
+  if [ "$remote_sha" = "$zero_sha" ]; then
+    git diff-tree --no-commit-id --name-only -r "$local_sha" >>"$tmp_files" || true
+  else
+    git diff --name-only "$remote_sha..$local_sha" >>"$tmp_files" || true
+  fi
+done
+
+if [ "$collect_from_stdin" = false ]; then
+  git diff --name-only HEAD >>"$tmp_files" || true
+fi
+
+if [ ! -s "$tmp_files" ]; then
+  echo "pre-push: nenhuma alteracao detectada para validar."
+  exit 0
+fi
+
+sort -u "$tmp_files" -o "$tmp_files"
+
+dotnet_impact=false
+only_docs=true
+
+is_documentation_path() {
+  case "$1" in
+    *.md|docs/*|.sdd/*|*.png|*.jpg|*.jpeg|*.gif|*.svg|*.webp)
+      return 0
+      ;;
+  esac
+
+  return 1
+}
+
+is_dotnet_impact_path() {
+  case "$1" in
+    *.cs|*.csproj|*.sln|*.slnx|*.props|*.targets|global.json|NuGet.config|.editorconfig|src/*|tests/*)
+      return 0
+      ;;
+  esac
+
+  return 1
+}
+
+while IFS= read -r file
+do
+  [ -n "$file" ] || continue
+
+  if ! is_documentation_path "$file"; then
+    only_docs=false
+  fi
+
+  if is_dotnet_impact_path "$file"; then
+    dotnet_impact=true
+  fi
+done <"$tmp_files"
+
+if [ "$only_docs" = true ]; then
+  echo "pre-push: somente alteracoes documentais detectadas; validacoes .NET ignoradas."
+  echo "pre-push: gates completos permanecem no CI."
+  exit 0
+fi
+
+if [ "$dotnet_impact" = false ]; then
+  echo "pre-push: nenhuma alteracao .NET impactante detectada; validacoes .NET ignoradas."
+  echo "pre-push: gates completos permanecem no CI."
+  exit 0
+fi
+
+if ! command -v dotnet >/dev/null 2>&1; then
+  echo "pre-push bloqueado: .NET SDK nao encontrado." >&2
+  exit 1
+fi
+
+if [ ! -f "$SOLUTION" ]; then
+  echo "pre-push bloqueado: solution nao encontrada: $SOLUTION" >&2
+  exit 1
+fi
+
+echo "pre-push: alteracao .NET detectada; executando restore, build e testes existentes."
+
+dotnet restore "$SOLUTION" || {
+  echo "pre-push bloqueado: dotnet restore falhou." >&2
+  exit 1
+}
+
+dotnet build "$SOLUTION" --no-restore || {
+  echo "pre-push bloqueado: dotnet build falhou." >&2
+  exit 1
+}
+
+dotnet test "$SOLUTION" --no-build || {
+  echo "pre-push bloqueado: dotnet test falhou." >&2
+  exit 1
+}
+
+echo "pre-push: validacoes concluidas com sucesso."

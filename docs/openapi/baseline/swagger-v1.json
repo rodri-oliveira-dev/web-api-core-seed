@@ -1,0 +1,1090 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Sample Restaurant API",
+    "description": "Esta API demonstra endpoints de restaurante do sample.",
+    "termsOfService": "https://opensource.org/licenses/MIT",
+    "contact": {
+      "name": "Rodrigo de Oliveira",
+      "email": "rodrigodotnet@gmail.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/v1/nova-conta": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterUserViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterUserViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterUserViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterUserViewModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true
+      }
+    },
+    "/api/v1/entrar": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginUserViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginUserViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginUserViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginUserViewModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        },
+        "deprecated": true
+      }
+    },
+    "/api/v1/Mesas/{id}": {
+      "get": {
+        "tags": [
+          "Mesas"
+        ],
+        "summary": "Método responsavel pela obtenção da Mesa",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de identificação do objeto a ser pesquisado",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "A chamada precisa ser efetuada por um usuario autenticado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "O usuário esta autenticado, mas o não possui permissão para executar essa ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Retorna o objeto referente a ID informada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MesaViewModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Caso o objeto não seja encontrada pela ID retorna null",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Mesas"
+        ],
+        "summary": "Atualiza o Mesa no sistema.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de identificação do Mesa a ser atualiado",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "default": null
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Mesa a ser atualizado",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MesaViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MesaViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MesaViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "A chamada precisa ser efetuada por um usuario autenticado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "O usuário esta autenticado, mas o não possui permissão para executar essa ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Objeto atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Não foi possivel executar a ação solicitada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "O objeto não foi encontrado."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Mesas"
+        ],
+        "summary": "Exclui o Mesa do sistema.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de identificação do Mesa a ser atualiado",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "A chamada precisa ser efetuada por um usuario autenticado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "O usuário esta autenticado, mas o não possui permissão para executar essa ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Objeto excluido com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Não foi possivel executar a ação solicitada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "O objeto não foi encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Mesas": {
+      "post": {
+        "tags": [
+          "Mesas"
+        ],
+        "summary": "Cadastra o novo Mesa no sistema.",
+        "requestBody": {
+          "description": "Mesa a ser cadastrado",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MesaViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MesaViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/MesaViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "A chamada precisa ser efetuada por um usuario autenticado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "O usuário esta autenticado, mas o não possui permissão para executar essa ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Too Many Requests",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Retorna o objeto referente a ID informada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MesaViewModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Não foi possivel executar a ação solicitada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Pratos": {
+      "get": {
+        "tags": [
+          "Pratos"
+        ],
+        "summary": "Método responsavel pela obtenção de lista de Pratos",
+        "parameters": [
+          {
+            "name": "PageNumber",
+            "in": "query",
+            "description": "Numero da pagina",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 1
+            }
+          },
+          {
+            "name": "PageSize",
+            "in": "query",
+            "description": "Quantidade de itens por pagina",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 10
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "A chamada precisa ser efetuada por um usuario autenticado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "O usuário esta autenticado, mas o não possui permissão para executar essa ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Excedeu a cota de requisições",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Retorna o objeto referente a ID informada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PratoViewModelPaginationResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Caso a lista de objeto não seja encontrada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Pratos"
+        ],
+        "summary": "Cadastra o novo prato no sistema.",
+        "requestBody": {
+          "description": "Prato a ser cadastrado",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PratoViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PratoViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PratoViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "A chamada precisa ser efetuada por um usuario autenticado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "O usuário esta autenticado, mas o não possui permissão para executar essa ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Excedeu a cota de requisições",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Retorna o objeto referente a ID informada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PratoViewModel"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Não foi possivel executar a ação solicitada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/Pratos/{id}": {
+      "get": {
+        "tags": [
+          "Pratos"
+        ],
+        "summary": "Método responsavel pela obtenção do Prato",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de identificação do objeto a ser pesquisado",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "A chamada precisa ser efetuada por um usuario autenticado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "O usuário esta autenticado, mas o não possui permissão para executar essa ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Excedeu a cota de requisições",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Retorna o objeto referente a ID informada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PratoViewModel"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Caso o objeto não seja encontrada pela ID retorna null",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Pratos"
+        ],
+        "summary": "Atualiza o prato no sistema.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de identificação do prato a ser atualiado",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "default": null
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Prato a ser atualizado",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PratoViewModel"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PratoViewModel"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PratoViewModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "A chamada precisa ser efetuada por um usuario autenticado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "O usuário esta autenticado, mas o não possui permissão para executar essa ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Excedeu a cota de requisições",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Objeto atualizado com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Não foi possivel executar a ação solicitada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "O objeto não foi encontrado."
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Pratos"
+        ],
+        "summary": "Exclui o prato do sistema.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID de identificação do prato a ser atualiado",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "default": null
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "A chamada precisa ser efetuada por um usuario autenticado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "O usuário esta autenticado, mas o não possui permissão para executar essa ação.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Excedeu a cota de requisições",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "Objeto excluido com sucesso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Não foi possivel executar a ação solicitada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "O objeto não foi encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CustomResult"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CustomResult": {
+        "type": "object",
+        "properties": {
+          "success": {
+            "type": "boolean"
+          },
+          "data": {
+            "description": "Objeto de retorno da chamada",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ELocalizacaoMesa": {
+        "enum": [
+          0,
+          1
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "ETipoPrato": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
+      },
+      "LoginUserViewModel": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "maxLength": 100,
+            "minLength": 6,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MesaViewModel": {
+        "required": [
+          "localizacaoMesa",
+          "numero"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "numero": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string"
+          },
+          "lugares": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "type": "integer",
+            "format": "int32"
+          },
+          "ativo": {
+            "type": "boolean"
+          },
+          "localizacaoMesa": {
+            "$ref": "#/components/schemas/ELocalizacaoMesa"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PratoViewModel": {
+        "required": [
+          "descricao",
+          "preco",
+          "titulo"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "titulo": {
+            "maxLength": 200,
+            "minLength": 2,
+            "type": "string"
+          },
+          "descricao": {
+            "maxLength": 800,
+            "minLength": 2,
+            "type": "string"
+          },
+          "fotoUpload": {
+            "type": "string",
+            "nullable": true
+          },
+          "foto": {
+            "type": "string",
+            "nullable": true
+          },
+          "preco": {
+            "type": "number",
+            "format": "double"
+          },
+          "ativo": {
+            "type": "boolean"
+          },
+          "tipoPrato": {
+            "$ref": "#/components/schemas/ETipoPrato"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PratoViewModelPaginationResult": {
+        "type": "object",
+        "properties": {
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "totalItens": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PratoViewModel"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "title": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "detail": {
+            "type": "string",
+            "nullable": true
+          },
+          "instance": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": { }
+      },
+      "RegisterUserViewModel": {
+        "required": [
+          "email",
+          "password"
+        ],
+        "type": "object",
+        "properties": {
+          "email": {
+            "minLength": 1,
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "maxLength": 100,
+            "minLength": 6,
+            "type": "string"
+          },
+          "confirmPassword": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "Insira o token JWT desta maneira: Bearer {seu token}",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [
+    {
+      "Bearer": [ ]
+    }
+  ]
+}

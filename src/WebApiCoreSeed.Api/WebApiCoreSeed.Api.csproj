@@ -1,0 +1,74 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <AspNetCoreHostingModel>InProcess</AspNetCoreHostingModel>
+    <TypeScriptToolsVersion>3.7</TypeScriptToolsVersion>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <UserSecretsId>c52dbe85-d94e-4cc2-9856-529f22712174</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\demo-webapi\**" />
+    <Compile Remove="wwwroot\imagens\**" />
+    <Content Remove="wwwroot\demo-webapi\**" />
+    <Content Remove="wwwroot\imagens\**" />
+    <EmbeddedResource Remove="wwwroot\demo-webapi\**" />
+    <EmbeddedResource Remove="wwwroot\imagens\**" />
+    <None Remove="wwwroot\demo-webapi\**" />
+    <None Remove="wwwroot\imagens\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Remove="wwwroot\%2a%2a" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AspNetCore.HealthChecks.Redis" />
+    <PackageReference Include="AspNetCore.HealthChecks.SqlServer" />
+    <PackageReference Include="AspNetCore.HealthChecks.Uris" />
+    <PackageReference Include="Asp.Versioning.Mvc" />
+    <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" />
+    <PackageReference Include="Asp.Versioning.OpenApi" />
+    <PackageReference Include="AutoMapper" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" />
+    <PackageReference Include="KubernetesClient">
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="OpenTelemetry.Exporter.OpenTelemetryProtocol" />
+    <PackageReference Include="OpenTelemetry.Extensions.Hosting" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.AspNetCore" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Http" />
+    <PackageReference Include="OpenTelemetry.Instrumentation.Runtime" />
+    <PackageReference Include="Serilog.AspNetCore" />
+    <PackageReference Include="Serilog.Expressions" />
+    <PackageReference Include="Serilog.Sinks.Console" />
+    <PackageReference Include="Serilog.Sinks.Seq" />
+    <PackageReference Include="Scalar.AspNetCore" />
+    <PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\app\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Modules\Identity\WebApiCoreSeed.Identity.Infrastructure\WebApiCoreSeed.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="..\Modules\SampleRestaurant\WebApiCoreSeed.SampleRestaurant\WebApiCoreSeed.SampleRestaurant.csproj" />
+    <ProjectReference Include="..\Modules\SampleRestaurant\WebApiCoreSeed.SampleRestaurant.Infrastructure\WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+
+</Project>

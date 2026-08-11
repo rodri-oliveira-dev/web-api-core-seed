@@ -1,6 +1,17 @@
+Legacy preservation notice
+==========================
+
+> **Attention:** this repository preserves a legacy ASP.NET Core Web API originally built for .NET Core 3.1. .NET Core 3.1 reached end of support on December 13, 2022.
+
+The active solution is being modernized incrementally on Phase 2, now targets .NET 10, and uses `WebApiCoreSeed.slnx`. The legacy baseline remains preserved separately so modernization work can compare against the original behavior without changing the historical reference.
+
+The preserved legacy version is identified by the tag `v1.0.0-legacy` and by the branch `legacy/netcoreapp3.1`.
+
+See [LEGACY.md](LEGACY.md) for the documented legacy requirements, commands, migrations, seed status, limitations, and validation notes.
+
 What is the Project?
 =====================
-The objective of this project was to implement the most commonly used technologies, and to share as a base project for WEB API in NET Core 3.1
+The objective of this project was to implement the most commonly used technologies, and to share as a base project for WEB API. The original implementation was .NET Core 3.1; the active solution now targets .NET 10.
 
 ## Give a Star! :star:
 If you liked the project or if project helped you, please give a star ;)
@@ -16,20 +27,38 @@ To know more about how to setup your enviroment visit the [Microsoft .NET Downlo
 
 ## Technologies implemented:
 
-- .NET Core 3.1
+- .NET 10
+- Preserved .NET Core 3.1 legacy baseline
 - ASP.NET WebApi Core with JWT Bearer Authentication
 - ASP.NET Identity Core
-- Entity Framework Core 3.1
+- Entity Framework Core 10
 - .NET Core Native DI
 - AutoMapper
 - FluentValidator
-- Swagger UI com JWT support
+- OpenAPI with Scalar UI and JWT support
 - Health Checks
 - Redis
-- Ip Rate Limit 
+- Native ASP.NET Core Rate Limiting
 - OWASP Security
 - Serilog
-- Datasul / Seq
+- Seq opcional
+
+## Observability
+
+OpenTelemetry is configured by the `OpenTelemetry` section and is vendor-neutral by default.
+
+- `OpenTelemetry:Enabled`: enables traces and metrics. Default: `true`.
+- `OpenTelemetry:ServiceName`: default service name: `web-api-core-seed-api`.
+- `OpenTelemetry:ServiceNamespace`: default namespace: `rodri-oliveira-dev.web-api-core-seed`.
+- `OpenTelemetry:Otlp:Enabled`: enables OTLP export. Default: `false`.
+- `OpenTelemetry:Otlp:Endpoint`: optional collector endpoint, also compatible with `OTEL_EXPORTER_OTLP_ENDPOINT`.
+- `OpenTelemetry:Otlp:Protocol`: `Grpc` or `HttpProtobuf`.
+
+Serilog remains the structured logging pipeline. Console and file logs include `TraceId` and `SpanId` when a request activity is active. Seq is optional through `SeqSettings:Enabled`.
+
+## Quality
+
+Operational notes for SonarCloud setup and Quality Gate protection are documented in [docs/quality/sonarcloud.md](docs/quality/sonarcloud.md).
 
 ## Architecture:
 

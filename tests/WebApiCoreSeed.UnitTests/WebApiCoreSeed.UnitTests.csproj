@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Bogus" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="Moq" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="coverlet.collector" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\WebApiCoreSeed.Api\WebApiCoreSeed.Api.csproj" />
+    <ProjectReference Include="..\..\src\Modules\Identity\WebApiCoreSeed.Identity.Infrastructure\WebApiCoreSeed.Identity.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\src\Modules\SampleRestaurant\WebApiCoreSeed.SampleRestaurant\WebApiCoreSeed.SampleRestaurant.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Core\Fixtures\" />
+  </ItemGroup>
+</Project>
