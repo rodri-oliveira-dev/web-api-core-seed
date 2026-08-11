@@ -118,6 +118,30 @@ PR: pendente
 - Validacao pendente:
   - Reexecutar CodeQL/GitHub Advanced Security no PR para confirmar fechamento dos alertas.
 
+## Correcao pos-PR - SonarCloud Quality Gate
+
+- Check analisado: `ci / Build, test and quality gates` no PR 24, run `31527206219`.
+- Condicoes reais do Quality Gate com falha:
+  - `new_coverage`: `64.9%`, limite `80%`.
+  - `new_duplicated_lines_density`: `4.5%`, limite `3%`.
+- Principais fontes identificadas no SonarCloud:
+  - Duplicacao entre `Controllers/V1/Controllers/MainController.cs` e `Controllers/V2/Controllers/MainController.cs`.
+  - Duplicacao entre `Controllers/V1/Controllers/AuthController.cs` e `Controllers/V2/Controllers/AuthController.cs`.
+- Ajuste aplicado:
+  - Fluxo comum de respostas extraido para `MainControllerBase`.
+  - Fluxo comum de login/JWT extraido para `AuthControllerBase`, preservando `HS384` na V1 e `HS256` na V2.
+  - Controllers versionados mantidos como adaptadores de metadados/rotas.
+  - Testes adicionados para login V1/V2, registro V1, erro de login e ramos de resposta do controller base.
+- Validacao local:
+  - Build Release: passou com `0` warnings e `0` erros.
+  - Unit tests: passou, `93` testes.
+  - Integration tests: passou, `45` testes.
+  - OpenAPI regenerado sem diff em `docs/openapi/openapi-v1.json` e `docs/openapi/openapi-v2.json`.
+  - Cobertura local agregada: linhas `86.07%`, branches `45.37%`.
+  - Arquivos novos principais: `AuthControllerBase` com `98.21%` de linhas e `MainControllerBase` com `97.37%` de linhas.
+- Validacao pendente:
+  - Reexecutar SonarCloud no PR apos push para confirmar o Quality Gate remoto.
+
 ## Resultado do prompt 06
 
 - Projeto `WebApiCoreSeed.Identity.Infrastructure` criado para persistencia de Identity.

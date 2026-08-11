@@ -217,6 +217,18 @@
 - Validado localmente com restore, build, testes unitarios e testes de integracao.
 - Reexecucao do check CodeQL no GitHub ainda e necessaria para confirmar fechamento dos alertas.
 
+## Correcao pos-PR de SonarCloud Quality Gate
+
+- PR 24 apresentou nova falha no check `ci / Build, test and quality gates`.
+- Condicoes reais consultadas no SonarCloud: `new_coverage` em `64.9%` e `new_duplicated_lines_density` em `4.5%`.
+- Duplicacao principal removida dos pares V1/V2 de `MainController` e `AuthController`.
+- `MainControllerBase` concentra as respostas comuns sem alterar contratos HTTP.
+- `AuthControllerBase` concentra login/JWT preservando algoritmos por versao: V1 `HS384`, V2 `HS256`.
+- Testes unitarios/leves cobrem login V1/V2, registro V1, senha invalida, usuario bloqueado e ramos de `MainControllerBase`.
+- OpenAPI foi regenerado e permaneceu sem diff.
+- Validacao local: build Release `0` warnings, unit tests `93` passed, integration tests `45` passed, cobertura local agregada `86.07%` de linhas.
+- Reexecucao do SonarCloud no PR ainda e necessaria apos push.
+
 ## Estado final da Fase 4
 
 - Branch atual: `phase/4-architecture-modernization`.

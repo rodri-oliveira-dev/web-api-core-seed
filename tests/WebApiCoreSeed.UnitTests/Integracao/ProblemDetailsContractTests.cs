@@ -13,8 +13,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -49,6 +51,95 @@ namespace WebApiCoreSeed.UnitTests.Integracao
             Assert.True(problem.TryGetProperty("errors", out var errors));
             Assert.True(errors.TryGetProperty("Email", out _));
             Assert.True(errors.TryGetProperty("Password", out _));
+        }
+
+        [Theory]
+        [InlineData("/api/v1/entrar", SecurityAlgorithms.HmacSha384)]
+        [InlineData("/api/v2/entrar", SecurityAlgorithms.HmacSha256)]
+        public async Task LoginComCredenciaisValidasDeveRetornarTokenDaVersao(string path, string expectedAlgorithm)
+        {
+            var email = $"login-{Guid.NewGuid():N}@example.local";
+            const string password = "Senha@123A";
+            using var factory = new WebApiCoreSeedApiFactory();
+            await factory.CreateIdentityUserAsync(email, password, ("Pratos", "ObterPorId"));
+            using var client = factory.CreateApiClient();
+
+            var response = await client.PostAsJsonAsync(path, new
+            {
+                email,
+                password
+            });
+            var json = await ReadJsonAsync(response, HttpStatusCode.OK);
+
+            AssertLoginResponse(json, email, expectedAlgorithm);
+        }
+
+        [Fact]
+        public async Task RegistrarV1ComUsuarioAutenticadoDeveCriarContaERetornarToken()
+        {
+            var email = $"register-{Guid.NewGuid():N}@example.local";
+            const string password = "Senha@123A";
+            using var factory = new WebApiCoreSeedApiFactory();
+            using var client = factory.CreateApiClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", WebApiCoreSeedApiFactory.CreateTokenWithoutPermission());
+
+            var response = await client.PostAsJsonAsync("/api/v1/nova-conta", new
+            {
+                email,
+                password,
+                confirmPassword = password
+            });
+            var json = await ReadJsonAsync(response, HttpStatusCode.OK);
+
+            AssertLoginResponse(json, email, SecurityAlgorithms.HmacSha384);
+        }
+
+        [Fact]
+        public async Task LoginComSenhaInvalidaDeveRetornarDomainProblemDetails()
+        {
+            var email = $"wrong-password-{Guid.NewGuid():N}@example.local";
+            using var factory = new WebApiCoreSeedApiFactory(configureRateLimits: CreateRateLimitConfiguration(authenticationSensitivePermitLimit: 10));
+            await factory.CreateIdentityUserAsync(email, "Senha@123A");
+            using var client = factory.CreateApiClient();
+
+            var response = await client.PostAsJsonAsync("/api/v1/entrar", new
+            {
+                email,
+                password = "Senha@456B"
+            });
+            var problem = await ReadProblemAsync(response, HttpStatusCode.BadRequest);
+
+            Assert.Equal("urn:problem:domain-rule", problem.GetProperty("type").GetString());
+            Assert.True(problem.TryGetProperty("traceId", out _));
+        }
+
+        [Fact]
+        public async Task LoginComUsuarioBloqueadoDeveRetornarDomainProblemDetails()
+        {
+            var email = $"locked-{Guid.NewGuid():N}@example.local";
+            using var factory = new WebApiCoreSeedApiFactory(configureRateLimits: CreateRateLimitConfiguration(authenticationSensitivePermitLimit: 10));
+            await factory.CreateIdentityUserAsync(email, "Senha@123A");
+            using var client = factory.CreateApiClient();
+
+            for (var attempt = 0; attempt < 3; attempt++)
+            {
+                var failed = await client.PostAsJsonAsync("/api/v1/entrar", new
+                {
+                    email,
+                    password = "Senha@456B"
+                });
+                Assert.Equal(HttpStatusCode.BadRequest, failed.StatusCode);
+            }
+
+            var response = await client.PostAsJsonAsync("/api/v1/entrar", new
+            {
+                email,
+                password = "Senha@456B"
+            });
+            var problem = await ReadProblemAsync(response, HttpStatusCode.BadRequest);
+
+            Assert.Equal("urn:problem:domain-rule", problem.GetProperty("type").GetString());
+            Assert.True(problem.TryGetProperty("traceId", out _));
         }
 
         [Fact]
@@ -361,6 +452,19 @@ namespace WebApiCoreSeed.UnitTests.Integracao
             Assert.True(response.GetProperty("content").TryGetProperty("application/problem+json", out _));
         }
 
+        private static void AssertLoginResponse(JsonElement json, string email, string expectedAlgorithm)
+        {
+            Assert.True(json.GetProperty("success").GetBoolean());
+            var data = json.GetProperty("data");
+            var accessToken = data.GetProperty("accessToken").GetString();
+            Assert.False(string.IsNullOrWhiteSpace(accessToken));
+
+            var jwt = new JwtSecurityTokenHandler().ReadJwtToken(accessToken);
+            Assert.Equal(expectedAlgorithm, jwt.Header.Alg);
+            Assert.Equal(email, data.GetProperty("userToken").GetProperty("email").GetString());
+            Assert.True(data.GetProperty("expiresIn").GetDouble() > 0);
+        }
+
         private static Action<NativeRateLimitingSettings> CreateRateLimitConfiguration(
             int publicPermitLimit = 3,
             int authenticatedPermitLimit = 3,
@@ -416,6 +520,28 @@ namespace WebApiCoreSeed.UnitTests.Integracao
                 return client;
             }
 
+            public async Task CreateIdentityUserAsync(string email, string password, params (string Type, string Value)[] claims)
+            {
+                using var scope = Services.CreateScope();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+                var user = new IdentityUser
+                {
+                    UserName = email,
+                    Email = email,
+                    EmailConfirmed = true,
+                    LockoutEnabled = true
+                };
+
+                var result = await userManager.CreateAsync(user, password);
+                Assert.True(result.Succeeded, string.Join("; ", result.Errors.Select(error => error.Description)));
+
+                if (claims.Length > 0)
+                {
+                    var claimResult = await userManager.AddClaimsAsync(user, claims.Select(claim => new Claim(claim.Type, claim.Value)));
+                    Assert.True(claimResult.Succeeded, string.Join("; ", claimResult.Errors.Select(error => error.Description)));
+                }
+            }
+
             protected override void ConfigureWebHost(IWebHostBuilder builder)
             {
                 builder.UseEnvironment("Testing");
@@ -442,6 +568,8 @@ namespace WebApiCoreSeed.UnitTests.Integracao
                     services.RemoveAll<ApplicationDbContext>();
                     services.RemoveAll<DbContextOptions<SampleRestaurantDbContext>>();
                     services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
+                    services.RemoveAll<IDbContextOptionsConfiguration<SampleRestaurantDbContext>>();
+                    services.RemoveAll<IDbContextOptionsConfiguration<ApplicationDbContext>>();
 
                     services.AddDbContext<SampleRestaurantDbContext>(options => options.UseInMemoryDatabase(_databaseName));
                     services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase(_databaseName + "-identity"));
