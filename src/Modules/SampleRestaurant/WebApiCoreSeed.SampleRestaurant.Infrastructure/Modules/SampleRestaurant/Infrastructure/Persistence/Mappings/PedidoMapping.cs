@@ -1,8 +1,6 @@
-using WebApiCoreSeed.SampleRestaurant.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using WebApiCoreSeed.SampleRestaurant.Models.Enums;
+using WebApiCoreSeed.SampleRestaurant.Models;
 
 namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Mappings
 {
@@ -10,8 +8,6 @@ namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Mappings
     {
         public void Configure(EntityTypeBuilder<Pedido> builder)
         {
-            var converter = new EnumToNumberConverter<ELocalizacaoMesa, int>();
-
             builder.HasKey(p => p.Id);
 
             builder.Property(p => p.Numero)

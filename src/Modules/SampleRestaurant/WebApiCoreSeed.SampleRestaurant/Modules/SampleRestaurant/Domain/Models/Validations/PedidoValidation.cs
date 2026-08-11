@@ -22,7 +22,6 @@ namespace WebApiCoreSeed.SampleRestaurant.Models.Validations
                 .Cascade(CascadeMode.Stop)
                 .NotNull().WithMessage(MensagemCampoObrigatorio)
                 .NotEmpty().WithMessage(MensagemCampoObrigatorio);
-                //.Must(p => p.Count < 1).WithMessage("O pedido precisa ter ao menos um prato.");
 
             RuleForEach(c => c.PedidoPrato).SetValidator(new PedidoPratoValidation());
 

@@ -2,8 +2,8 @@ using System;
 using System.Globalization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using WebApiCoreSeed.Api.Configuration;
 using Serilog;
+using WebApiCoreSeed.Api.Configuration;
 
 namespace WebApiCoreSeed.Api
 {
@@ -42,7 +42,7 @@ namespace WebApiCoreSeed.Api
             }
             finally
             {
-                Log.CloseAndFlush();
+                await Log.CloseAndFlushAsync();
             }
         }
     }
