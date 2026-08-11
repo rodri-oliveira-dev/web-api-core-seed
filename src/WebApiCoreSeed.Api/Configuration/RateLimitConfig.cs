@@ -24,7 +24,6 @@ namespace WebApiCoreSeed.Api.Configuration
 
     public static class RateLimitConfig
     {
-        private const string ClientIdHeader = "X-ClientId";
         private static readonly Action<ILogger, string, string, Exception?> RateLimitRejected =
             LoggerMessage.Define<string, string>(
                 LogLevel.Warning,
@@ -135,11 +134,8 @@ namespace WebApiCoreSeed.Api.Configuration
                 return $"{policyName}:user:{Hash(userId)}";
             }
 
-            var clientId = httpContext.Request.Headers[ClientIdHeader].ToString();
             var remoteAddress = httpContext.Connection.RemoteIpAddress?.ToString() ?? "unknown";
-            var anonymousKey = string.IsNullOrWhiteSpace(clientId)
-                ? $"anonymous|remote:{remoteAddress}"
-                : $"anonymous|client:{clientId}|remote:{remoteAddress}";
+            var anonymousKey = $"anonymous|remote:{remoteAddress}";
 
             return $"{policyName}:anonymous:{Hash(anonymousKey)}";
         }

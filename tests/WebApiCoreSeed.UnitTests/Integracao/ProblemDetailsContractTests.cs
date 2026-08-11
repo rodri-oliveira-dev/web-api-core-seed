@@ -246,7 +246,7 @@ namespace WebApiCoreSeed.UnitTests.Integracao
         }
 
         [Fact]
-        public async Task LoginAcimaDoLimiteDeveUsarParticoesAnonimasIndependentes()
+        public async Task LoginAcimaDoLimiteNaoDevePermitirBypassPorClientIdAnonimo()
         {
             using var factory = new WebApiCoreSeedApiFactory(configureRateLimits: CreateRateLimitConfiguration(authenticationSensitivePermitLimit: 1));
             using var firstPartition = factory.CreateApiClient();
@@ -262,7 +262,46 @@ namespace WebApiCoreSeed.UnitTests.Integracao
 
             Assert.Equal("urn:problem:rate-limit", problem.GetProperty("type").GetString());
             Assert.NotNull(blocked.Headers.RetryAfter);
-            Assert.Equal(HttpStatusCode.BadRequest, recovered.StatusCode);
+            Assert.Equal(HttpStatusCode.TooManyRequests, recovered.StatusCode);
+        }
+
+        [Fact]
+        public async Task LoginAcimaDoLimiteNaoDeveConfiarEmForwardedHeaderDeProxyNaoConfiavel()
+        {
+            using var factory = new WebApiCoreSeedApiFactory(configureRateLimits: CreateRateLimitConfiguration(authenticationSensitivePermitLimit: 1));
+            using var firstClient = factory.CreateApiClient();
+            using var secondClient = factory.CreateApiClient();
+            firstClient.DefaultRequestHeaders.Add("X-Forwarded-For", "203.0.113.10");
+            secondClient.DefaultRequestHeaders.Add("X-Forwarded-For", "203.0.113.20");
+
+            Assert.Equal(HttpStatusCode.BadRequest, (await firstClient.PostAsJsonAsync("/api/v1/entrar", new { })).StatusCode);
+
+            var blocked = await secondClient.PostAsJsonAsync("/api/v1/entrar", new { });
+
+            await ReadProblemAsync(blocked, HttpStatusCode.TooManyRequests);
+        }
+
+        [Fact]
+        public async Task LoginAcimaDoLimiteDeveUsarForwardedHeaderSomenteComProxyConfiavel()
+        {
+            using var factory = new WebApiCoreSeedApiFactory(
+                configureRateLimits: CreateRateLimitConfiguration(authenticationSensitivePermitLimit: 1),
+                configureConfiguration: configuration =>
+                {
+                    configuration["ForwardedHeaders:Enabled"] = "true";
+                    configuration["ForwardedHeaders:KnownNetworks:0"] = "0.0.0.0/0";
+                });
+            using var firstAddress = factory.CreateApiClient();
+            using var secondAddress = factory.CreateApiClient();
+            firstAddress.DefaultRequestHeaders.Add("X-Forwarded-For", "203.0.113.10");
+            secondAddress.DefaultRequestHeaders.Add("X-Forwarded-For", "203.0.113.20");
+
+            Assert.Equal(HttpStatusCode.BadRequest, (await firstAddress.PostAsJsonAsync("/api/v1/entrar", new { })).StatusCode);
+            Assert.Equal(HttpStatusCode.BadRequest, (await secondAddress.PostAsJsonAsync("/api/v1/entrar", new { })).StatusCode);
+
+            var blocked = await firstAddress.PostAsJsonAsync("/api/v1/entrar", new { });
+
+            await ReadProblemAsync(blocked, HttpStatusCode.TooManyRequests);
         }
 
         [Fact]
@@ -347,14 +386,17 @@ namespace WebApiCoreSeed.UnitTests.Integracao
             private const string TestSecret = "X-BURGUER@COCA-2-PROBLEM-DETAILS-TEST-SECRET-2026";
             private readonly Action<IServiceCollection>? _configureServices;
             private readonly Action<NativeRateLimitingSettings>? _configureRateLimits;
+            private readonly Action<Dictionary<string, string?>>? _configureConfiguration;
             private readonly string _databaseName = Guid.NewGuid().ToString();
 
             public WebApiCoreSeedApiFactory(
                 Action<IServiceCollection>? configureServices = null,
-                Action<NativeRateLimitingSettings>? configureRateLimits = null)
+                Action<NativeRateLimitingSettings>? configureRateLimits = null,
+                Action<Dictionary<string, string?>>? configureConfiguration = null)
             {
                 _configureServices = configureServices;
                 _configureRateLimits = configureRateLimits;
+                _configureConfiguration = configureConfiguration;
                 EnsureBootstrapConfiguration();
             }
 
@@ -379,7 +421,7 @@ namespace WebApiCoreSeed.UnitTests.Integracao
                 builder.UseEnvironment("Testing");
                 builder.ConfigureAppConfiguration((_, configuration) =>
                 {
-                    configuration.AddInMemoryCollection(new Dictionary<string, string?>
+                    var values = new Dictionary<string, string?>
                     {
                         ["ConnectionStrings:DefaultConnection"] = $"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog={_databaseName};Integrated Security=True;",
                         ["AppSettings:Secret"] = TestSecret,
@@ -388,7 +430,9 @@ namespace WebApiCoreSeed.UnitTests.Integracao
                         ["SeqSettings:Url"] = "http://localhost",
                         ["SeqSettings:FilePath"] = "test-problem-details.log",
                         ["OpenTelemetry:Enabled"] = "false"
-                    });
+                    };
+                    _configureConfiguration?.Invoke(values);
+                    configuration.AddInMemoryCollection(values);
 
                 });
 

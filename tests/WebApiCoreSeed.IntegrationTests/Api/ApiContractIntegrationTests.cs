@@ -254,23 +254,6 @@ public sealed class ApiContractIntegrationTests
         Assert.True(exists);
     }
 
-    [Fact(DisplayName = "Rate limit publico retorna Too Many Requests Problem Details")]
-    public async Task ObterPratosQuandoAcimaDoLimiteDeveRetornarTooManyRequests()
-    {
-        await _factory.ResetStateAsync();
-        using var client = _factory.CreateApiClient();
-        client.DefaultRequestHeaders.Add("X-ClientId", $"api-rate-{Guid.NewGuid():N}");
-
-        Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/v1/Pratos?pageNumber=1&pageSize=10")).StatusCode);
-        Assert.Equal(HttpStatusCode.OK, (await client.GetAsync("/api/v1/Pratos?pageNumber=1&pageSize=10")).StatusCode);
-
-        var response = await client.GetAsync("/api/v1/Pratos?pageNumber=1&pageSize=10");
-        var problem = await JsonAssertions.ReadProblemAsync(response, HttpStatusCode.TooManyRequests);
-
-        Assert.Equal("urn:problem:rate-limit", problem.GetProperty("type").GetString());
-        Assert.NotNull(response.Headers.RetryAfter);
-    }
-
     [Fact(DisplayName = "Health check responde com SQL Server e Redis saudaveis")]
     public async Task HealthCheckQuandoDependenciasProntasDeveRetornarHealthy()
     {

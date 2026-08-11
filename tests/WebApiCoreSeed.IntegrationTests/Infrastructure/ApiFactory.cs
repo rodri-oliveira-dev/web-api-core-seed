@@ -140,13 +140,13 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
                 ["ForwardedHeaders:Enabled"] = "false",
                 ["RequestLimits:TimeoutSeconds"] = "30",
                 ["RequestLimits:MaxRequestBodyBytes"] = "10485760",
-                ["NativeRateLimitingSettings:Public:PermitLimit"] = "2",
+                ["NativeRateLimitingSettings:Public:PermitLimit"] = "200",
                 ["NativeRateLimitingSettings:Public:WindowSeconds"] = "30",
                 ["NativeRateLimitingSettings:Public:QueueLimit"] = "0",
-                ["NativeRateLimitingSettings:Authenticated:PermitLimit"] = "2",
+                ["NativeRateLimitingSettings:Authenticated:PermitLimit"] = "200",
                 ["NativeRateLimitingSettings:Authenticated:WindowSeconds"] = "30",
                 ["NativeRateLimitingSettings:Authenticated:QueueLimit"] = "0",
-                ["NativeRateLimitingSettings:AuthenticationSensitive:PermitLimit"] = "2",
+                ["NativeRateLimitingSettings:AuthenticationSensitive:PermitLimit"] = "200",
                 ["NativeRateLimitingSettings:AuthenticationSensitive:WindowSeconds"] = "30",
                 ["NativeRateLimitingSettings:AuthenticationSensitive:QueueLimit"] = "0"
             });
@@ -288,13 +288,13 @@ public sealed class ApiFactory : WebApplicationFactory<Program>, IAsyncLifetime
             ["ForwardedHeaders__Enabled"] = "false",
             ["RequestLimits__TimeoutSeconds"] = "30",
             ["RequestLimits__MaxRequestBodyBytes"] = "10485760",
-            ["NativeRateLimitingSettings__Public__PermitLimit"] = "2",
+            ["NativeRateLimitingSettings__Public__PermitLimit"] = "200",
             ["NativeRateLimitingSettings__Public__WindowSeconds"] = "30",
             ["NativeRateLimitingSettings__Public__QueueLimit"] = "0",
-            ["NativeRateLimitingSettings__Authenticated__PermitLimit"] = "2",
+            ["NativeRateLimitingSettings__Authenticated__PermitLimit"] = "200",
             ["NativeRateLimitingSettings__Authenticated__WindowSeconds"] = "30",
             ["NativeRateLimitingSettings__Authenticated__QueueLimit"] = "0",
-            ["NativeRateLimitingSettings__AuthenticationSensitive__PermitLimit"] = "2",
+            ["NativeRateLimitingSettings__AuthenticationSensitive__PermitLimit"] = "200",
             ["NativeRateLimitingSettings__AuthenticationSensitive__WindowSeconds"] = "30",
             ["NativeRateLimitingSettings__AuthenticationSensitive__QueueLimit"] = "0"
         };
