@@ -119,12 +119,6 @@ jobs:
           "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude=[*.Test]*,[*.Tests]*,[*.UnitTests]*,[*.IntegrationTests]*"
           "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile=**/*.generated.cs"
 
-      - name: End SonarCloud analysis and enforce Quality Gate
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
-
       - name: Generate OpenAPI contracts
         run: dotnet run --project "$OPENAPI_GENERATOR_PROJECT" --configuration Release --no-build
 
@@ -144,6 +138,12 @@ jobs:
 
       - name: Report deprecated packages
         run: dotnet list "$SOLUTION" package --deprecated
+
+      - name: End SonarCloud analysis and enforce Quality Gate
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
 
       - name: Upload test results
         if: always()
