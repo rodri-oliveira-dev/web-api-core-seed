@@ -7,7 +7,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Models.Validations
     {
         private const int MenorDdd = 11;
         private const int MaiorDdd = 99;
-        private const string MensagemCampoObrigatorio = "O campo {PropertyName} é obrigatório";
+        private const string MensagemCampoObrigatorio = "O campo {PropertyName} Ã© obrigatÃ³rio";
 
         public TelefoneValidation()
         {

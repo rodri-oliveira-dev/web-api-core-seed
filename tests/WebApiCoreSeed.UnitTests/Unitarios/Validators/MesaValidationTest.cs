@@ -7,7 +7,7 @@ namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
 {
     public class MesaValidationTest
     {
-        [Fact(DisplayName = "Mesa falha validação")]
+        [Fact(DisplayName = "Mesa falha validaÃ§Ã£o")]
         [Trait("Validators", "Mesa")]
         public void MesaQuandoCamposObrigatoriosInvalidosDeveFalharValidacao()
         {
@@ -23,7 +23,7 @@ namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
             resultado.ShouldHaveValidationErrorFor(m => m.Lugares);
         }
 
-        [Fact(DisplayName = "Mesa passa validação")]
+        [Fact(DisplayName = "Mesa passa validaÃ§Ã£o")]
         [Trait("Validators", "Mesa")]
         public void MesaQuandoCamposObrigatoriosValidosDevePassarValidacao()
         {

@@ -7,7 +7,7 @@ namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
 {
     public class PedidoPratoValidationTest
     {
-        [Fact(DisplayName = "Pedido Prato falha validação, campos obrigatorios")]
+        [Fact(DisplayName = "Pedido Prato falha validaÃ§Ã£o, campos obrigatorios")]
         [Trait("Validators", "PedidoPrato")]
         public void PedidoPratoQuandoPratoAusenteDeveFalharValidacao()
         {
@@ -22,7 +22,7 @@ namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
             resultado.ShouldHaveValidationErrorFor(pp => pp.Prato);
         }
 
-        [Fact(DisplayName = "Pedido Prato falha validação, campo observação maior que o aceito")]
+        [Fact(DisplayName = "Pedido Prato falha validaÃ§Ã£o, campo observaÃ§Ã£o maior que o aceito")]
         [Trait("Validators", "PedidoPrato")]
         public void PedidoPratoQuandoObservacaoMaiorQueLimiteDeveFalharValidacao()
         {
@@ -41,7 +41,7 @@ namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
             resultado.ShouldHaveValidationErrorFor(pp => pp.Observacao);
         }
 
-        [Fact(DisplayName = "Pedido Prato passa validação")]
+        [Fact(DisplayName = "Pedido Prato passa validaÃ§Ã£o")]
         [Trait("Validators", "PedidoPrato")]
         public void PedidoPratoQuandoCamposValidosDevePassarValidacao()
         {
@@ -61,7 +61,7 @@ namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
             resultado.ShouldNotHaveValidationErrorFor(pp => pp.Observacao);
         }
 
-        [Fact(DisplayName = "Pedido Prato aceita observação dentro do limite")]
+        [Fact(DisplayName = "Pedido Prato aceita observaÃ§Ã£o dentro do limite")]
         [Trait("Validators", "PedidoPrato")]
         public void PedidoPratoQuandoObservacaoDentroDoLimiteDevePassarValidacao()
         {

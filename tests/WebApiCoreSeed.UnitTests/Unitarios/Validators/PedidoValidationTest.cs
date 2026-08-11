@@ -10,7 +10,7 @@ namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
 {
     public class PedidoValidationTest
     {
-        [Fact(DisplayName = "Pedido falha validaÁ„o, campos obrigatorios")]
+        [Fact(DisplayName = "Pedido falha valida√ß√£o, campos obrigatorios")]
         [Trait("Validators", "Pedido")]
         public void PedidoQuandoCamposObrigatoriosAusentesDeveFalharValidacao()
         {
@@ -28,7 +28,7 @@ namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
             resultado.ShouldHaveValidationErrorFor(p => p.Numero);
         }
 
-        [Fact(DisplayName = "Pedido passa validaÁ„o, campos obrigatorios")]
+        [Fact(DisplayName = "Pedido passa valida√ß√£o, campos obrigatorios")]
         [Trait("Validators", "Pedido")]
         public void PedidoQuandoCamposObrigatoriosValidosDevePassarValidacao()
         {
@@ -59,7 +59,7 @@ namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
                         Prato= new Prato()
                         {
                             Titulo = "X-Burguer",
-                            Descricao = "Lanch„o",
+                            Descricao = "Lanch√£o",
                             Foto = "x-burguer.jpg",
                             Preco = 25,
                             TipoPrato = ETipoPrato.Comida,

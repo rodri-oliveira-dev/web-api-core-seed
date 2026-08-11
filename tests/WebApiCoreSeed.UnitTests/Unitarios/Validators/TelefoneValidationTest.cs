@@ -8,7 +8,7 @@ namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
 {
     public class TelefoneValidationTest
     {
-        [Fact(DisplayName = "Telefone falha validação")]
+        [Fact(DisplayName = "Telefone falha validaÃ§Ã£o")]
         [Trait("Validators", "Telefone")]
         public void TelefoneQuandoCamposInvalidosDeveFalharValidacao()
         {
@@ -24,7 +24,7 @@ namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
             resultado.ShouldHaveValidationErrorFor(t => t.Numero);
         }
 
-        [Fact(DisplayName = "Telefone passa validação")]
+        [Fact(DisplayName = "Telefone passa validaÃ§Ã£o")]
         [Trait("Validators", "Telefone")]
         public void TelefoneQuandoCamposValidosDevePassarValidacao()
         {

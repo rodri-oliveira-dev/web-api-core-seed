@@ -7,7 +7,7 @@ namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
 {
     public class PratoValidationTest
     {
-        [Fact(DisplayName = "Prato falha validação, campos obrigatorios")]
+        [Fact(DisplayName = "Prato falha validaÃ§Ã£o, campos obrigatorios")]
         [Trait("Validators", "Prato")]
         public void PratoQuandoCamposObrigatoriosInvalidosDeveFalharValidacao()
         {
@@ -25,7 +25,7 @@ namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
             resultado.ShouldHaveValidationErrorFor(p => p.Preco);
         }
 
-        [Fact(DisplayName = "Prato passa validação, campos obrigatorios")]
+        [Fact(DisplayName = "Prato passa validaÃ§Ã£o, campos obrigatorios")]
         [Trait("Validators", "Prato")]
         public void PratoQuandoCamposObrigatoriosValidosDevePassarValidacao()
         {

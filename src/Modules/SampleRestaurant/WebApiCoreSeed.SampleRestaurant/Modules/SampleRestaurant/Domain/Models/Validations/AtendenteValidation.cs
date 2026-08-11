@@ -5,7 +5,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Models.Validations
 {
     public class AtendenteValidation : AbstractValidator<Atendente>
     {
-        private const string MensagemCampoObrigatorio = "O campo {PropertyName} é obrigatório";
+        private const string MensagemCampoObrigatorio = "O campo {PropertyName} Ã© obrigatÃ³rio";
 
         public AtendenteValidation()
         {

@@ -8,11 +8,11 @@ namespace WebApiCoreSeed.Api.Resources
         {
             return statusCode switch
             {
-                400 => "O pedido não pode ser cumprido devido à erro de sintaxe.",
+                400 => "O pedido nÃ£o pode ser cumprido devido Ã  erro de sintaxe.",
                 401 => "A chamada precisa ser efetuada por um usuario autenticado.",
-                403 => "O usuário esta autenticado, mas o não possui permissão para executar essa ação.",
-                404 => "A página solicitada não pôde ser encontrada, mas pode estar disponível novamente no futuro.",
-                405 => "Foi feita uma solicitação de uma página usando um método de solicitação não suportado por essa página.",
+                403 => "O usuÃ¡rio esta autenticado, mas o nÃ£o possui permissÃ£o para executar essa aÃ§Ã£o.",
+                404 => "A pÃ¡gina solicitada nÃ£o pÃ´de ser encontrada, mas pode estar disponÃ­vel novamente no futuro.",
+                405 => "Foi feita uma solicitaÃ§Ã£o de uma pÃ¡gina usando um mÃ©todo de solicitaÃ§Ã£o nÃ£o suportado por essa pÃ¡gina.",
                 _ => ReasonPhrases.GetReasonPhrase(statusCode)
             };
         }

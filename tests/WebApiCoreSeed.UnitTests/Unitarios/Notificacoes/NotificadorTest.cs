@@ -21,7 +21,7 @@ namespace WebApiCoreSeed.UnitTests.Unitarios.Notificacoes
             Assert.Empty(notificador.ObterNotificacoes());
         }
 
-        [Fact(DisplayName = "Adicionando notificação")]
+        [Fact(DisplayName = "Adicionando notificaÃ§Ã£o")]
         [Trait("Business", "Notificacoes")]
         public void HandleQuandoNotificacaoInformadaDeveRegistrarNotificacao()
         {

@@ -9,7 +9,7 @@ namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
 {
     public class AtendenteValidationTest
     {
-        [Fact(DisplayName = "Atendente tipo garçon falha validação")]
+        [Fact(DisplayName = "Atendente tipo garÃ§on falha validaÃ§Ã£o")]
         [Trait("Validators", "Atendente")]
         public void GarcomQuandoCamposObrigatoriosAusentesDeveFalharValidacao()
         {
@@ -26,7 +26,7 @@ namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
             resultado.ShouldHaveValidationErrorFor(atendente => atendente.Telefone);
         }
 
-        [Fact(DisplayName = "Atendente tipo garçom passa validação")]
+        [Fact(DisplayName = "Atendente tipo garÃ§om passa validaÃ§Ã£o")]
         [Trait("Validators", "Atendente")]
         public void GarcomQuandoCamposObrigatoriosValidosDevePassarValidacao()
         {
@@ -54,7 +54,7 @@ namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
             resultado.ShouldNotHaveValidationErrorFor(atendente => atendente.Telefone);
         }
 
-        [Fact(DisplayName = "Atendente tipo Totem falha validação")]
+        [Fact(DisplayName = "Atendente tipo Totem falha validaÃ§Ã£o")]
         [Trait("Validators", "Atendente")]
         public void TotemQuandoNomeAusenteDeveFalharValidacao()
         {
@@ -69,7 +69,7 @@ namespace WebApiCoreSeed.UnitTests.Unitarios.Validators
             resultado.ShouldHaveValidationErrorFor(atendente => atendente.Nome);
         }
 
-        [Fact(DisplayName = "Atendente tipo Totem passa validação")]
+        [Fact(DisplayName = "Atendente tipo Totem passa validaÃ§Ã£o")]
         [Trait("Validators", "Atendente")]
         public void TotemQuandoNomeValidoDevePassarValidacao()
         {
