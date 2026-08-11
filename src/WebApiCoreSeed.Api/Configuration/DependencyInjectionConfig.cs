@@ -25,10 +25,12 @@ namespace WebApiCoreSeed.Api.Configuration
             services.AddScoped<IPedidoRepository, PedidoRepository>();
             services.AddScoped<IPedidoPratoRepository, PedidoPratoRepository>();
             services.AddScoped<IPratoRepository, PratoRepository>();
+            services.AddScoped<ILogginRepository, LogginRepository>();
             services.AddScoped<ISampleRestaurantUnitOfWork, SampleRestaurantUnitOfWork>();
 
             //Services
-            services.AddScoped<IPedidoService, PedidoService>();
+            services.AddScoped<IAtendenteService, AtendenteService>();
+            services.AddScoped<ILogginService, LogginService>();
             services.AddScoped<IMesaService, MesaService>();
             services.AddScoped<IPedidoService, PedidoService>();
             services.AddScoped<IPedidoPratoService, PedidoPratoService>();
