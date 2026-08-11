@@ -265,17 +265,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MesaViewModel"
+                "$ref": "#/components/schemas/MesaRequestViewModel"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/MesaViewModel"
+                "$ref": "#/components/schemas/MesaRequestViewModel"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/MesaViewModel"
+                "$ref": "#/components/schemas/MesaRequestViewModel"
               }
             }
           },
@@ -435,17 +435,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/MesaViewModel"
+                "$ref": "#/components/schemas/MesaRequestViewModel"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/MesaViewModel"
+                "$ref": "#/components/schemas/MesaRequestViewModel"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/MesaViewModel"
+                "$ref": "#/components/schemas/MesaRequestViewModel"
               }
             }
           },
@@ -614,17 +614,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PratoViewModel"
+                "$ref": "#/components/schemas/PratoRequestViewModel"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/PratoViewModel"
+                "$ref": "#/components/schemas/PratoRequestViewModel"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/PratoViewModel"
+                "$ref": "#/components/schemas/PratoRequestViewModel"
               }
             }
           },
@@ -796,17 +796,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/PratoViewModel"
+                "$ref": "#/components/schemas/PratoRequestViewModel"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/PratoViewModel"
+                "$ref": "#/components/schemas/PratoRequestViewModel"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/PratoViewModel"
+                "$ref": "#/components/schemas/PratoRequestViewModel"
               }
             }
           },
@@ -997,6 +997,44 @@
           }
         }
       },
+      "MesaRequestViewModel": {
+        "required": [
+          "numero",
+          "lugares",
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "numero": {
+            "maxLength": 50,
+            "minLength": 1,
+            "type": "string"
+          },
+          "lugares": {
+            "maximum": 2147483647,
+            "minimum": 1,
+            "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "format": "int32"
+          },
+          "ativo": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "localizacaoMesa": {
+            "type": "integer",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ELocalizacaoMesa"
+              }
+            ],
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          }
+        }
+      },
       "MesaViewModel": {
         "required": [
           "numero",
@@ -1057,6 +1095,56 @@
           },
           "hasPreviousPage": {
             "type": "boolean"
+          }
+        }
+      },
+      "PratoRequestViewModel": {
+        "required": [
+          "titulo",
+          "descricao",
+          "preco",
+          "id"
+        ],
+        "type": "object",
+        "properties": {
+          "titulo": {
+            "maxLength": 200,
+            "minLength": 2,
+            "type": "string"
+          },
+          "descricao": {
+            "maxLength": 800,
+            "minLength": 2,
+            "type": "string"
+          },
+          "fotoUpload": {
+            "type": "string",
+            "nullable": true
+          },
+          "foto": {
+            "type": "string",
+            "nullable": true
+          },
+          "preco": {
+            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
+            "format": "double"
+          },
+          "ativo": {
+            "type": "boolean",
+            "nullable": true
+          },
+          "tipoPrato": {
+            "type": "integer",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/ETipoPrato"
+              }
+            ],
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "format": "uuid"
           }
         }
       },

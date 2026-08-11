@@ -74,13 +74,13 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         [ClaimsAuthorize("Mesas")]
         [ProducesResponseType(typeof(MesaViewModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<MesaViewModel>> Adicionar(MesaViewModel mesaViewModel, CancellationToken cancellationToken)
+        public async Task<ActionResult<MesaViewModel>> Adicionar(MesaRequestViewModel mesaViewModel, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState, ETipoAcao.ModeloInvalido);
 
             await _mesaService.Adicionar(_mapper.Map<Mesa>(mesaViewModel), cancellationToken);
 
-            return CustomResponse(mesaViewModel, ETipoAcao.Adicionado);
+            return CustomResponse(_mapper.Map<MesaViewModel>(mesaViewModel), ETipoAcao.Adicionado);
         }
 
         /// <summary>
@@ -99,8 +99,10 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         [ClaimsAuthorize("Mesas")]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Atualizar(Guid id, MesaViewModel mesaViewModel, CancellationToken cancellationToken)
+        public async Task<IActionResult> Atualizar(Guid id, MesaRequestViewModel mesaViewModel, CancellationToken cancellationToken)
         {
+            if (!ModelState.IsValid) return CustomResponse(ModelState, ETipoAcao.ModeloInvalido);
+
             if (id != mesaViewModel.Id)
             {
                 NotificarErro("Os ids informados não são iguais!");
@@ -113,8 +115,8 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
 
             mesaAtualizada.Numero = mesaViewModel.Numero;
             mesaAtualizada.Lugares = mesaViewModel.Lugares;
-            mesaAtualizada.Ativo = mesaViewModel.Ativo;
-            mesaAtualizada.Ativo = mesaViewModel.Ativo;
+            mesaAtualizada.Ativo = mesaViewModel.Ativo.GetValueOrDefault();
+            mesaAtualizada.Ativo = mesaViewModel.Ativo.GetValueOrDefault();
             mesaAtualizada.LocalizacaoMesa = mesaAtualizada.LocalizacaoMesa;
 
             await _mesaService.Atualizar(_mapper.Map<Mesa>(mesaAtualizada), cancellationToken);

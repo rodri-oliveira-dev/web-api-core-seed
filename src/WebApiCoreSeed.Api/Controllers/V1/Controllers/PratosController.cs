@@ -124,7 +124,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         [ClaimsAuthorize("Pratos")]
         [ProducesResponseType(typeof(PratoViewModel), StatusCodes.Status201Created)]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<PratoViewModel>> Adicionar(PratoViewModel pratoViewModel, CancellationToken cancellationToken)
+        public async Task<ActionResult<PratoViewModel>> Adicionar(PratoRequestViewModel pratoViewModel, CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid) return CustomResponse(ModelState, ETipoAcao.ModeloInvalido);
 
@@ -133,10 +133,11 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
                 return CustomResponse(pratoViewModel, ETipoAcao.ModeloInvalido);
             }
 
-            pratoViewModel.Foto = imagemNome;
-            await _pratoService.Adicionar(_mapper.Map<Prato>(pratoViewModel), cancellationToken);
+            var response = _mapper.Map<PratoViewModel>(pratoViewModel);
+            response.Foto = imagemNome;
+            await _pratoService.Adicionar(_mapper.Map<Prato>(response), cancellationToken);
 
-            return CustomResponse(pratoViewModel, ETipoAcao.Adicionado);
+            return CustomResponse(response, ETipoAcao.Adicionado);
         }
 
         /// <summary>
@@ -156,8 +157,10 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         [ClaimsAuthorize("Pratos")]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status204NoContent)]
         [ProducesResponseType(typeof(CustomResult), StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> Atualizar(Guid id, PratoViewModel pratoViewModel, CancellationToken cancellationToken)
+        public async Task<IActionResult> Atualizar(Guid id, PratoRequestViewModel pratoViewModel, CancellationToken cancellationToken)
         {
+            if (!ModelState.IsValid) return CustomResponse(ModelState, ETipoAcao.ModeloInvalido);
+
             if (id != pratoViewModel.Id)
             {
                 NotificarErro("Os ids informados não são iguais!");
@@ -168,12 +171,9 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
 
             if (pratoAtualizacao == null) return CustomResponse(ModelState, ETipoAcao.NaoEncontrado);
 
-            pratoViewModel.Foto = pratoAtualizacao.Foto;
-            if (!ModelState.IsValid) return CustomResponse(ModelState, ETipoAcao.ModeloInvalido);
-
             if (pratoViewModel.FotoUpload != null)
             {
-                if (!UploadArquivo(pratoViewModel.FotoUpload, pratoViewModel.Foto, out var imagemNome))
+                if (!UploadArquivo(pratoViewModel.FotoUpload, pratoAtualizacao.Foto, out var imagemNome))
                 {
                     return CustomResponse(ModelState, ETipoAcao.ModeloInvalido);
                 }
@@ -183,7 +183,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
             pratoAtualizacao.Titulo = pratoViewModel.Titulo;
             pratoAtualizacao.Descricao = pratoViewModel.Descricao;
             pratoAtualizacao.Preco = pratoViewModel.Preco;
-            pratoAtualizacao.Ativo = pratoViewModel.Ativo;
+            pratoAtualizacao.Ativo = pratoViewModel.Ativo.GetValueOrDefault();
             pratoAtualizacao.TipoPrato = pratoAtualizacao.TipoPrato;
 
             await _pratoService.Atualizar(_mapper.Map<Prato>(pratoAtualizacao), cancellationToken);

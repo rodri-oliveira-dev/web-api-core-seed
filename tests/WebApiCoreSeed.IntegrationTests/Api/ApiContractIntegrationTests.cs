@@ -5,6 +5,7 @@ using System.Text.Json;
 using Microsoft.EntityFrameworkCore;
 using WebApiCoreSeed.IntegrationTests.Infrastructure;
 using WebApiCoreSeed.SampleRestaurant.Models;
+using WebApiCoreSeed.SampleRestaurant.Models.Enums;
 
 namespace WebApiCoreSeed.IntegrationTests.Api;
 
@@ -228,6 +229,66 @@ public sealed class ApiContractIntegrationTests
 
         Assert.Equal("urn:problem:domain-rule", problem.GetProperty("type").GetString());
         Assert.True(problem.GetProperty("errors").TryGetProperty("notifications", out _));
+    }
+
+    [Fact(DisplayName = "Contrato de Mesa rejeita ausencia de campos obrigatorios")]
+    public async Task AdicionarMesaQuandoCampoObrigatorioAusenteDeveRetornarProblemDetails()
+    {
+        await _factory.ResetStateAsync();
+        using var client = _factory.CreateApiClient(("Mesas", "Adicionar"));
+
+        var response = await client.PostAsJsonAsync("/api/v1/Mesas", new
+        {
+            id = Guid.NewGuid(),
+            numero = "MESA-SEM-LUGARES",
+            ativo = true,
+            localizacaoMesa = 1
+        });
+        var problem = await JsonAssertions.ReadProblemAsync(response, HttpStatusCode.BadRequest);
+
+        Assert.Equal("urn:problem:validation", problem.GetProperty("type").GetString());
+        Assert.Contains("lugares", problem.GetProperty("errors").GetRawText(), StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact(DisplayName = "Contrato de Mesa preserva defaults compativeis quando opcionais estao ausentes")]
+    public async Task AdicionarMesaQuandoOpcionaisAusentesDevePersistirDefaults()
+    {
+        await _factory.ResetStateAsync();
+        var mesaId = Guid.NewGuid();
+        using var client = _factory.CreateApiClient(("Mesas", "Adicionar"));
+
+        var response = await client.PostAsJsonAsync("/api/v1/Mesas", new
+        {
+            id = mesaId,
+            numero = "MESA-DEFAULTS",
+            lugares = 4
+        });
+
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+
+        var persisted = await _factory.WithDomainContextAsync(context =>
+            context.Mesas.SingleAsync(item => item.Id == mesaId));
+
+        Assert.False(persisted.Ativo);
+        Assert.Equal(ELocalizacaoMesa.Interna, persisted.LocalizacaoMesa);
+    }
+
+    [Fact(DisplayName = "Contrato de Prato rejeita ausencia de campos obrigatorios")]
+    public async Task AdicionarPratoQuandoCampoObrigatorioAusenteDeveRetornarProblemDetails()
+    {
+        await _factory.ResetStateAsync();
+        using var client = _factory.CreateApiClient(("Pratos", "Adicionar"));
+
+        var response = await client.PostAsJsonAsync("/api/v1/Pratos", new
+        {
+            id = Guid.NewGuid(),
+            titulo = "Prato sem preco",
+            descricao = "Payload sem preco para contrato"
+        });
+        var problem = await JsonAssertions.ReadProblemAsync(response, HttpStatusCode.BadRequest);
+
+        Assert.Equal("urn:problem:validation", problem.GetProperty("type").GetString());
+        Assert.Contains("preco", problem.GetProperty("errors").GetRawText(), StringComparison.OrdinalIgnoreCase);
     }
 
     [Fact(DisplayName = "Endpoint de escrita persiste Mesa usando Unit of Work")]
