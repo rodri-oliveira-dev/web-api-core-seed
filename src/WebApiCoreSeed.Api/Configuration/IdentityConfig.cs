@@ -67,7 +67,7 @@ namespace WebApiCoreSeed.Api.Configuration
                 x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(x =>
             {
-                x.RequireHttpsMetadata = false;
+                x.RequireHttpsMetadata = RequiresHttpsMetadata(configuration);
                 x.SaveToken = true;
                 x.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -129,6 +129,14 @@ namespace WebApiCoreSeed.Api.Configuration
             });
 
             return services;
+        }
+
+        private static bool RequiresHttpsMetadata(IConfiguration configuration)
+        {
+            var environment = configuration["ASPNETCORE_ENVIRONMENT"];
+
+            return !string.Equals(environment, "Development", StringComparison.OrdinalIgnoreCase)
+                && !string.Equals(environment, "Testing", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

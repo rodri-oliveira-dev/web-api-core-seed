@@ -60,7 +60,12 @@ public sealed class SecurityHardeningIntegrationTests
         Assert.Equal("nosniff", response.Headers.GetValues("X-Content-Type-Options").Single());
         Assert.Equal("no-referrer", response.Headers.GetValues("Referrer-Policy").Single());
         Assert.Contains("camera=()", response.Headers.GetValues("Permissions-Policy").Single());
-        Assert.Contains("frame-ancestors 'none'", response.Headers.GetValues("Content-Security-Policy").Single());
+        var contentSecurityPolicy = response.Headers.GetValues("Content-Security-Policy").Single();
+        Assert.Contains("frame-ancestors 'none'", contentSecurityPolicy);
+        Assert.Contains("object-src 'none'", contentSecurityPolicy);
+        Assert.Contains("base-uri 'self'", contentSecurityPolicy);
+        Assert.DoesNotContain("unsafe-inline", contentSecurityPolicy, StringComparison.Ordinal);
+        Assert.DoesNotContain("unsafe-eval", contentSecurityPolicy, StringComparison.Ordinal);
         Assert.False(response.Headers.Contains("X-XSS-Protection"));
         Assert.False(response.Headers.Contains("X-Xss-Protection"));
         Assert.False(response.Headers.Contains("Feature-Policy"));
