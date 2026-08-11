@@ -1,9 +1,11 @@
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text;
 
 namespace WebApiCoreSeed.SampleRestaurant.Models.Validations.Documentos
 {
-    public class CpfValidacao
+    public static class CpfValidacao
     {
         public const int TamanhoCpf = 11;
 
@@ -52,7 +54,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Models.Validations.Documentos
         }
     }
 
-    public class CnpjValidacao
+    public static class CnpjValidacao
     {
         public const int TamanhoCnpj = 14;
 
@@ -107,8 +109,8 @@ namespace WebApiCoreSeed.SampleRestaurant.Models.Validations.Documentos
         private string _numero;
         private const int Modulo = 11;
         private readonly List<int> _multiplicadores = new List<int> { 2, 3, 4, 5, 6, 7, 8, 9 };
-        private readonly IDictionary<int, string> _substituicoes = new Dictionary<int, string>();
-        private bool _complementarDoModulo = true;
+        private readonly Dictionary<int, string> _substituicoes = new Dictionary<int, string>();
+        private readonly bool _complementarDoModulo = true;
 
         public DigitoVerificador(string numero)
         {
@@ -140,7 +142,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Models.Validations.Documentos
 
         public string CalculaDigito()
         {
-            return !(_numero.Length > 0) ? "" : GetDigitSum();
+            return _numero.Length == 0 ? string.Empty : GetDigitSum();
         }
 
         private string GetDigitSum()
@@ -157,23 +159,25 @@ namespace WebApiCoreSeed.SampleRestaurant.Models.Validations.Documentos
             var mod = (soma % Modulo);
             var resultado = _complementarDoModulo ? Modulo - mod : mod;
 
-            return _substituicoes.ContainsKey(resultado) ? _substituicoes[resultado] : resultado.ToString();
+            return _substituicoes.TryGetValue(resultado, out var substituicao)
+                ? substituicao
+                : resultado.ToString(CultureInfo.InvariantCulture);
         }
     }
 
-    public class Utils
+    public static class Utils
     {
         public static string ApenasNumeros(string valor)
         {
-            var onlyNumber = "";
+            var onlyNumber = new StringBuilder(valor.Length);
             foreach (var s in valor)
             {
                 if (char.IsDigit(s))
                 {
-                    onlyNumber += s;
+                    onlyNumber.Append(s);
                 }
             }
-            return onlyNumber.Trim();
+            return onlyNumber.ToString();
         }
     }
 }

@@ -36,6 +36,8 @@ namespace WebApiCoreSeed.Api.Configuration
     {
         private const string SerilogOutputTemplate =
             "[{Timestamp:HH:mm:ss} {Level:u3} TraceId={TraceId} SpanId={SpanId}] {Message:lj} {Properties:j}{NewLine}{Exception}";
+        private static readonly string[] JsonMimeTypes = { "application/json" };
+        private static readonly string[] DatabaseHealthCheckTags = { "db", "sql", "sqlserver" };
         private static readonly Action<Microsoft.Extensions.Logging.ILogger, string, Exception?> LogStatusCodeProblem =
             LoggerMessage.Define<string>(
                 LogLevel.Warning,
@@ -378,7 +380,7 @@ namespace WebApiCoreSeed.Api.Configuration
                 options.EnableForHttps = true;
                 options.Providers.Add<BrotliCompressionProvider>();
                 options.Providers.Add<GzipCompressionProvider>();
-                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(new[] { "application/json" });
+                options.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(JsonMimeTypes);
             });
             services.Configure<GzipCompressionProviderOptions>(options => options.Level = CompressionLevel.Fastest);
 
@@ -391,7 +393,7 @@ namespace WebApiCoreSeed.Api.Configuration
             string defaultConnection)
         {
             var healthChecks = services.AddHealthChecks()
-                .AddSqlServer(defaultConnection, name: "Banco de Dados", tags: new[] { "db", "sql", "sqlserver" });
+                .AddSqlServer(defaultConnection, name: "Banco de Dados", tags: DatabaseHealthCheckTags);
 
             var seqSettings = new SeqSettings();
             configuration.GetSection(SeqSettings.SectionName).Bind(seqSettings);

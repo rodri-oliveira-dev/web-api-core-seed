@@ -1,4 +1,5 @@
 using System;
+using System.Globalization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using WebApiCoreSeed.Api.Configuration;
@@ -6,12 +7,16 @@ using Serilog;
 
 namespace WebApiCoreSeed.Api
 {
-    public class Program
+    public sealed class Program
     {
+        private Program()
+        {
+        }
+
         public static async System.Threading.Tasks.Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
-                .WriteTo.Console()
+                .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture)
                 .CreateBootstrapLogger();
 
             try

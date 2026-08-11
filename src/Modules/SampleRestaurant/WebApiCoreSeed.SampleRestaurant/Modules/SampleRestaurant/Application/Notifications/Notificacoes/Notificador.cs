@@ -1,12 +1,11 @@
 using System.Collections.Generic;
-using System.Linq;
 using WebApiCoreSeed.SampleRestaurant.Intefaces;
 
 namespace WebApiCoreSeed.SampleRestaurant.Notificacoes
 {
     public class Notificador : INotificador
     {
-        private List<Notificacao> _notificacoes;
+        private readonly List<Notificacao> _notificacoes;
 
         public Notificador()
         {
@@ -25,7 +24,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Notificacoes
 
         public bool TemNotificacao()
         {
-            return _notificacoes.Any();
+            return _notificacoes.Count > 0;
         }
     }
 }

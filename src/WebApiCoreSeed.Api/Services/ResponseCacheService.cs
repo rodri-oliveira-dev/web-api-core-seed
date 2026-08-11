@@ -11,6 +11,10 @@ namespace WebApiCoreSeed.Api.Services
     public class ResponseCacheService : IResponseCacheService
     {
         private readonly IDistributedCache _distributedCache;
+        private static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+        };
 
         public ResponseCacheService(IDistributedCache distributedCache)
         {
@@ -24,10 +28,7 @@ namespace WebApiCoreSeed.Api.Services
                 return;
             }
 
-            var serializedResponse = JsonSerializer.Serialize(response, new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-            });
+            var serializedResponse = JsonSerializer.Serialize(response, SerializerOptions);
 
             await _distributedCache.SetStringAsync(cacheKey, serializedResponse, new DistributedCacheEntryOptions
             {

@@ -66,11 +66,14 @@ namespace WebApiCoreSeed.Api.Attributes
         {
             var keyBuilder = new StringBuilder();
 
-            keyBuilder.Append($"{request.Path}");
+            keyBuilder.Append(request.Path);
 
             foreach (var (key, value) in request.Query.OrderBy(x => x.Key))
             {
-                keyBuilder.Append($"|{key}-{value}");
+                keyBuilder.Append('|');
+                keyBuilder.Append(key);
+                keyBuilder.Append('-');
+                keyBuilder.Append(value);
             }
 
             return keyBuilder.ToString();
