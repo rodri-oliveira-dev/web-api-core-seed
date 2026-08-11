@@ -101,67 +101,67 @@ static string FindRepositoryRoot(string startPath)
 
 namespace WebApiCoreSeed.OpenApiGenerator
 {
-sealed class OpenApiFactory : WebApplicationFactory<WebApiCoreSeed.Api.Program>
-{
-    private const string OpenApiSecret = "X-BURGUER@COCA-2-OPENAPI-GENERATOR-TEST-SECRET-2026";
-    private const string ApiContentRootRelativePath = "src/WebApiCoreSeed.Api";
-    private readonly string _databaseName = Guid.NewGuid().ToString();
-    private readonly string _repositoryRoot;
-    private readonly string? _previousDefaultConnection;
-    private readonly string? _previousAppSecret;
-
-    public OpenApiFactory(string repositoryRoot)
+    sealed class OpenApiFactory : WebApplicationFactory<WebApiCoreSeed.Api.Program>
     {
-        _repositoryRoot = repositoryRoot;
-        _previousDefaultConnection = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
-        _previousAppSecret = Environment.GetEnvironmentVariable("AppSettings__Secret");
-        Environment.SetEnvironmentVariable("ConnectionStrings__DefaultConnection", BuildConnectionString(_databaseName));
-        Environment.SetEnvironmentVariable("AppSettings__Secret", OpenApiSecret);
-    }
+        private const string OpenApiSecret = "X-BURGUER@COCA-2-OPENAPI-GENERATOR-TEST-SECRET-2026";
+        private const string ApiContentRootRelativePath = "src/WebApiCoreSeed.Api";
+        private readonly string _databaseName = Guid.NewGuid().ToString();
+        private readonly string _repositoryRoot;
+        private readonly string? _previousDefaultConnection;
+        private readonly string? _previousAppSecret;
 
-    protected override void ConfigureWebHost(IWebHostBuilder builder)
-    {
-        builder.UseEnvironment("Testing");
-        builder.UseContentRoot(Path.Combine(_repositoryRoot, ApiContentRootRelativePath));
-        builder.ConfigureAppConfiguration((_, configuration) =>
+        public OpenApiFactory(string repositoryRoot)
         {
-            configuration.AddInMemoryCollection(new Dictionary<string, string?>
+            _repositoryRoot = repositoryRoot;
+            _previousDefaultConnection = Environment.GetEnvironmentVariable("ConnectionStrings__DefaultConnection");
+            _previousAppSecret = Environment.GetEnvironmentVariable("AppSettings__Secret");
+            Environment.SetEnvironmentVariable("ConnectionStrings__DefaultConnection", BuildConnectionString(_databaseName));
+            Environment.SetEnvironmentVariable("AppSettings__Secret", OpenApiSecret);
+        }
+
+        protected override void ConfigureWebHost(IWebHostBuilder builder)
+        {
+            builder.UseEnvironment("Testing");
+            builder.UseContentRoot(Path.Combine(_repositoryRoot, ApiContentRootRelativePath));
+            builder.ConfigureAppConfiguration((_, configuration) =>
             {
-                ["ConnectionStrings:DefaultConnection"] = BuildConnectionString(_databaseName),
-                ["AppSettings:Secret"] = OpenApiSecret,
-                ["RedisCacheSettings:Enabled"] = "false",
-                ["SeqSettings:Enabled"] = "false",
-                ["OpenTelemetry:Enabled"] = "false"
+                configuration.AddInMemoryCollection(new Dictionary<string, string?>
+                {
+                    ["ConnectionStrings:DefaultConnection"] = BuildConnectionString(_databaseName),
+                    ["AppSettings:Secret"] = OpenApiSecret,
+                    ["RedisCacheSettings:Enabled"] = "false",
+                    ["SeqSettings:Enabled"] = "false",
+                    ["OpenTelemetry:Enabled"] = "false"
+                });
             });
-        });
 
-        builder.ConfigureServices(services =>
+            builder.ConfigureServices(services =>
+            {
+                services.RemoveAll<SampleRestaurantDbContext>();
+                services.RemoveAll<ApplicationDbContext>();
+                services.RemoveAll<DbContextOptions<SampleRestaurantDbContext>>();
+                services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
+
+                services.AddDbContext<SampleRestaurantDbContext>(options => options.UseInMemoryDatabase(_databaseName));
+                services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase(_databaseName + "-identity"));
+                services.PostConfigure<HealthCheckServiceOptions>(options => options.Registrations.Clear());
+                services.RemoveAll<RedisCacheSettings>();
+                services.RemoveAll<IResponseCacheService>();
+                services.AddSingleton(new RedisCacheSettings { Enabled = false });
+            });
+        }
+
+        protected override void Dispose(bool disposing)
         {
-            services.RemoveAll<SampleRestaurantDbContext>();
-            services.RemoveAll<ApplicationDbContext>();
-            services.RemoveAll<DbContextOptions<SampleRestaurantDbContext>>();
-            services.RemoveAll<DbContextOptions<ApplicationDbContext>>();
+            Environment.SetEnvironmentVariable("ConnectionStrings__DefaultConnection", _previousDefaultConnection);
+            Environment.SetEnvironmentVariable("AppSettings__Secret", _previousAppSecret);
 
-            services.AddDbContext<SampleRestaurantDbContext>(options => options.UseInMemoryDatabase(_databaseName));
-            services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase(_databaseName + "-identity"));
-            services.PostConfigure<HealthCheckServiceOptions>(options => options.Registrations.Clear());
-            services.RemoveAll<RedisCacheSettings>();
-            services.RemoveAll<IResponseCacheService>();
-            services.AddSingleton(new RedisCacheSettings { Enabled = false });
-        });
+            base.Dispose(disposing);
+        }
+
+        private static string BuildConnectionString(string databaseName)
+        {
+            return $"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog={databaseName};Integrated Security=True;";
+        }
     }
-
-    protected override void Dispose(bool disposing)
-    {
-        Environment.SetEnvironmentVariable("ConnectionStrings__DefaultConnection", _previousDefaultConnection);
-        Environment.SetEnvironmentVariable("AppSettings__Secret", _previousAppSecret);
-
-        base.Dispose(disposing);
-    }
-
-    private static string BuildConnectionString(string databaseName)
-    {
-        return $"Data Source=(localdb)\\MSSQLLocalDB;Initial Catalog={databaseName};Integrated Security=True;";
-    }
-}
 }
