@@ -3,7 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <RestoreUseStaticGraphEvaluation>true</RestoreUseStaticGraphEvaluation>
-    <MicrosoftDotNetPackageVersion>10.0.10</MicrosoftDotNetPackageVersion>
+    <MicrosoftDotNetPackageVersion>10.0.11</MicrosoftDotNetPackageVersion>
     <OpenTelemetryPackageVersion>1.17.0</OpenTelemetryPackageVersion>
   </PropertyGroup>
 

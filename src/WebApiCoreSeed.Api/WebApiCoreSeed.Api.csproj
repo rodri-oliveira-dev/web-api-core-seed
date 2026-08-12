@@ -57,6 +57,7 @@
     <PackageReference Include="Serilog.Sinks.Seq" />
     <PackageReference Include="Scalar.AspNetCore" />
     <PackageReference Include="AspNetCore.HealthChecks.UI.Client" />
+    <PackageReference Include="StackExchange.Redis" />
   </ItemGroup>
 
   <ItemGroup>
