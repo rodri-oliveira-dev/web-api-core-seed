@@ -40,8 +40,10 @@ function Read-RequiredSecret {
 Write-Host "Configuring User Secrets for src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj"
 $connectionString = Read-RequiredSecret "ConnectionStrings:DefaultConnection"
 $jwtSecret = Read-RequiredSecret "AppSettings:Secret"
+$developmentSeedPassword = Read-RequiredSecret "DevelopmentSeed:User:Password"
 
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" $connectionString --project $apiProject | Out-Null
 dotnet user-secrets set "AppSettings:Secret" $jwtSecret --project $apiProject | Out-Null
+dotnet user-secrets set "DevelopmentSeed:User:Password" $developmentSeedPassword --project $apiProject | Out-Null
 
 Write-Host "User Secrets configured without printing secret values."

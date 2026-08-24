@@ -45,6 +45,34 @@ services:
         condition: service_healthy
     restart: "no"
 
+  seed:
+    profiles: ["tools"]
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: final
+    command: ["--seed"]
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      DOTNET_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=${SQLSERVER_DATABASE:-SampleRestaurantDb};User Id=sa;Password=${SQLSERVER_SA_PASSWORD:?SQLSERVER_SA_PASSWORD is required};Encrypt=True;TrustServerCertificate=True;MultipleActiveResultSets=true;Application Name=WebApiCoreSeed.Seed;"
+      AppSettings__Secret: ${JWT_SECRET:?JWT_SECRET is required}
+      AppSettings__ExpiracaoHoras: 2
+      AppSettings__Emissor: WebApiCoreSeed
+      AppSettings__ValidoEm: "http://localhost:${API_HTTP_PORT:-8080}"
+      DevelopmentSeed__User__Email: ${DEVELOPMENT_SEED_EMAIL:-developer@example.local}
+      DevelopmentSeed__User__Password: ${DEVELOPMENT_SEED_PASSWORD:?DEVELOPMENT_SEED_PASSWORD is required}
+      RedisCacheSettings__Enabled: "false"
+      SeqSettings__Enabled: "false"
+      SeqSettings__FilePath: ""
+      OpenTelemetry__Enabled: "false"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+      migrations:
+        condition: service_completed_successfully
+    restart: "no"
+
   api:
     build:
       context: .

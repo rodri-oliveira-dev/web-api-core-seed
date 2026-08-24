@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Serilog;
 using WebApiCoreSeed.Api.Configuration;
+using WebApiCoreSeed.Api.DevelopmentSeed;
 
 namespace WebApiCoreSeed.Api
 {
@@ -32,6 +33,12 @@ namespace WebApiCoreSeed.Api
 
                 var app = builder.Build();
 
+                if (DevelopmentSeedCommand.ShouldRun(args))
+                {
+                    await app.RunDevelopmentSeedAsync();
+                    return;
+                }
+
                 app.UseApiPipeline();
 
                 await app.RunAsync();
@@ -39,6 +46,7 @@ namespace WebApiCoreSeed.Api
             catch (Exception ex)
             {
                 Log.Fatal(ex, "Host terminated unexpectedly");
+                Environment.ExitCode = 1;
             }
             finally
             {

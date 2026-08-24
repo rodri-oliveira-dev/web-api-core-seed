@@ -60,6 +60,16 @@ Serilog remains the structured logging pipeline. Console and file logs include `
 
 Quality gates and local CI reproduction are documented in [docs/quality-gates.md](docs/quality-gates.md). Operational notes for SonarCloud setup, Dependabot-safe execution and Quality Gate protection are documented in [docs/quality/sonarcloud.md](docs/quality/sonarcloud.md).
 
+## Development Seed
+
+Development data is applied only by an explicit non-production command. Configure local secrets first, then run:
+
+```bash
+dotnet run --project src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj -- --seed
+```
+
+The command applies EF Core migrations for Identity and SampleRestaurant, creates/updates a local development user, and upserts deterministic sample restaurant data. It is blocked in `Production` and requires `DevelopmentSeed:User:Password` from User Secrets or environment variables. See [containerized local development](docs/development/containerized-local-development.md#development-seed).
+
 ## Architecture:
 
 - Full architecture with responsibility separation concerns, SOLID and Clean Code
