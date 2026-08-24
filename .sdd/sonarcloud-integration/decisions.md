@@ -291,3 +291,17 @@ Consequences: GitHub Actions analysis will target the SonarCloud project that cu
 Risks: If the SonarCloud project is later renamed, the workflow key must be updated again.
 
 Mitigation: Keep the key documented in one visible workflow variable and in the SonarCloud operational guide.
+
+## D020 - Separate SonarCloud From Independent CI Gates
+
+Context: Runs for Dependabot pull requests failed at `sonarscanner begin` because `SONAR_TOKEN` was not available. The previous single-job design placed SonarCloud initialization before build, tests, OpenAPI validation and package audits.
+
+Decision: Keep SonarCloud in `.github/workflows/ci.yml`, but run it as a separate `SonarCloud Quality Gate` job after the independent `Build, test and quality gates` job.
+
+Alternatives considered: Keep one job with conditional scanner steps; use `continue-on-error`; use `pull_request_target`; make SonarCloud optional for all pull requests.
+
+Consequences: Independent gates run even when SonarCloud cannot initialize. Trusted contexts still fail when `SONAR_TOKEN` is missing, the scanner fails, the Quality Gate is red or the Quality Gate wait times out.
+
+Risks: The SonarCloud job duplicates restore/build/test work in trusted contexts.
+
+Mitigation: Prefer correctness and clear quality gates over optimizing runtime. Revisit artifact reuse only if runtime becomes a measured problem.

@@ -58,7 +58,7 @@ Serilog remains the structured logging pipeline. Console and file logs include `
 
 ## Quality
 
-Operational notes for SonarCloud setup and Quality Gate protection are documented in [docs/quality/sonarcloud.md](docs/quality/sonarcloud.md).
+Quality gates and local CI reproduction are documented in [docs/quality-gates.md](docs/quality-gates.md). Operational notes for SonarCloud setup, Dependabot-safe execution and Quality Gate protection are documented in [docs/quality/sonarcloud.md](docs/quality/sonarcloud.md).
 
 ## Architecture:
 

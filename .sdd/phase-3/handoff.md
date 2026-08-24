@@ -64,9 +64,23 @@
 ## Workflows e check names
 
 - `.github/workflows/ci.yml`: `Build, test and quality gates`.
+- `.github/workflows/ci.yml`: `SonarCloud Quality Gate`.
 - `.github/workflows/codeql.yml`: `CodeQL analysis`.
 - `.github/workflows/dependency-review.yml`: `Review dependency changes`.
 - `.github/dependabot.yml`: updates semanais agrupados para NuGet e GitHub Actions.
+
+## Recuperacao do CI - 2026-08-24
+
+- Branch: `fix/ci-quality-gates`.
+- SDD corretivo: `.sdd/phase-3/05-ci-quality-gates/ci-recovery/`.
+- `Build, test and quality gates` nao depende mais do SonarCloud.
+- `SonarCloud Quality Gate` roda separado, apos os gates independentes.
+- Dependabot e forks pulam SonarCloud com notice explicito porque nao devem receber `SONAR_TOKEN`.
+- PRs/pushes confiaveis falham se `SONAR_TOKEN` estiver ausente ou se o Quality Gate reprovar.
+- Uploads de TRX/cobertura/OpenAPI agora possuem condicoes baseadas em existencia de arquivos.
+- O SonarCloud remoto ainda esta vermelho por cobertura de New Code abaixo de 80; duplicacao esta dentro do limite.
+- PR da recuperacao: `https://github.com/rodri-oliveira-dev/web-api-core-seed/pull/29`.
+- Validacao remota inicial do PR: `Build, test and quality gates`, `SonarCloud Quality Gate`, `CodeQL analysis` e `Review dependency changes` passaram.
 
 ## Comandos locais
 

@@ -4,7 +4,12 @@
 
 A integracao com SonarCloud complementa o workflow `ci` com analise estatica, importacao de cobertura, importacao de resultados de testes e avaliacao sincronizada do Quality Gate.
 
-O fluxo atual roda em GitHub Actions:
+O workflow principal tem dois jobs:
+
+- `Build, test and quality gates`: restore, build, testes, cobertura, OpenAPI e auditorias de pacotes sem depender do SonarCloud.
+- `SonarCloud Quality Gate`: analise SonarCloud e Quality Gate para contextos confiaveis.
+
+O job SonarCloud roda em GitHub Actions:
 
 1. checkout com historico completo;
 2. setup do SDK definido em `global.json`;
@@ -14,14 +19,13 @@ O fluxo atual roda em GitHub Actions:
 6. `sonarscanner begin`;
 7. build;
 8. testes unitarios e de integracao com TRX, Cobertura e OpenCover;
-9. `sonarscanner end` aguardando o Quality Gate;
-10. geracao e verificacao de OpenAPI;
-11. auditorias de pacotes vulneraveis e obsoletos;
-12. upload de artefatos com `if: always()`.
+9. `sonarscanner end` aguardando o Quality Gate.
 
 Os dados enviados ao SonarCloud incluem metricas de codigo C#, problemas de confiabilidade, seguranca e manutenibilidade, security hotspots, relatorios TRX e cobertura OpenCover. Cobertura continua sendo publicado como artefato do workflow, mas o SonarCloud usa OpenCover por meio de `sonar.cs.opencover.reportsPaths`.
 
 O Quality Gate e avaliado no SonarCloud. Como o workflow usa `sonar.qualitygate.wait=true`, o passo `End SonarCloud analysis and enforce Quality Gate` aguarda o resultado ate o timeout configurado. Se o gate reprovar ou o timeout expirar, o job falha.
+
+Falhas no SonarCloud nao impedem que `Build, test and quality gates` execute os gates independentes. Em contextos confiaveis, isso nao torna SonarCloud opcional: o job `SonarCloud Quality Gate` continua falhando quando o token esta ausente, o scanner falha ou o Quality Gate fica vermelho.
 
 ## Pre-requisitos
 
@@ -122,29 +126,35 @@ Configuracao recomendada:
 - proteger a branch `main`;
 - exigir pull request antes de merge;
 - exigir status checks obrigatorios;
-- exigir o workflow de build, testes e qualidade;
-- exigir o check do SonarCloud quando ele estiver disponivel apos a primeira execucao;
+- exigir `Build, test and quality gates`;
+- exigir `SonarCloud Quality Gate` para proteger pushes e pull requests confiaveis;
+- exigir `CodeQL analysis`;
+- exigir `Review dependency changes` para pull requests;
 - exigir branch atualizada antes do merge;
 - bloquear merge quando o Quality Gate falhar.
 
-Nao fixe nesta documentacao um nome exato para o check do SonarCloud antes da primeira execucao. Selecione o check exibido pelo GitHub depois que SonarCloud publicar o primeiro status.
+Dependabot e pull requests de forks seguem a estrategia segura documentada abaixo. Nesses contextos, o job `SonarCloud Quality Gate` registra skip explicito porque o token nao deve ser entregue a codigo nao confiavel.
 
 ## Branches e pull requests
 
 Comportamento atual do workflow:
 
-- `push` em `main`: roda CI e analise SonarCloud;
-- `push` em `phase/4-architecture-modernization`: roda CI e tenta analise SonarCloud quando branch analysis estiver disponivel;
-- `pull_request` para `main`: roda CI e tenta analise de pull request;
+- `push` em `main`: roda CI independente e analise SonarCloud obrigatoria;
+- `push` em `phase/4-architecture-modernization`: roda CI independente e analise SonarCloud obrigatoria quando o branch existir no workflow e `SONAR_TOKEN` estiver configurado;
+- `pull_request` confiavel para `main`: roda CI independente e analise SonarCloud obrigatoria;
+- `pull_request` do Dependabot para `main`: roda CI independente e ignora SonarCloud com notice explicito porque `SONAR_TOKEN` nao e disponibilizado;
+- `pull_request` de fork para `main`: roda CI independente e ignora SonarCloud com notice explicito porque o codigo nao e confiavel para uso de secrets;
 - `workflow_dispatch`: permite execucao manual.
 
 A disponibilidade de analise de branch e alguns recursos de pull request podem depender do plano SonarCloud e da vinculacao do projeto com GitHub.
 
-Pull requests vindos de forks podem nao receber secrets do repositorio. Nesses casos, o passo do SonarCloud pode nao ter `SONAR_TOKEN`. Trate esse resultado como uma limitacao segura do GitHub Actions e valide a mudanca por um branch interno ou por um maintainer rerun quando a politica do repositorio permitir. Nunca exponha o token para contornar essa limitacao.
+Pull requests vindos de forks e pull requests do Dependabot nao recebem `SONAR_TOKEN`. Trate esse resultado como uma limitacao segura do GitHub Actions e valide a analise SonarCloud por um branch interno ou por um pull request confiavel quando a politica do repositorio permitir. Nunca exponha o token para contornar essa limitacao e nao use `pull_request_target` para executar codigo nao confiavel com secrets.
 
 ## Troubleshooting
 
-`SONAR_TOKEN` ausente: confirme que o secret existe em `Settings -> Secrets and variables -> Actions` e que o nome esta exatamente `SONAR_TOKEN`.
+`SONAR_TOKEN` ausente em push ou PR confiavel: confirme que o secret existe em `Settings -> Secrets and variables -> Actions` e que o nome esta exatamente `SONAR_TOKEN`. O job SonarCloud falha intencionalmente nesses contextos.
+
+`SONAR_TOKEN` ausente em Dependabot ou fork: comportamento esperado. O job SonarCloud registra skip explicito e os gates independentes continuam executando.
 
 Chave do projeto incorreta: confirme no SonarCloud se a chave e `rodri-oliveira-dev_web-api-core-seed2` e ajuste o workflow apenas se a chave real for diferente.
 
