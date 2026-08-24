@@ -13,4 +13,4 @@
 - [x] Update SDD validation/report/status/handoff/decisions.
 - [x] Commit, push, open PR, wait first checks, and do not merge.
 - [x] Remediate initial SonarCloud new-code coverage failure with focused tests.
-- [ ] Push coverage remediation and wait final checks; do not merge.
+- [x] Push coverage remediation and wait final checks; do not merge.

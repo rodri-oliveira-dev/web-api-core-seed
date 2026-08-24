@@ -3,7 +3,7 @@
 | Prompt | Status |
 | --- | --- |
 | 01 - Development seed deterministico e idempotente | PR aberto; checks remotos passaram |
-| 02 - Normalize UTF-8 encoding and active code naming | PR aberto; SonarCloud coverage remediation em validacao |
+| 02 - Normalize UTF-8 encoding and active code naming | PR aberto; checks remotos passaram |
 
 ## Prompt 01
 
@@ -33,4 +33,4 @@
 - EF pending model changes: sem alteracoes pendentes nos dois DbContexts.
 - Vulnerabilidades: nenhuma nas fontes atuais.
 - PR: https://github.com/rodri-oliveira-dev/web-api-core-seed/pull/36.
-- Checks remotos: primeira rodada passou build/test, CodeQL e Dependency Review, mas SonarCloud falhou por `new_coverage` 66.0 abaixo do limiar 80; testes focados adicionados antes do novo push.
+- Checks remotos: apos remediacao de cobertura, Build/test, CodeQL, Dependency Review e SonarCloud Quality Gate passaram.

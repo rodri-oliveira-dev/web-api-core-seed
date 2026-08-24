@@ -54,6 +54,7 @@ git diff --check
 - The failed condition was `new_coverage`; all other queried quality gate conditions were OK.
 - Additional focused tests were added for `LogEntryValidation`, `LogEntryService`, `LogEntryRepository` and newly normalized Problem Details text.
 - Local unit tests increased from 115 to 124 passing tests before the follow-up push.
+- The follow-up PR run passed Build/test, CodeQL, Dependency Review and SonarCloud Quality Gate.
 
 ## Notes
 

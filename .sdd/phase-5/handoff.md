@@ -50,3 +50,4 @@
   - Primeira rodada passou build/test, CodeQL e Dependency Review.
   - SonarCloud Quality Gate falhou inicialmente por cobertura de codigo novo (`new_coverage` 66.0 abaixo do limiar 80).
   - Foram adicionados testes focados para `LogEntryValidation`, `LogEntryService`, `LogEntryRepository` e textos normalizados de Problem Details antes do novo push.
+  - Rodada final passou Build/test, CodeQL, Dependency Review e SonarCloud Quality Gate.
