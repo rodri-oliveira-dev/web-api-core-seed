@@ -25,4 +25,8 @@
     <ProjectReference Include="..\..\src\Modules\SampleRestaurant\WebApiCoreSeed.SampleRestaurant.Infrastructure\WebApiCoreSeed.SampleRestaurant.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="Infrastructure\LegacyUpgrade\legacy-schema-baseline.sql" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
