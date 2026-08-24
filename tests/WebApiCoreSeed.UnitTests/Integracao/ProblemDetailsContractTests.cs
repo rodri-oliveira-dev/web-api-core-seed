@@ -23,6 +23,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.IdentityModel.Tokens;
 using WebApiCoreSeed.Api;
+using WebApiCoreSeed.Api.ViewModels;
 using WebApiCoreSeed.Identity.Infrastructure.Context;
 using WebApiCoreSeed.Api.Services.Interfaces;
 using WebApiCoreSeed.Api.Settings;
@@ -30,6 +31,7 @@ using WebApiCoreSeed.SampleRestaurant.Application.Contracts.Queries;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Pagination;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Repository;
 using WebApiCoreSeed.SampleRestaurant.Models;
+using WebApiCoreSeed.SampleRestaurant.Models.Enums;
 using WebApiCoreSeed.SampleRestaurant.Infrastructure.Context;
 using Xunit;
 
@@ -156,6 +158,119 @@ namespace WebApiCoreSeed.UnitTests.Integracao
                 ?? throw new InvalidOperationException("Expected response request URI.");
             Assert.Equal("/api/v1/Pratos/" + requestUri.Segments[^1], problem.GetProperty("instance").GetString());
             Assert.True(problem.TryGetProperty("traceId", out _));
+        }
+
+        [Fact]
+        public async Task ObterPratoExistenteDeveRetornarOk()
+        {
+            var prato = CreatePrato("Prato existente");
+            var repository = new StatefulPratoRepository(prato);
+            using var factory = new WebApiCoreSeedApiFactory(services =>
+            {
+                services.RemoveAll<IPratoRepository>();
+                services.AddSingleton<IPratoRepository>(repository);
+            });
+            using var client = factory.CreateApiClient(("Pratos", "*"));
+
+            var json = await ReadJsonAsync(await client.GetAsync($"/api/v1/Pratos/{prato.Id}"), HttpStatusCode.OK);
+
+            Assert.Equal(prato.Id, json.GetProperty("id").GetGuid());
+            Assert.Equal("Prato existente", json.GetProperty("titulo").GetString());
+        }
+
+        [Fact]
+        public async Task AdicionarPratoValidoDeveRetornarCreatedComFotoGerada()
+        {
+            using var factory = new WebApiCoreSeedApiFactory();
+            using var client = factory.CreateApiClient(("Pratos", "*"));
+
+            var response = await client.PostAsJsonAsync("/api/v1/Pratos", CreatePratoRequest());
+            var json = await ReadJsonAsync(response, HttpStatusCode.Created);
+            var data = json.GetProperty("data");
+
+            Assert.True(json.GetProperty("success").GetBoolean());
+            Assert.Equal("Prato HTTP", data.GetProperty("titulo").GetString());
+            Assert.EndsWith(".png", data.GetProperty("foto").GetString(), StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public async Task AdicionarPratoQuandoImagemAusenteDeveRetornarDomainProblemDetails()
+        {
+            using var factory = new WebApiCoreSeedApiFactory();
+            using var client = factory.CreateApiClient(("Pratos", "*"));
+            var payload = CreatePratoRequest(fotoUpload: null);
+
+            var problem = await ReadProblemAsync(await client.PostAsJsonAsync("/api/v1/Pratos", payload), HttpStatusCode.BadRequest);
+
+            Assert.Equal("urn:problem:domain-rule", problem.GetProperty("type").GetString());
+            Assert.Contains("imagem", problem.GetProperty("errors").GetRawText(), StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public async Task AdicionarPratoQuandoImagemNaoEhBase64DeveRetornarDomainProblemDetails()
+        {
+            using var factory = new WebApiCoreSeedApiFactory();
+            using var client = factory.CreateApiClient(("Pratos", "*"));
+            var payload = CreatePratoRequest(fotoUpload: "nao-e-base64");
+
+            var problem = await ReadProblemAsync(await client.PostAsJsonAsync("/api/v1/Pratos", payload), HttpStatusCode.BadRequest);
+
+            Assert.Equal("urn:problem:domain-rule", problem.GetProperty("type").GetString());
+            Assert.Contains("Base64", problem.GetProperty("errors").GetRawText(), StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public async Task AtualizarPratoQuandoIdDivergenteDeveRetornarDomainProblemDetails()
+        {
+            using var factory = new WebApiCoreSeedApiFactory();
+            using var client = factory.CreateApiClient(("Pratos", "*"));
+            var payload = CreatePratoRequest();
+
+            var problem = await ReadProblemAsync(
+                await client.PutAsJsonAsync($"/api/v1/Pratos/{Guid.NewGuid()}", payload),
+                HttpStatusCode.BadRequest);
+
+            Assert.Equal("urn:problem:domain-rule", problem.GetProperty("type").GetString());
+            Assert.Contains("ids", problem.GetProperty("errors").GetRawText(), StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public async Task AtualizarPratoExistenteDevePersistirAlteracoes()
+        {
+            var prato = CreatePrato("Prato anterior");
+            var repository = new StatefulPratoRepository(prato);
+            using var factory = new WebApiCoreSeedApiFactory(services =>
+            {
+                services.RemoveAll<IPratoRepository>();
+                services.AddSingleton<IPratoRepository>(repository);
+            });
+            using var client = factory.CreateApiClient(("Pratos", "*"));
+            var payload = CreatePratoRequest(prato.Id, titulo: "Prato atualizado", foto: "atualizado.webp");
+
+            var response = await client.PutAsJsonAsync($"/api/v1/Pratos/{prato.Id}", payload);
+
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.NotNull(repository.UpdatedPrato);
+            Assert.Equal("Prato atualizado", repository.UpdatedPrato.Titulo);
+            Assert.EndsWith(".png", repository.UpdatedPrato.Foto, StringComparison.OrdinalIgnoreCase);
+        }
+
+        [Fact]
+        public async Task ExcluirPratoExistenteDeveRemoverComSucesso()
+        {
+            var prato = CreatePrato("Prato removido");
+            var repository = new StatefulPratoRepository(prato);
+            using var factory = new WebApiCoreSeedApiFactory(services =>
+            {
+                services.RemoveAll<IPratoRepository>();
+                services.AddSingleton<IPratoRepository>(repository);
+            });
+            using var client = factory.CreateApiClient(("Pratos", "*"));
+
+            var response = await client.DeleteAsync($"/api/v1/Pratos/{prato.Id}");
+
+            Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+            Assert.Equal(prato.Id, repository.RemovedPratoId);
         }
 
         [Fact]
@@ -465,6 +580,40 @@ namespace WebApiCoreSeed.UnitTests.Integracao
             Assert.True(data.GetProperty("expiresIn").GetDouble() > 0);
         }
 
+        private static PratoRequestViewModel CreatePratoRequest(
+            Guid? id = null,
+            string titulo = "Prato HTTP",
+            string descricao = "Prato criado via teste HTTP.",
+            string? fotoUpload = "aW1hZ2VtLWRlLXRlc3Rl",
+            string foto = "prato.png")
+        {
+            return new PratoRequestViewModel
+            {
+                Id = id ?? Guid.NewGuid(),
+                Titulo = titulo,
+                Descricao = descricao,
+                FotoUpload = fotoUpload,
+                Foto = foto,
+                Preco = 25.5,
+                Ativo = true,
+                TipoPrato = ETipoPrato.Comida
+            };
+        }
+
+        private static Prato CreatePrato(string titulo)
+        {
+            return new Prato
+            {
+                Id = Guid.NewGuid(),
+                Titulo = titulo,
+                Descricao = "Prato existente para teste HTTP.",
+                Foto = "existente.png",
+                Preco = 42.5,
+                Ativo = true,
+                TipoPrato = ETipoPrato.Comida
+            };
+        }
+
         private static Action<NativeRateLimitingSettings> CreateRateLimitConfiguration(
             int publicPermitLimit = 3,
             int authenticatedPermitLimit = 3,
@@ -645,6 +794,78 @@ namespace WebApiCoreSeed.UnitTests.Integracao
 
             public Task<int> Contar(CancellationToken cancellationToken = default) => Task.FromResult(0);
 
+        }
+
+        private sealed class StatefulPratoRepository : IPratoRepository
+        {
+            private readonly Dictionary<Guid, Prato> _pratos;
+
+            public StatefulPratoRepository(params Prato[] pratos)
+            {
+                _pratos = pratos.ToDictionary(prato => prato.Id);
+            }
+
+            public Prato? UpdatedPrato { get; private set; }
+
+            public Guid? RemovedPratoId { get; private set; }
+
+            public Task Adicionar(Prato prato, CancellationToken cancellationToken = default)
+            {
+                _pratos[prato.Id] = prato;
+                return Task.CompletedTask;
+            }
+
+            public Task Atualizar(Prato prato, CancellationToken cancellationToken = default)
+            {
+                UpdatedPrato = prato;
+                _pratos[prato.Id] = prato;
+                return Task.CompletedTask;
+            }
+
+            public Task RemoverPorId(Guid id, CancellationToken cancellationToken = default)
+            {
+                RemovedPratoId = id;
+                _pratos.Remove(id);
+                return Task.CompletedTask;
+            }
+
+            public Task<Prato?> ObterPorId(Guid id, CancellationToken cancellationToken = default)
+            {
+                _pratos.TryGetValue(id, out var prato);
+                return Task.FromResult(prato);
+            }
+
+            public Task<bool> ExisteComId(Guid id, CancellationToken cancellationToken = default)
+            {
+                return Task.FromResult(_pratos.ContainsKey(id));
+            }
+
+            public Task<IReadOnlyList<PratoListItem>> ListarPagina(PaginationParameter paginationParameter, CancellationToken cancellationToken = default)
+            {
+                var items = _pratos.Values
+                    .OrderBy(prato => prato.Titulo)
+                    .ThenBy(prato => prato.Id)
+                    .Skip((paginationParameter.PageNumber - 1) * paginationParameter.PageSize)
+                    .Take(paginationParameter.PageSize)
+                    .Select(prato => new PratoListItem
+                    {
+                        Id = prato.Id,
+                        Titulo = prato.Titulo,
+                        Descricao = prato.Descricao,
+                        Foto = prato.Foto,
+                        Preco = prato.Preco,
+                        Ativo = prato.Ativo,
+                        TipoPrato = prato.TipoPrato
+                    })
+                    .ToArray();
+
+                return Task.FromResult<IReadOnlyList<PratoListItem>>(items);
+            }
+
+            public Task<int> Contar(CancellationToken cancellationToken = default)
+            {
+                return Task.FromResult(_pratos.Count);
+            }
         }
 
         private sealed class FakeMesaRepository : IMesaRepository
