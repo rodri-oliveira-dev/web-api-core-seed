@@ -229,6 +229,26 @@
 - Validacao local: build Release `0` warnings, unit tests `93` passed, integration tests `45` passed, cobertura local agregada `86.07%` de linhas.
 - Reexecucao do SonarCloud no PR ainda e necessaria apos push.
 
+## Validacao complementar de upgrade legado
+
+- Branch atual para esta entrega: `test/legacy-schema-upgrade`.
+- Objetivo: completar a pendencia de upgrade representativo da issue `#18`.
+- Baseline SQL versionado: `tests/WebApiCoreSeed.IntegrationTests/Infrastructure/LegacyUpgrade/legacy-schema-baseline.sql`.
+- Origem: migrations legadas do commit `6ce03d7f011c6809fbcbad47aa26d490f53ddf3d`.
+- Hash SHA-256 do baseline: `DB3116099B513AB76C4BEFB37AED1138B6A9493E8A3DAC564C767895BC0B5601`.
+- Fixture nova: `LegacySchemaUpgradeFixture`, usando SQL Server Testcontainers sem API/Redis e sem aplicar migrations antecipadamente.
+- Teste novo: `LegacySchemaUpgradeIntegrationTests.MigrationsQuandoSchemaLegadoExisteDevemAplicarSomenteUpgradeAtual`.
+- O teste valida:
+  - `__EFMigrationsHistory` compartilhado por Identity e SampleRestaurant.
+  - IDs historicos preservados: `20200817223121_InitialCreate`, `20200817223231_InitialCreate`.
+  - Migration nova aplicada: `20260801191447_AddPratosPaginationOrderingIndex`.
+  - Ausencia inicial e existencia final de `IX_Pratos_Titulo_Id`.
+  - Preservacao de usuario, atendente, mesa, prato, pedido, item de pedido e log.
+  - Uso do banco atualizado pelos DbContexts atuais.
+  - Indices/FKs essenciais e idempotencia de segunda execucao.
+- Validacao local passou: restore, build Release, unit tests, integration tests, teste novo isolado duas vezes, banco vazio, EF list/pending, scripts idempotentes, OpenAPI sem diff e `git diff --check`.
+- Estado Git observado: `tools/OpenApiGenerator/packages.lock.json` tinha alteracao local preexistente e nao deve ser incluido no commit desta entrega.
+
 ## Estado final da Fase 4
 
 - Branch atual: `phase/4-architecture-modernization`.

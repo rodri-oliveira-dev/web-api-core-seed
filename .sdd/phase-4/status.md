@@ -142,6 +142,25 @@ PR: pendente
 - Validacao pendente:
   - Reexecutar SonarCloud no PR apos push para confirmar o Quality Gate remoto.
 
+## Validacao complementar - Upgrade de schema legado
+
+- Branch criada: `test/legacy-schema-upgrade`.
+- Issue relacionada: `#18`.
+- Baseline SQL versionado criado em `tests/WebApiCoreSeed.IntegrationTests/Infrastructure/LegacyUpgrade/legacy-schema-baseline.sql`.
+- Origem do baseline: migrations do commit `6ce03d7f011c6809fbcbad47aa26d490f53ddf3d`.
+- SHA-256 do baseline: `DB3116099B513AB76C4BEFB37AED1138B6A9493E8A3DAC564C767895BC0B5601`.
+- Teste adicionado: `LegacySchemaUpgradeIntegrationTests.MigrationsQuandoSchemaLegadoExisteDevemAplicarSomenteUpgradeAtual`.
+- Migrations antes do upgrade: `20200817223121_InitialCreate`, `20200817223231_InitialCreate`.
+- Migration aplicada no upgrade: `20260801191447_AddPratosPaginationOrderingIndex`.
+- Dados preservados: usuario Identity, atendente, mesa, prato, pedido, item de pedido e log.
+- Schema validado: `IX_Pratos_Titulo_Id`, indices FK legados, `UserNameIndex` e FKs principais do sample.
+- Idempotencia: segunda execucao de `MigrateAsync` nos dois contextos manteve uma linha por migration ID.
+- Validacao local: restore, build Release, unit tests, integration tests, teste novo isolado duas vezes, teste de banco vazio, comandos EF, scripts idempotentes, OpenAPI e `git diff --check` passaram.
+- Observacoes:
+  - `dotnet ef` local esta em `10.0.10` e exibiu aviso por runtime `10.0.11`, sem falhar.
+  - Comandos EF precisaram de `ConnectionStrings__DefaultConnection` dummy porque `appsettings.json` ativo nao possui `DefaultConnection`.
+  - `tools/OpenApiGenerator/packages.lock.json` ja estava modificado antes desta entrega e nao pertence ao diff do teste.
+
 ## Resultado do prompt 06
 
 - Projeto `WebApiCoreSeed.Identity.Infrastructure` criado para persistencia de Identity.
