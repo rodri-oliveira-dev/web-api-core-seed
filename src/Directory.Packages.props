@@ -8,7 +8,7 @@
     <PackageVersion Include="AspNetCore.HealthChecks.Uris" Version="9.0.0" />
     <PackageVersion Include="Asp.Versioning.Mvc" Version="10.2.1" />
     <PackageVersion Include="Asp.Versioning.Mvc.ApiExplorer" Version="10.2.1" />
-    <PackageVersion Include="Asp.Versioning.OpenApi" Version="10.2.2" />
+    <PackageVersion Include="Asp.Versioning.OpenApi" Version="10.2.3" />
     <PackageVersion Include="AutoMapper" Version="16.2.0" />
     <PackageVersion Include="FluentValidation" Version="12.1.1" />
     <PackageVersion Include="KubernetesClient" Version="19.0.2" />
@@ -29,11 +29,11 @@
     <PackageVersion Include="OpenTelemetry.Instrumentation.EntityFrameworkCore" Version="1.17.0-beta.1" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Http" Version="$(OpenTelemetryPackageVersion)" />
     <PackageVersion Include="OpenTelemetry.Instrumentation.Runtime" Version="$(OpenTelemetryPackageVersion)" />
-    <PackageVersion Include="Scalar.AspNetCore" Version="2.16.20" />
+    <PackageVersion Include="Scalar.AspNetCore" Version="2.17.1" />
     <PackageVersion Include="Serilog.AspNetCore" Version="10.0.0" />
     <PackageVersion Include="Serilog.Expressions" Version="5.0.0" />
     <PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageVersion Include="Serilog.Sinks.Seq" Version="9.1.0" />
-    <PackageVersion Include="StackExchange.Redis" Version="3.1.13" />
+    <PackageVersion Include="StackExchange.Redis" Version="3.1.31" />
   </ItemGroup>
 </Project>

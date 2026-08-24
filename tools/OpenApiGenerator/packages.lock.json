@@ -58,8 +58,8 @@
       },
       "Asp.Versioning.OpenApi": {
         "type": "Transitive",
-        "resolved": "10.2.1",
-        "contentHash": "vYPWPl+8Ur0oyIdJb8gCwotp2fPwlQkRiiUVO8A/MtCVd05RAOc6m2OiDpBQzus2FT5RkZcyi7SseX7uSMsP2Q==",
+        "resolved": "10.2.2",
+        "contentHash": "pY5nhVFGuMBBbzN3v0oW6Pn4NQR8AxZuuWWkDxkWOxHp5rtCSvpphaWDgWeZ59z3yuTI45pPHit1+0d8oDcRsg==",
         "dependencies": {
           "Asp.Versioning.Mvc.ApiExplorer": "10.2.1",
           "Microsoft.AspNetCore.OpenApi": "10.0.10",
@@ -814,15 +814,15 @@
           "OpenTelemetry.Api": "[1.17.0, 2.0.0)"
         }
       },
-      "Pipelines.Sockets.Unofficial": {
+      "RESPite": {
         "type": "Transitive",
-        "resolved": "2.2.8",
-        "contentHash": "zG2FApP5zxSx6OcdJQLbZDk2AVlN2BNQD6MorwIfV6gVj0RRxWPEp2LXAxqDGZqeNV1Zp0BNPcNaey/GXmTdvQ=="
+        "resolved": "3.1.13",
+        "contentHash": "wqViG+Dl4Ln/X33IyfmciyGirm1ET+M7kjwbb+oJAbDXLP2u2hX1eOnaEgyIAerJNSP98BytyddcW3ZQH55wgw=="
       },
       "Scalar.AspNetCore": {
         "type": "Transitive",
-        "resolved": "2.16.17",
-        "contentHash": "J5FyUxdZE/QbS/s3NSE6XWoBIJwta1eOUBuDbieHm2HSfFELH8hOnxSsoEBreckoekfZ7STsMCMGmmUNPVVosg=="
+        "resolved": "2.16.20",
+        "contentHash": "pSmyME4FCnYocbLmn9lmAUTVVSEPb5E6noqRcmJYpO65eaum68gw17yMORbeckW+gMksiL04m+zXoTxOKv0+kQ=="
       },
       "Serilog": {
         "type": "Transitive",
@@ -925,11 +925,12 @@
       },
       "StackExchange.Redis": {
         "type": "Transitive",
-        "resolved": "2.7.27",
-        "contentHash": "Uqc2OQHglqj9/FfGQ6RkKFkZfHySfZlfmbCl+hc+u2I/IqunfelQ7QJi7ZhvAJxUtu80pildVX6NPLdDaUffOw==",
+        "resolved": "3.1.13",
+        "contentHash": "OvhFdV2ucee2hnN2v2EOcOTMvIzGsq1PX4kAbIYC8cax+MyabSa7Eu3hWY6D//SbxzZQ/eYFvD8Tvg+pK+969g==",
         "dependencies": {
-          "Microsoft.Extensions.Logging.Abstractions": "6.0.0",
-          "Pipelines.Sockets.Unofficial": "2.2.8"
+          "Microsoft.Extensions.Logging.Abstractions": "10.0.5",
+          "RESPite": "3.1.13",
+          "System.IO.Hashing": "10.0.5"
         }
       },
       "System.ClientModel": {
@@ -964,6 +965,11 @@
           "Microsoft.IdentityModel.Tokens": "8.19.2"
         }
       },
+      "System.IO.Hashing": {
+        "type": "Transitive",
+        "resolved": "10.0.5",
+        "contentHash": "8IBJWcCT9+e4Bmevm4T7+fQEiAh133KGiz4oiVTgJckd3Q76OFdR1falgn9lpz7+C4HJvogCDJeAa2QmvbeVtg=="
+      },
       "System.Memory.Data": {
         "type": "Transitive",
         "resolved": "8.0.1",
@@ -984,7 +990,7 @@
         "dependencies": {
           "Asp.Versioning.Mvc": "[10.2.1, )",
           "Asp.Versioning.Mvc.ApiExplorer": "[10.2.1, )",
-          "Asp.Versioning.OpenApi": "[10.2.1, )",
+          "Asp.Versioning.OpenApi": "[10.2.2, )",
           "AspNetCore.HealthChecks.Redis": "[9.0.0, )",
           "AspNetCore.HealthChecks.SqlServer": "[9.0.0, )",
           "AspNetCore.HealthChecks.UI.Client": "[9.0.0, )",
@@ -1002,11 +1008,12 @@
           "OpenTelemetry.Instrumentation.EntityFrameworkCore": "[1.17.0-beta.1, )",
           "OpenTelemetry.Instrumentation.Http": "[1.17.0, )",
           "OpenTelemetry.Instrumentation.Runtime": "[1.17.0, )",
-          "Scalar.AspNetCore": "[2.16.17, )",
+          "Scalar.AspNetCore": "[2.16.20, )",
           "Serilog.AspNetCore": "[10.0.0, )",
           "Serilog.Expressions": "[5.0.0, )",
           "Serilog.Sinks.Console": "[6.1.1, )",
           "Serilog.Sinks.Seq": "[9.1.0, )",
+          "StackExchange.Redis": "[3.1.13, )",
           "WebApiCoreSeed.Identity.Infrastructure": "[1.0.0, )",
           "WebApiCoreSeed.SampleRestaurant": "[1.0.0, )",
           "WebApiCoreSeed.SampleRestaurant.Infrastructure": "[1.0.0, )"
