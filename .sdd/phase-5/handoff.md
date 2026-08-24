@@ -45,4 +45,8 @@
   - Regenerado com alteracoes textuais apenas em descricoes.
 - Validacao local:
   - Restore locked, build Release, unit tests, integration tests, architecture tests, migrations em banco vazio, upgrade legado, EF pending, OpenAPI JSON, vulnerabilidades e `git diff --check` passaram.
-- PR: pendente.
+- PR: https://github.com/rodri-oliveira-dev/web-api-core-seed/pull/36.
+- Checks remotos:
+  - Primeira rodada passou build/test, CodeQL e Dependency Review.
+  - SonarCloud Quality Gate falhou inicialmente por cobertura de codigo novo (`new_coverage` 66.0 abaixo do limiar 80).
+  - Foram adicionados testes focados para `LogEntryValidation`, `LogEntryService`, `LogEntryRepository` e textos normalizados de Problem Details antes do novo push.

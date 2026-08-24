@@ -126,6 +126,30 @@ public sealed class MainControllerBaseTests
     }
 
     [Fact]
+    public void ProblemDetailsQuandoNotificacaoIndicaConflitoDeveRetornar409()
+    {
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.Path = "/api/v1/resources";
+        var notifications = new[] { new Notificacao("Já existe um objeto cadastrado.") };
+
+        var problem = ApiProblemDetails.CreateFromNotifications(httpContext, notifications);
+
+        Assert.Equal(StatusCodes.Status409Conflict, problem.Status);
+        Assert.Equal(ApiProblemDetails.ConflictType, problem.Type);
+        Assert.Equal("A operação conflita com um recurso existente.", problem.Detail);
+    }
+
+    [Fact]
+    public void ProblemDetailsQuandoStatusConhecidoDeveRetornarTextoPortuguesCorreto()
+    {
+        Assert.Equal("Requisição inválida.", ApiProblemDetails.TitleForStatusCode(StatusCodes.Status400BadRequest));
+        Assert.Equal("Autenticação necessária.", ApiProblemDetails.TitleForStatusCode(StatusCodes.Status401Unauthorized));
+        Assert.Equal("Recurso não encontrado.", ApiProblemDetails.TitleForStatusCode(StatusCodes.Status404NotFound));
+        Assert.Equal("Limite de requisições excedido.", ApiProblemDetails.TitleForStatusCode(StatusCodes.Status429TooManyRequests));
+        Assert.Equal("Ocorreu um erro inesperado ao processar a requisição.", ApiProblemDetails.DetailForStatusCode(StatusCodes.Status500InternalServerError));
+    }
+
+    [Fact]
     public void NotificarErroModelInvalidaDeveUsarMensagemPadraoQuandoErroNaoPossuiTexto()
     {
         var controller = CreateController();

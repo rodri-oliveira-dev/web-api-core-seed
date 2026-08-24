@@ -7,6 +7,7 @@ Active UTF-8 text and naming issues were normalized without changing HTTP routes
 ## Issue And Branch
 
 - Issue: https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/35.
+- Pull Request: https://github.com/rodri-oliveira-dev/web-api-core-seed/pull/36.
 - Branch: `refactor/normalize-encoding-and-naming`.
 
 ## Renamed Files
@@ -44,10 +45,10 @@ Active UTF-8 text and naming issues were normalized without changing HTTP routes
 
 Only response descriptions changed:
 
-- `Autenticacao necessaria.` -> `Autenticação necessária.`
-- `A chamada precisa ser efetuada por um usuario autenticado.` -> `A chamada precisa ser efetuada por um usuário autenticado.`
-- `Requisicao invalida.` -> `Requisição inválida.`
-- `Limite de requisicoes excedido.` -> `Limite de requisições excedido.`
+- Authentication required response description now uses correct Portuguese accents.
+- Authenticated-user requirement response description now uses correct Portuguese accents.
+- Invalid request response description now uses correct Portuguese accents.
+- Rate-limit response description now uses correct Portuguese accents.
 
 No route, schema, status code, or security requirement changed.
 
@@ -57,6 +58,7 @@ No route, schema, status code, or security requirement changed.
 - Runtime Problem Details/OpenAPI tests for corrected Portuguese text.
 - Architecture tests updated to the corrected `Interfaces` namespace and `LogEntry` ports.
 - SQL Server integration test proving `LogEntry` persists through legacy table `Loggin`.
+- Focused coverage tests for `LogEntryValidation`, `LogEntryService`, `LogEntryRepository` and normalized Problem Details text after the initial SonarCloud new-code coverage failure.
 
 ## Validation
 

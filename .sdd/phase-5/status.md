@@ -3,7 +3,7 @@
 | Prompt | Status |
 | --- | --- |
 | 01 - Development seed deterministico e idempotente | PR aberto; checks remotos passaram |
-| 02 - Normalize UTF-8 encoding and active code naming | validacao local concluida; PR pendente |
+| 02 - Normalize UTF-8 encoding and active code naming | PR aberto; SonarCloud coverage remediation em validacao |
 
 ## Prompt 01
 
@@ -27,9 +27,10 @@
 - Nomes ativos corrigidos: `Intefaces` -> `Interfaces`, `Clains` -> `Claims`, `Loggin*` -> `LogEntry*`.
 - Identificador legado preservado: tabela `Loggin`.
 - OpenAPI: regenerado com mudancas textuais em descricoes 400/401/429.
-- Unit tests: 115 passed.
+- Unit tests: 124 passed after coverage remediation.
 - Integration tests: 54 passed.
 - Architecture tests: 8 passed explicitamente.
 - EF pending model changes: sem alteracoes pendentes nos dois DbContexts.
 - Vulnerabilidades: nenhuma nas fontes atuais.
-- PR: pendente.
+- PR: https://github.com/rodri-oliveira-dev/web-api-core-seed/pull/36.
+- Checks remotos: primeira rodada passou build/test, CodeQL e Dependency Review, mas SonarCloud falhou por `new_coverage` 66.0 abaixo do limiar 80; testes focados adicionados antes do novo push.

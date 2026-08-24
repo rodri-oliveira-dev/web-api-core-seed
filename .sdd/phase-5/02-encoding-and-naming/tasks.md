@@ -11,4 +11,6 @@
 - [x] Regenerate OpenAPI.
 - [x] Run mandatory validation commands.
 - [x] Update SDD validation/report/status/handoff/decisions.
-- [ ] Commit, push, open PR, wait checks, and do not merge.
+- [x] Commit, push, open PR, wait first checks, and do not merge.
+- [x] Remediate initial SonarCloud new-code coverage failure with focused tests.
+- [ ] Push coverage remediation and wait final checks; do not merge.

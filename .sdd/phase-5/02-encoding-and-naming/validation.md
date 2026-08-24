@@ -3,7 +3,7 @@
 ## Planned Commands
 
 ```powershell
-rg -n "Ã|Â|�" .
+rg -n "<mojibake-marker-regex>" .
 rg -n "Intefaces|Clains|Loggin|FluentValidator" .
 dotnet restore WebApiCoreSeed.slnx --locked-mode
 dotnet build WebApiCoreSeed.slnx --configuration Release --no-restore
@@ -30,11 +30,11 @@ git diff --check
 
 | Validation | Result |
 | --- | --- |
-| Active search `rg -n "Ã|Â|�" src tests README.md docs/openapi` | Passed; no active occurrences. |
-| Active search for corrected names | Passed except historical migration designers, intentionally preserved. |
+| Active mojibake marker search in the full repository excluding build outputs | Passed; no matches. |
+| Active search for corrected names | Passed except historical migration designers, intentionally preserved schema references and compatibility tests. |
 | `dotnet restore WebApiCoreSeed.slnx --locked-mode` | Passed. |
-| `dotnet build WebApiCoreSeed.slnx --configuration Release --no-restore` | Passed with warning `AV0016` in `ApiConfig.cs`, pre-existing API versioning analyzer guidance. |
-| Unit tests | Passed: 115 tests. |
+| `dotnet build WebApiCoreSeed.slnx --configuration Release --no-restore` | Passed with 0 warnings and 0 errors after the coverage remediation tests. |
+| Unit tests | Passed: 124 tests. |
 | Integration tests | Passed: 54 tests. |
 | Architecture tests | Passed explicitly: 8 tests. |
 | Migrations on empty database test | Passed explicitly. |
@@ -48,9 +48,16 @@ git diff --check
 | `git diff --check` | Passed. |
 | Unexpected migrations created | None. |
 
+## Remote Quality Gate Follow-Up
+
+- The first PR run passed build/test, CodeQL and dependency review, but failed the SonarCloud Quality Gate because new-code coverage was `66.0`, below the `80` threshold.
+- The failed condition was `new_coverage`; all other queried quality gate conditions were OK.
+- Additional focused tests were added for `LogEntryValidation`, `LogEntryService`, `LogEntryRepository` and newly normalized Problem Details text.
+- Local unit tests increased from 115 to 124 passing tests before the follow-up push.
+
 ## Notes
 
 - `dotnet ef` emitted the existing local warning that EF tools `10.0.10` are older than runtime `10.0.11`; commands still passed.
 - The first EF attempt failed because the design-time connection string was absent; rerun passed with a dummy `DefaultConnection`, consistent with previous phase notes.
-- Final full-repository mojibake search returned no matches.
+- Final full-repository mojibake marker search returned no matches.
 - Final naming search returned only preserved `Loggin` table/schema references in mappings, snapshots, historical migrations and compatibility tests.
