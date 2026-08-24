@@ -6,6 +6,7 @@ using WebApiCoreSeed.SampleRestaurant.Infrastructure.Context;
 using WebApiCoreSeed.SampleRestaurant.Infrastructure.Persistence;
 using WebApiCoreSeed.SampleRestaurant.Infrastructure.Repository;
 using Microsoft.Extensions.DependencyInjection;
+using WebApiCoreSeed.Api.DevelopmentSeed;
 using WebApiCoreSeed.Api.Extensions;
 using WebApiCoreSeed.SampleRestaurant.Intefaces.Service;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Persistence;
@@ -40,6 +41,7 @@ namespace WebApiCoreSeed.Api.Configuration
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddScoped<IUser, AspNetUser>();
+            services.AddDevelopmentSeed();
 
             return services;
         }

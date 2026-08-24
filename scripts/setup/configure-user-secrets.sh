@@ -35,8 +35,10 @@ read_secret() {
 echo "Configuring User Secrets for src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj"
 connection_string=$(read_secret "ConnectionStrings:DefaultConnection: ")
 jwt_secret=$(read_secret "AppSettings:Secret: ")
+development_seed_password=$(read_secret "DevelopmentSeed:User:Password: ")
 
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "$connection_string" --project "$api_project" >/dev/null
 dotnet user-secrets set "AppSettings:Secret" "$jwt_secret" --project "$api_project" >/dev/null
+dotnet user-secrets set "DevelopmentSeed:User:Password" "$development_seed_password" --project "$api_project" >/dev/null
 
 echo "User Secrets configured without printing secret values."

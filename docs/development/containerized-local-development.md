@@ -22,6 +22,7 @@ Mode 2 runs the full stack in Docker Compose. The API, SQL Server, Redis and mig
 
 - `api`: ASP.NET Core API image built from the root `Dockerfile`.
 - `migrations`: one-shot SDK image that applies EF Core migrations.
+- `seed`: optional one-shot runtime image that applies migrations idempotently and runs the development seed.
 - `sqlserver`: SQL Server development database.
 - `redis`: local Redis cache.
 
@@ -61,6 +62,8 @@ Manual configuration is also supported:
 ```bash
 dotnet user-secrets set "ConnectionStrings:DefaultConnection" "<local connection string>" --project src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj
 dotnet user-secrets set "AppSettings:Secret" "<local JWT secret>" --project src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj
+dotnet user-secrets set "DevelopmentSeed:User:Password" "<local development password>" --project src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj
+dotnet user-secrets set "DevelopmentSeed:User:Email" "developer@example.local" --project src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj
 ```
 
 For host execution, use `localhost` for SQL Server and Redis in the configured values.
@@ -130,6 +133,77 @@ Run migrations explicitly:
 docker compose --env-file .env.local up migrations
 ```
 
+For host execution, the development seed command also applies migrations before inserting data:
+
+```bash
+dotnet run --project src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj -- --seed
+```
+
+## Development Seed
+
+The development seed is explicit and idempotent. It never runs during normal API startup and is blocked when the environment is `Production`.
+
+Configure the local credential without committing it:
+
+```bash
+dotnet user-secrets set "DevelopmentSeed:User:Password" "<local development password>" --project src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj
+```
+
+Optional email override:
+
+```bash
+dotnet user-secrets set "DevelopmentSeed:User:Email" "developer@example.local" --project src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj
+```
+
+Start infrastructure for host mode:
+
+```bash
+docker compose --env-file .env.local up -d sqlserver redis
+```
+
+Apply migrations and run the seed:
+
+```bash
+dotnet run --project src/WebApiCoreSeed.Api/WebApiCoreSeed.Api.csproj -- --seed
+```
+
+Run it again with the same command. The second execution updates only known seed records that drifted and does not duplicate users, claims, pratos, mesas, pedidos or itens.
+
+The seed creates:
+
+- Identity user `developer@example.local` by default, with the password supplied locally.
+- Claims for representative protected endpoints such as `Mesas` and `Pratos`.
+- Four pratos, three mesas, one atendente, one pedido and two pedido items with deterministic IDs.
+
+Authenticate with the seeded user:
+
+```bash
+curl -X POST "http://localhost:8080/api/v1/entrar" \
+  -H "Content-Type: application/json" \
+  -d "{\"email\":\"developer@example.local\",\"password\":\"<local development password>\"}"
+```
+
+Use the returned `accessToken` for protected endpoints:
+
+```bash
+curl "http://localhost:8080/api/v1/Mesas/22000000-0000-0000-0000-000000000001" \
+  -H "Authorization: Bearer <accessToken>"
+```
+
+Run the seed in Docker Compose with the optional tools profile:
+
+```bash
+docker compose --env-file .env.local --profile tools up seed
+```
+
+Remove local data by deleting Compose volumes:
+
+```bash
+docker compose --env-file .env.local down --volumes
+```
+
+For a host-managed SQL Server database, remove local data by dropping the local database or by pointing `ConnectionStrings:DefaultConnection` to a new disposable database. Do not run the seed against production data.
+
 ## Health Checks
 
 - Liveness: `http://localhost:8080/health/live`.
@@ -152,8 +226,11 @@ SQL Server and Redis have Compose health checks. The API image does not install 
 - Certificate error: local SQL connections use `TrustServerCertificate=True`.
 - Non-root permission error: the container disables file logging with `SeqSettings__FilePath=""` in Compose.
 - Missing secrets: Compose fails if `SQLSERVER_SA_PASSWORD` or `JWT_SECRET` is absent.
+- Missing seed password: host seed fails if `DevelopmentSeed:User:Password` is absent; Compose seed fails if `DEVELOPMENT_SEED_PASSWORD` is absent.
 - `localhost` vs Compose DNS: host mode uses `localhost`; containers use `sqlserver` and `redis`.
 
 ## Security
 
 No local secret file is mounted into the API container. User Secrets are only for host development. Compose secrets come from `.env.local` or host environment variables. Production should use environment-specific configuration and a secret manager, not this Compose file.
+
+The seed does not store a password in source, does not log the configured password, does not emit JWTs, does not relax Identity password policy and does not use `EnsureCreated`. It uses EF Core migrations and `UserManager<IdentityUser>`. Identity and SampleRestaurant are persisted through separate DbContexts; there is no distributed Unit of Work across them.
