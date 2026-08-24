@@ -1,45 +1,28 @@
-Sobre o que é o Projeto?
-=====================
-O objetivo deste projeto é implementar as tecnologias usadas mais comuns e compartilhar com a comunidade um projeto base de WEB API em NET Core.
+# Source Layout
 
-## Dê uma estrela! :star:
-Se você gostou do projeto ou ajudou de alguma maneira, dê uma estrela ;)
+Esta pasta contém a aplicação ativa do `web-api-core-seed`, modernizada para .NET 10.
 
-## Como usar:
-- Você precisará do Visual Studio 2019 e do .NET Core SDK mais recentes.
-- *** Verifique se você instalou a mesma versão de tempo de execução (SDK) descrita em global.json ***
-- O SDK e as ferramentas mais recentes podem ser baixados em https://dot.net/core.
+## Projetos
 
-Além disso, você pode executar o projeto no Visual Studio Code (Windows, Linux ou MacOS).
+- `WebApiCoreSeed.Api`: adaptador HTTP e composition root.
+- `Modules/Identity/WebApiCoreSeed.Identity.Infrastructure`: persistência do Identity.
+- `Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant`: domínio e aplicação do exemplo de restaurante.
+- `Modules/SampleRestaurant/WebApiCoreSeed.SampleRestaurant.Infrastructure`: persistência EF Core do exemplo.
 
-Para saber mais sobre como configurar seu ambiente, visite o [Guia de Download do Microsoft .NET] (https://www.microsoft.com/net/download)
+## Tecnologias Ativas
 
-## Tecnologias implementadas:
-
-- .NET Core 3.1
-- ASP.NET WebApi Core COM JWT Bearer Authentication
+- .NET 10
+- ASP.NET Core Web API com JWT Bearer Authentication
 - ASP.NET Identity Core
-- Entity Framework Core 3.1
-- .NET Core Native DI
+- Entity Framework Core 10
 - AutoMapper
-- FluentValidator
-- Swagger UI with JWT support
-- Health Checks
-- Redis
-- Ip Rate Limit 
-- OWASP Security
+- FluentValidation
+- OpenAPI com Scalar UI e suporte a JWT
+- Health checks
+- Redis opcional
+- Rate limiting nativo do ASP.NET Core
+- Serilog
 
-## Arquitetura:
+## Compatibilidade
 
-- Arquitetura completa com preocupações de separação de responsabilidades, SOLID e Código Limpo
-- Domain Driven Design (Layers and Domain Model Pattern)
-- Domain Events
-- Domain Notification
-- Repository e Generic Repository
-
-## Aviso Legal:
-- ** NÃO ** pretende ser uma solução definitiva
-- Cuidado para usar na forma de produção
-
-## Pull-Requests 
-Envie uma mensagem :)
+O histórico legado permanece preservado fora desta pasta ativa. Não renomeie tabelas, colunas ou migrations legadas apenas para corrigir nomenclatura.

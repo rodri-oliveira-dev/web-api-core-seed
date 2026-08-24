@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc.ModelBinding;
 using WebApiCoreSeed.Api.Errors;
 using WebApiCoreSeed.Api.Results;
 using WebApiCoreSeed.Api.ViewModels;
-using WebApiCoreSeed.SampleRestaurant.Intefaces;
+using WebApiCoreSeed.SampleRestaurant.Interfaces;
 using WebApiCoreSeed.SampleRestaurant.Notificacoes;
 
 namespace WebApiCoreSeed.Api.Controllers
@@ -81,16 +81,16 @@ namespace WebApiCoreSeed.Api.Controllers
                             HttpContext,
                             StatusCodes.Status404NotFound,
                             ApiProblemDetails.NotFoundType,
-                            "Recurso nao encontrado.",
-                            "Objeto nao foi encontrado."));
+                            "Recurso não encontrado.",
+                            "Objeto não foi encontrado."));
 
                     case ETipoAcao.ModeloInvalido:// HTTP Code 400
                         return ApiProblemDetails.ToObjectResult(ApiProblemDetails.Create(
                             HttpContext,
                             StatusCodes.Status400BadRequest,
                             ApiProblemDetails.ValidationType,
-                            "Requisicao invalida.",
-                            "A requisicao possui dados invalidos."));
+                            "Requisição inválida.",
+                            "A requisição possui dados inválidos."));
 
                     default:
                         throw new ArgumentOutOfRangeException(nameof(tipoAcao), tipoAcao, string.Empty);
@@ -122,7 +122,7 @@ namespace WebApiCoreSeed.Api.Controllers
             var erros = modelState.Values.SelectMany(e => e.Errors);
             foreach (var erro in erros)
             {
-                var errorMsg = string.IsNullOrWhiteSpace(erro.ErrorMessage) ? "Valor informado invalido." : erro.ErrorMessage;
+                var errorMsg = string.IsNullOrWhiteSpace(erro.ErrorMessage) ? "Valor informado inválido." : erro.ErrorMessage;
                 NotificarErro(errorMsg);
             }
         }

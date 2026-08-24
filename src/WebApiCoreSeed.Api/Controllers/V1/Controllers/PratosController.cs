@@ -8,10 +8,10 @@ using Microsoft.Extensions.Logging;
 using WebApiCoreSeed.Api.Attributes;
 using WebApiCoreSeed.Api.Configuration;
 using WebApiCoreSeed.Api.Extensions;
-using WebApiCoreSeed.Api.Extensions.Clains;
+using WebApiCoreSeed.Api.Extensions.Claims;
 using WebApiCoreSeed.Api.ViewModels;
-using WebApiCoreSeed.SampleRestaurant.Intefaces;
-using WebApiCoreSeed.SampleRestaurant.Intefaces.Service;
+using WebApiCoreSeed.SampleRestaurant.Interfaces;
+using WebApiCoreSeed.SampleRestaurant.Interfaces.Service;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Pagination;
 using WebApiCoreSeed.SampleRestaurant.Models;
 using System;
@@ -39,13 +39,13 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
             LoggerMessage.Define<Guid>(
                 LogLevel.Information,
                 new EventId(1000, nameof(LogAuthenticatedUserCalledMethod)),
-                "Usuario autenticado {UserId} chamou o metodo");
+                "Usuário autenticado {UserId} chamou o método");
 
         private static readonly Action<ILogger, Exception?> LogAnonymousUserCalledMethod =
             LoggerMessage.Define(
                 LogLevel.Information,
                 new EventId(1001, nameof(LogAnonymousUserCalledMethod)),
-                "Usuario anonimo chamou o metodo");
+                "Usuário anônimo chamou o método");
 
         public PratosController(INotificador notificador,
                                   IPratoService pratoService,
@@ -66,7 +66,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// <param name="cancellationToken">Token de cancelamento da requisição.</param>
         /// <returns></returns>
         /// <response code="200">Retorna o objeto referente a ID informada</response>
-        /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
+        /// <response code="401">A chamada precisa ser efetuada por um usuário autenticado.</response>
         /// <response code="403">O usuário esta autenticado, mas o não possui permissão para executar essa ação.</response>
         /// <response code="404">Caso a lista de objeto não seja encontrada</response>
         /// <response code="429">Excedeu a cota de requisições</response>
@@ -103,7 +103,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// <param name="cancellationToken">Token de cancelamento da requisição.</param>
         /// <returns></returns>
         /// <response code="200">Retorna o objeto referente a ID informada</response>
-        /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
+        /// <response code="401">A chamada precisa ser efetuada por um usuário autenticado.</response>
         /// <response code="403">O usuário esta autenticado, mas o não possui permissão para executar essa ação.</response>
         /// <response code="404">Caso o objeto não seja encontrada pela ID retorna null</response>
         /// <response code="429">Excedeu a cota de requisições</response>
@@ -128,7 +128,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// <returns></returns>
         /// <response code="201">Retorna o objeto referente a ID informada</response>
         /// <response code="400">Não foi possivel executar a ação solicitada</response>
-        /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
+        /// <response code="401">A chamada precisa ser efetuada por um usuário autenticado.</response>
         /// <response code="403">O usuário esta autenticado, mas o não possui permissão para executar essa ação.</response>
         /// <response code="429">Excedeu a cota de requisições</response>
         [HttpPost]
@@ -160,7 +160,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// <returns></returns>
         /// <response code="204">Objeto atualizado com sucesso</response>
         /// <response code="400">Não foi possivel executar a ação solicitada</response>
-        /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
+        /// <response code="401">A chamada precisa ser efetuada por um usuário autenticado.</response>
         /// <response code="403">O usuário esta autenticado, mas o não possui permissão para executar essa ação.</response>
         /// <response code="404">O objeto não foi encontrado.</response>
         /// <response code="429">Excedeu a cota de requisições</response>
@@ -210,7 +210,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// <returns></returns>
         /// <response code="204">Objeto excluido com sucesso</response>
         /// <response code="400">Não foi possivel executar a ação solicitada</response>
-        /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
+        /// <response code="401">A chamada precisa ser efetuada por um usuário autenticado.</response>
         /// <response code="403">O usuário esta autenticado, mas o não possui permissão para executar essa ação.</response>
         /// <response code="404">O objeto não foi encontrado.</response>
         /// <response code="429">Excedeu a cota de requisições</response>
@@ -255,7 +255,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
             var filePath = Path.GetFullPath(Path.Combine(diretorioUpload, imgNome));
             if (!EstaDentroDoDiretorio(filePath, diretorioUpload))
             {
-                NotificarErro("Nome de arquivo invalido!");
+                NotificarErro("Nome de arquivo inválido!");
                 return false;
             }
 

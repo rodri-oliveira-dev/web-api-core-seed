@@ -109,10 +109,12 @@ namespace WebApiCoreSeed.UnitTests.Integracao
                 email,
                 password = "Senha@456B"
             });
-            var problem = await ReadProblemAsync(response, HttpStatusCode.BadRequest);
+            var (problem, body) = await ReadProblemWithBodyAsync(response, HttpStatusCode.BadRequest);
 
             Assert.Equal("urn:problem:domain-rule", problem.GetProperty("type").GetString());
             Assert.True(problem.TryGetProperty("traceId", out _));
+            AssertNotificationContains(problem, "Usuário ou Senha incorretos");
+            AssertNoKnownMojibake(body);
         }
 
         [Fact]
@@ -138,10 +140,12 @@ namespace WebApiCoreSeed.UnitTests.Integracao
                 email,
                 password = "Senha@456B"
             });
-            var problem = await ReadProblemAsync(response, HttpStatusCode.BadRequest);
+            var (problem, body) = await ReadProblemWithBodyAsync(response, HttpStatusCode.BadRequest);
 
             Assert.Equal("urn:problem:domain-rule", problem.GetProperty("type").GetString());
             Assert.True(problem.TryGetProperty("traceId", out _));
+            AssertNotificationContains(problem, "Usuário temporariamente bloqueado por tentativas inválidas");
+            AssertNoKnownMojibake(body);
         }
 
         [Fact]
@@ -351,6 +355,7 @@ namespace WebApiCoreSeed.UnitTests.Integracao
             var problem = await ReadProblemAsync(response, HttpStatusCode.Unauthorized);
 
             Assert.Equal("urn:problem:authentication", problem.GetProperty("type").GetString());
+            Assert.Equal("Autenticação necessária.", problem.GetProperty("title").GetString());
             Assert.True(problem.TryGetProperty("traceId", out _));
         }
 
@@ -365,6 +370,7 @@ namespace WebApiCoreSeed.UnitTests.Integracao
             var problem = await ReadProblemAsync(response, HttpStatusCode.Forbidden);
 
             Assert.Equal("urn:problem:authorization", problem.GetProperty("type").GetString());
+            Assert.Equal("Acesso negado.", problem.GetProperty("title").GetString());
             Assert.True(problem.TryGetProperty("traceId", out _));
         }
 
@@ -397,6 +403,8 @@ namespace WebApiCoreSeed.UnitTests.Integracao
             Assert.Equal("3.0.4", v1.GetProperty("openapi").GetString());
             Assert.Equal("v1", v1.GetProperty("info").GetProperty("version").GetString());
             Assert.Equal("v2", v2.GetProperty("info").GetProperty("version").GetString());
+            AssertNoKnownMojibake(v1.GetRawText());
+            AssertNoKnownMojibake(v2.GetRawText());
 
             Assert.True(v1.GetProperty("paths").TryGetProperty("/api/v1/Pratos", out var pratosPath));
             Assert.True(v1.GetProperty("paths").TryGetProperty("/api/v1/Mesas/{id}", out var mesaPath));
@@ -409,11 +417,15 @@ namespace WebApiCoreSeed.UnitTests.Integracao
 
             var publicGet = pratosPath.GetProperty("get");
             Assert.False(publicGet.TryGetProperty("security", out _));
+            Assert.Equal("Requisição inválida.", publicGet.GetProperty("responses").GetProperty("400").GetProperty("description").GetString());
             AssertProblemResponse(publicGet, "429");
 
             var protectedGet = mesaPath.GetProperty("get");
             Assert.True(protectedGet.TryGetProperty("security", out var security));
             Assert.Contains("Bearer", security.GetRawText(), StringComparison.Ordinal);
+            Assert.Equal(
+                "A chamada precisa ser efetuada por um usuário autenticado.",
+                protectedGet.GetProperty("responses").GetProperty("401").GetProperty("description").GetString());
             AssertProblemResponse(protectedGet, "401");
             AssertProblemResponse(protectedGet, "403");
             AssertProblemResponse(protectedGet, "429");
@@ -542,13 +554,25 @@ namespace WebApiCoreSeed.UnitTests.Integracao
 
         private static async Task<JsonElement> ReadProblemAsync(HttpResponseMessage response, HttpStatusCode expectedStatusCode)
         {
+            return (await ReadProblemWithBodyAsync(response, expectedStatusCode)).Problem;
+        }
+
+        private static async Task<(JsonElement Problem, string Body)> ReadProblemWithBodyAsync(HttpResponseMessage response, HttpStatusCode expectedStatusCode)
+        {
             Assert.Equal(expectedStatusCode, response.StatusCode);
             Assert.Equal("application/problem+json", response.Content.Headers.ContentType?.MediaType);
 
-            using var stream = await response.Content.ReadAsStreamAsync();
-            using var document = await JsonDocument.ParseAsync(stream);
+            var bytes = await response.Content.ReadAsByteArrayAsync();
+            var body = Encoding.UTF8.GetString(bytes);
+            using var document = JsonDocument.Parse(bytes);
 
-            return document.RootElement.Clone();
+            return (document.RootElement.Clone(), body);
+        }
+
+        private static void AssertNoKnownMojibake(string text)
+        {
+            var markers = new[] { "\u00c3", "\u00c2", "\ufffd" };
+            Assert.DoesNotContain(markers, marker => text.Contains(marker, StringComparison.Ordinal));
         }
 
         private static async Task<JsonElement> ReadJsonAsync(HttpResponseMessage response, HttpStatusCode expectedStatusCode)
@@ -565,6 +589,18 @@ namespace WebApiCoreSeed.UnitTests.Integracao
         {
             var response = operation.GetProperty("responses").GetProperty(statusCode);
             Assert.True(response.GetProperty("content").TryGetProperty("application/problem+json", out _));
+        }
+
+        private static void AssertNotificationContains(JsonElement problem, string expectedMessage)
+        {
+            var notifications = problem
+                .GetProperty("errors")
+                .GetProperty("notifications")
+                .EnumerateArray()
+                .Select(item => item.GetString())
+                .ToArray();
+
+            Assert.Contains(expectedMessage, notifications);
         }
 
         private static void AssertLoginResponse(JsonElement json, string email, string expectedAlgorithm)

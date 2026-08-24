@@ -41,7 +41,7 @@ namespace WebApiCoreSeed.Api.Errors
                     StatusCodes.Status409Conflict,
                     ApiProblemDetails.ConflictType,
                     "Conflito com o estado atual do recurso.",
-                    "A operacao nao pode ser concluida porque o recurso foi alterado.");
+                    "A operação não pode ser concluída porque o recurso foi alterado.");
             }
 
             if (exception is not DbUpdateException)

@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using WebApiCoreSeed.SampleRestaurant.Notificacoes;
 
-namespace WebApiCoreSeed.SampleRestaurant.Intefaces
+namespace WebApiCoreSeed.SampleRestaurant.Interfaces
 {
     public interface INotificador
     {

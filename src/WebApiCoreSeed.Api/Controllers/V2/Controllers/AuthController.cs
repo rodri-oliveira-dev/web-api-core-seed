@@ -8,7 +8,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using WebApiCoreSeed.Api.Configuration;
 using WebApiCoreSeed.Api.Settings;
-using WebApiCoreSeed.SampleRestaurant.Intefaces;
+using WebApiCoreSeed.SampleRestaurant.Interfaces;
 
 namespace WebApiCoreSeed.Api.Controllers.V2.Controllers
 {

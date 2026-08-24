@@ -69,7 +69,7 @@
             }
           },
           "401": {
-            "description": "Autenticacao necessaria.",
+            "description": "Autenticação necessária.",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -178,7 +178,7 @@
         ],
         "responses": {
           "401": {
-            "description": "A chamada precisa ser efetuada por um usuario autenticado.",
+            "description": "A chamada precisa ser efetuada por um usuário autenticado.",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -228,7 +228,7 @@
             }
           },
           "400": {
-            "description": "Requisicao invalida.",
+            "description": "Requisição inválida.",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -283,7 +283,7 @@
         },
         "responses": {
           "401": {
-            "description": "A chamada precisa ser efetuada por um usuario autenticado.",
+            "description": "A chamada precisa ser efetuada por um usuário autenticado.",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -358,7 +358,7 @@
         ],
         "responses": {
           "401": {
-            "description": "A chamada precisa ser efetuada por um usuario autenticado.",
+            "description": "A chamada precisa ser efetuada por um usuário autenticado.",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -453,7 +453,7 @@
         },
         "responses": {
           "401": {
-            "description": "A chamada precisa ser efetuada por um usuario autenticado.",
+            "description": "A chamada precisa ser efetuada por um usuário autenticado.",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -544,7 +544,7 @@
         ],
         "responses": {
           "401": {
-            "description": "A chamada precisa ser efetuada por um usuario autenticado.",
+            "description": "A chamada precisa ser efetuada por um usuário autenticado.",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -594,7 +594,7 @@
             }
           },
           "400": {
-            "description": "Requisicao invalida.",
+            "description": "Requisição inválida.",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -632,7 +632,7 @@
         },
         "responses": {
           "401": {
-            "description": "A chamada precisa ser efetuada por um usuario autenticado.",
+            "description": "A chamada precisa ser efetuada por um usuário autenticado.",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -709,7 +709,7 @@
         ],
         "responses": {
           "401": {
-            "description": "A chamada precisa ser efetuada por um usuario autenticado.",
+            "description": "A chamada precisa ser efetuada por um usuário autenticado.",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -759,7 +759,7 @@
             }
           },
           "400": {
-            "description": "Requisicao invalida.",
+            "description": "Requisição inválida.",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -814,7 +814,7 @@
         },
         "responses": {
           "401": {
-            "description": "A chamada precisa ser efetuada por um usuario autenticado.",
+            "description": "A chamada precisa ser efetuada por um usuário autenticado.",
             "content": {
               "application/problem+json": {
                 "schema": {
@@ -889,7 +889,7 @@
         ],
         "responses": {
           "401": {
-            "description": "A chamada precisa ser efetuada por um usuario autenticado.",
+            "description": "A chamada precisa ser efetuada por um usuário autenticado.",
             "content": {
               "application/problem+json": {
                 "schema": {

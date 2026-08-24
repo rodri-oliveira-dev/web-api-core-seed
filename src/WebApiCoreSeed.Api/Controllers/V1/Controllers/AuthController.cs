@@ -10,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using WebApiCoreSeed.Api.Configuration;
 using WebApiCoreSeed.Api.Settings;
 using WebApiCoreSeed.Api.ViewModels.User;
-using WebApiCoreSeed.SampleRestaurant.Intefaces;
+using WebApiCoreSeed.SampleRestaurant.Interfaces;
 
 namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
 {

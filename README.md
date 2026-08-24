@@ -34,7 +34,7 @@ To know more about how to setup your enviroment visit the [Microsoft .NET Downlo
 - Entity Framework Core 10
 - .NET Core Native DI
 - AutoMapper
-- FluentValidator
+- FluentValidation
 - OpenAPI with Scalar UI and JWT support
 - Health Checks
 - Redis

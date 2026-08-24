@@ -100,8 +100,8 @@ namespace WebApiCoreSeed.Api.Configuration
                                 context.HttpContext,
                                 StatusCodes.Status401Unauthorized,
                                 ApiProblemDetails.AuthenticationType,
-                                "Autenticacao necessaria.",
-                                "A chamada precisa ser efetuada por um usuario autenticado.")
+                                "Autenticação necessária.",
+                                "A chamada precisa ser efetuada por um usuário autenticado.")
                         });
                     },
                     OnForbidden = async context =>
@@ -122,7 +122,7 @@ namespace WebApiCoreSeed.Api.Configuration
                                 StatusCodes.Status403Forbidden,
                                 ApiProblemDetails.AuthorizationType,
                                 "Acesso negado.",
-                                "O usuario esta autenticado, mas nao possui permissao para executar essa acao.")
+                                "O usuário está autenticado, mas não possui permissão para executar essa ação.")
                         });
                     }
                 };

@@ -6,7 +6,7 @@ using WebApiCoreSeed.Api;
 using WebApiCoreSeed.Api.Controllers.V1.Controllers;
 using WebApiCoreSeed.SampleRestaurant.Models;
 using WebApiCoreSeed.SampleRestaurant.Infrastructure.Context;
-using WebApiCoreSeed.SampleRestaurant.Intefaces.Service;
+using WebApiCoreSeed.SampleRestaurant.Interfaces.Service;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Repository;
 using Xunit;
 
@@ -119,7 +119,7 @@ namespace WebApiCoreSeed.UnitTests.Arquitetura
                     .SelectMany(constructor => constructor.GetParameters())
                     .Any(parameter => string.Equals(
                         parameter.ParameterType.Namespace,
-                        "WebApiCoreSeed.SampleRestaurant.Intefaces.Service",
+                        "WebApiCoreSeed.SampleRestaurant.Interfaces.Service",
                         StringComparison.Ordinal));
 
                 Assert.True(hasApplicationPort, $"{controllerType.Name} deve depender de uma porta de entrada de Application.");
@@ -155,13 +155,13 @@ namespace WebApiCoreSeed.UnitTests.Arquitetura
             var contracts = new[]
             {
                 typeof(IAtendenteService),
-                typeof(ILogginService),
+                typeof(ILogEntryService),
                 typeof(IMesaService),
                 typeof(IPedidoPratoService),
                 typeof(IPedidoService),
                 typeof(IPratoService),
                 typeof(IAtendenteRepository),
-                typeof(ILogginRepository),
+                typeof(ILogEntryRepository),
                 typeof(IMesaRepository),
                 typeof(IPedidoPratoRepository),
                 typeof(IPedidoRepository),

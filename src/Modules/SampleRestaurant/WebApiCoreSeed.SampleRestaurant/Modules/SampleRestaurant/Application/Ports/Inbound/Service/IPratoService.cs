@@ -6,7 +6,7 @@ using WebApiCoreSeed.SampleRestaurant.Interfaces.Pagination;
 using WebApiCoreSeed.SampleRestaurant.Application.Contracts.Queries;
 using WebApiCoreSeed.SampleRestaurant.Models;
 
-namespace WebApiCoreSeed.SampleRestaurant.Intefaces.Service
+namespace WebApiCoreSeed.SampleRestaurant.Interfaces.Service
 {
     public interface IPratoService
     {

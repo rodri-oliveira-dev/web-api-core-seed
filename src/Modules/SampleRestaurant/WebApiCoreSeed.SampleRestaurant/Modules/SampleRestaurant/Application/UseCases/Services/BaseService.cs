@@ -1,4 +1,4 @@
-using WebApiCoreSeed.SampleRestaurant.Intefaces;
+using WebApiCoreSeed.SampleRestaurant.Interfaces;
 using WebApiCoreSeed.SampleRestaurant.Models;
 using WebApiCoreSeed.SampleRestaurant.Notificacoes;
 using FluentValidation;

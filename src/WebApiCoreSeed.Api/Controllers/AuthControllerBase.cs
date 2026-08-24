@@ -13,7 +13,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using WebApiCoreSeed.Api.Settings;
 using WebApiCoreSeed.Api.ViewModels.User;
-using WebApiCoreSeed.SampleRestaurant.Intefaces;
+using WebApiCoreSeed.SampleRestaurant.Interfaces;
 
 namespace WebApiCoreSeed.Api.Controllers
 {
@@ -54,11 +54,11 @@ namespace WebApiCoreSeed.Api.Controllers
 
             if (result.IsLockedOut)
             {
-                NotificarErro("UsuÃ¡rio temporariamente bloqueado por tentativas invÃ¡lidas");
+                NotificarErro("Usuário temporariamente bloqueado por tentativas inválidas");
                 return CustomResponse(loginUser);
             }
 
-            NotificarErro("UsuÃ¡rio ou Senha incorretos");
+            NotificarErro("Usuário ou Senha incorretos");
             return CustomResponse(loginUser);
         }
 

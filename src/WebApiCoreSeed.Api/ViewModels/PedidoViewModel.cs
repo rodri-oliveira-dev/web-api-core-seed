@@ -13,7 +13,7 @@ namespace WebApiCoreSeed.Api.ViewModels
         public Guid MesaId { get; set; }
 
         [Required(ErrorMessage = "O campo {0} é obrigatório")]
-        [StringLength(50, ErrorMessage = "O campo {0} precisa ter entre no maximo {1} caracteres")]
+        [StringLength(50, ErrorMessage = "O campo {0} precisa ter no máximo {1} caracteres")]
         public string Numero { get; set; } = string.Empty;
 
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:HH:mm}")]

@@ -8,7 +8,7 @@ using WebApiCoreSeed.Api.Controllers;
 using WebApiCoreSeed.Api.Errors;
 using WebApiCoreSeed.Api.Results;
 using WebApiCoreSeed.Api.ViewModels;
-using WebApiCoreSeed.SampleRestaurant.Intefaces;
+using WebApiCoreSeed.SampleRestaurant.Interfaces;
 using WebApiCoreSeed.SampleRestaurant.Notificacoes;
 using Xunit;
 
@@ -138,7 +138,7 @@ public sealed class MainControllerBaseTests
         var problemResult = AssertProblem(result, StatusCodes.Status400BadRequest, ApiProblemDetails.DomainRuleType);
         var problem = Assert.IsType<ProblemDetails>(problemResult.Value);
         var errors = Assert.IsType<Dictionary<string, string[]>>(problem.Extensions[ApiProblemDetails.ErrorsExtension]);
-        Assert.Contains("Valor informado invalido.", errors["notifications"]);
+        Assert.Contains("Valor informado inválido.", errors["notifications"]);
     }
 
     [Fact]

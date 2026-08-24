@@ -40,7 +40,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Migrations
                     b.ToTable("Atendentes", (string)null);
                 });
 
-            modelBuilder.Entity("WebApiCoreSeed.SampleRestaurant.Models.LogginEntity", b =>
+            modelBuilder.Entity("WebApiCoreSeed.SampleRestaurant.Models.LogEntry", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

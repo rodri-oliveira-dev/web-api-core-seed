@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using WebApiCoreSeed.SampleRestaurant.Intefaces;
+using WebApiCoreSeed.SampleRestaurant.Interfaces;
 
 namespace WebApiCoreSeed.SampleRestaurant.Notificacoes
 {

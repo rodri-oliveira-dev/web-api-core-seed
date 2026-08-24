@@ -6,6 +6,7 @@ using WebApiCoreSeed.IntegrationTests.Infrastructure;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Persistence;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Repository;
 using WebApiCoreSeed.SampleRestaurant.Models;
+using WebApiCoreSeed.SampleRestaurant.Models.Enums;
 
 namespace WebApiCoreSeed.IntegrationTests.Infrastructure;
 
@@ -58,6 +59,42 @@ public sealed class SqlServerIntegrationTests
 
         Assert.Equal("Moqueca de teste", persisted.Titulo);
         Assert.True(persisted.Ativo);
+    }
+
+    [Fact(DisplayName = "LogEntry preserva tabela legada Loggin no SQL Server")]
+    public async Task LogEntryQuandoPersistidoDeveUsarTabelaLegadaLoggin()
+    {
+        await _factory.ResetStateAsync();
+        var logEntry = new LogEntry
+        {
+            Id = Guid.NewGuid(),
+            EventId = 42,
+            Escopo = "Compatibility",
+            LogLevel = ELogLevel.Information,
+            Message = "Evento de compatibilidade persistido",
+            CreatedTime = DateTime.UtcNow
+        };
+
+        await _factory.WithDomainContextAsync(async context =>
+        {
+            context.LogEntries.Add(logEntry);
+            await context.SaveChangesAsync();
+        });
+
+        await using var connection = new SqlConnection(_factory.SqlServerConnectionString);
+        await connection.OpenAsync();
+        await using var command = connection.CreateCommand();
+        command.CommandText = "SELECT COUNT_BIG(*) FROM [dbo].[Loggin] WHERE [Id] = @Id AND [Message] = @Message;";
+        command.Parameters.AddWithValue("@Id", logEntry.Id);
+        command.Parameters.AddWithValue("@Message", logEntry.Message);
+
+        var rows = Convert.ToInt64(await command.ExecuteScalarAsync(), System.Globalization.CultureInfo.InvariantCulture);
+        Assert.Equal(1, rows);
+
+        var persisted = await _factory.WithDomainContextAsync(context =>
+            context.LogEntries.AsNoTracking().SingleAsync(item => item.Id == logEntry.Id));
+
+        Assert.Equal(logEntry.Message, persisted.Message);
     }
 
     [Fact(DisplayName = "Unit of Work confirma criacao registrada por repositorio")]

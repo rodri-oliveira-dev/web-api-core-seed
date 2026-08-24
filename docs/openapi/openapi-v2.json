@@ -59,7 +59,7 @@
             }
           },
           "429": {
-            "description": "Limite de requisicoes excedido.",
+            "description": "Limite de requisições excedido.",
             "content": {
               "application/problem+json": {
                 "schema": {

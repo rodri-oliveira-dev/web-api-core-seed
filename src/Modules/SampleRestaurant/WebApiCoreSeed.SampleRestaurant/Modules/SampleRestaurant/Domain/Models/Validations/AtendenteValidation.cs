@@ -24,7 +24,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Models.Validations
                     .Cascade(CascadeMode.Stop)
                     .NotEmpty().WithMessage(MensagemCampoObrigatorio)
                     .NotNull().WithMessage(MensagemCampoObrigatorio)
-                    .EmailAddress().WithMessage("E-mail envalido");
+                    .EmailAddress().WithMessage("E-mail inválido");
 
                 RuleFor(c => c.Telefone)
                     .Cascade(CascadeMode.Stop)

@@ -1,7 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using WebApiCoreSeed.IntegrationTests.Infrastructure;
-using WebApiCoreSeed.SampleRestaurant.Intefaces;
-using WebApiCoreSeed.SampleRestaurant.Intefaces.Service;
+using WebApiCoreSeed.SampleRestaurant.Interfaces;
+using WebApiCoreSeed.SampleRestaurant.Interfaces.Service;
 using WebApiCoreSeed.SampleRestaurant.Infrastructure.Context;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Persistence;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Repository;
@@ -27,14 +27,14 @@ public sealed class CompositionRootIntegrationTests
 
         Assert.NotNull(provider.GetRequiredService<SampleRestaurantDbContext>());
         Assert.NotNull(provider.GetRequiredService<IAtendenteRepository>());
-        Assert.NotNull(provider.GetRequiredService<ILogginRepository>());
+        Assert.NotNull(provider.GetRequiredService<ILogEntryRepository>());
         Assert.NotNull(provider.GetRequiredService<IMesaRepository>());
         Assert.NotNull(provider.GetRequiredService<IPedidoPratoRepository>());
         Assert.NotNull(provider.GetRequiredService<IPedidoRepository>());
         Assert.NotNull(provider.GetRequiredService<IPratoRepository>());
         Assert.NotNull(provider.GetRequiredService<ISampleRestaurantUnitOfWork>());
         Assert.NotNull(provider.GetRequiredService<IAtendenteService>());
-        Assert.NotNull(provider.GetRequiredService<ILogginService>());
+        Assert.NotNull(provider.GetRequiredService<ILogEntryService>());
         Assert.NotNull(provider.GetRequiredService<IMesaService>());
         Assert.NotNull(provider.GetRequiredService<IPedidoPratoService>());
         Assert.NotNull(provider.GetRequiredService<IPedidoService>());
