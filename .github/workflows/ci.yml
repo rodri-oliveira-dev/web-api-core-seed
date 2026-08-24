@@ -9,7 +9,6 @@ on:
 
 permissions:
   contents: read
-  pull-requests: read
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
@@ -33,12 +32,12 @@ jobs:
     name: Build, test and quality gates
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
-        with:
-          fetch-depth: 0
 
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v6
@@ -53,39 +52,8 @@ jobs:
           restore-keys: |
             nuget-${{ runner.os }}-
 
-      - name: Cache SonarCloud
-        uses: actions/cache@v6
-        with:
-          path: ~/.sonar/cache
-          key: sonar-${{ runner.os }}-dotnet-sonarscanner-${{ env.SONAR_SCANNER_VERSION }}
-          restore-keys: |
-            sonar-${{ runner.os }}-dotnet-sonarscanner-
-
-      - name: Install SonarScanner for .NET
-        run: |
-          dotnet tool install --global dotnet-sonarscanner --version "$SONAR_SCANNER_VERSION"
-          echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
-
       - name: Restore
         run: dotnet restore "$SOLUTION"
-
-      - name: Begin SonarCloud analysis
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          dotnet sonarscanner begin \
-            /k:"$SONAR_PROJECT_KEY" \
-            /o:"$SONAR_ORGANIZATION" \
-            /d:sonar.host.url="$SONAR_HOST_URL" \
-            /d:sonar.token="$SONAR_TOKEN" \
-            /d:sonar.sourceEncoding="UTF-8" \
-            /d:sonar.qualitygate.wait=true \
-            /d:sonar.qualitygate.timeout="$SONAR_QUALITY_GATE_TIMEOUT" \
-            /d:sonar.cs.opencover.reportsPaths="TestResults/Unit/*/coverage.opencover.xml,TestResults/Integration/*/coverage.opencover.xml" \
-            /d:sonar.cs.vstest.reportsPaths="TestResults/Unit/unit-tests.trx,TestResults/Integration/integration-tests.trx" \
-            /d:sonar.coverage.exclusions="tests/**,tools/**,**/Migrations/**,**/*ModelSnapshot.cs,**/*.Designer.cs" \
-            /d:sonar.cpd.exclusions="**/Migrations/**,**/*ModelSnapshot.cs,**/*.Designer.cs,docs/openapi/**/*.json,**/packages.lock.json"
 
       - name: Build
         run: dotnet build "$SOLUTION" --configuration Release --no-restore
@@ -139,14 +107,8 @@ jobs:
       - name: Report deprecated packages
         run: dotnet list "$SOLUTION" package --deprecated
 
-      - name: End SonarCloud analysis and enforce Quality Gate
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
-
       - name: Upload test results
-        if: always()
+        if: ${{ always() && hashFiles('TestResults/Unit/unit-tests.trx', 'TestResults/Integration/integration-tests.trx') != '' }}
         uses: actions/upload-artifact@v7
         with:
           name: test-results
@@ -156,7 +118,7 @@ jobs:
           if-no-files-found: error
 
       - name: Upload coverage results
-        if: always()
+        if: ${{ always() && hashFiles('TestResults/Unit/*/coverage.cobertura.xml', 'TestResults/Unit/*/coverage.opencover.xml', 'TestResults/Integration/*/coverage.cobertura.xml', 'TestResults/Integration/*/coverage.opencover.xml') != '' }}
         uses: actions/upload-artifact@v7
         with:
           name: coverage-results
@@ -168,9 +130,158 @@ jobs:
           if-no-files-found: error
 
       - name: Upload generated OpenAPI contracts
-        if: always()
+        if: ${{ always() && hashFiles('docs/openapi/openapi-v*.json') != '' }}
         uses: actions/upload-artifact@v7
         with:
           name: openapi-contracts
           path: docs/openapi/openapi-v*.json
           if-no-files-found: error
+
+  sonarcloud:
+    name: SonarCloud Quality Gate
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: build-test-quality
+    permissions:
+      contents: read
+      pull-requests: read
+
+    steps:
+      - name: Classify SonarCloud execution context
+        id: sonar-context
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_AUTHOR: ${{ github.event.pull_request.user.login || '' }}
+          PR_HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name || '' }}
+          REPOSITORY: ${{ github.repository }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          set -euo pipefail
+
+          if [[ "$EVENT_NAME" == "pull_request" && "$PR_AUTHOR" == "dependabot[bot]" ]]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "reason=dependabot-pull-request" >> "$GITHUB_OUTPUT"
+            echo "::notice::SonarCloud skipped because Dependabot pull requests do not receive repository secrets."
+            exit 0
+          fi
+
+          if [[ "$EVENT_NAME" == "pull_request" && -n "$PR_HEAD_REPOSITORY" && "$PR_HEAD_REPOSITORY" != "$REPOSITORY" ]]; then
+            echo "run=false" >> "$GITHUB_OUTPUT"
+            echo "reason=fork-pull-request" >> "$GITHUB_OUTPUT"
+            echo "::notice::SonarCloud skipped because fork pull requests do not receive repository secrets."
+            exit 0
+          fi
+
+          if [[ -z "${SONAR_TOKEN:-}" ]]; then
+            echo "::error::SONAR_TOKEN is required for trusted SonarCloud analysis. Configure it in GitHub Actions repository or organization secrets."
+            exit 1
+          fi
+
+          echo "run=true" >> "$GITHUB_OUTPUT"
+          echo "reason=trusted-context" >> "$GITHUB_OUTPUT"
+
+      - name: Report SonarCloud skip
+        if: ${{ steps.sonar-context.outputs.run == 'false' }}
+        run: echo "SonarCloud skipped for ${{ steps.sonar-context.outputs.reason }}."
+
+      - name: Checkout repository
+        if: ${{ steps.sonar-context.outputs.run == 'true' }}
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET SDK
+        if: ${{ steps.sonar-context.outputs.run == 'true' }}
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Cache NuGet packages
+        if: ${{ steps.sonar-context.outputs.run == 'true' }}
+        uses: actions/cache@v6
+        with:
+          path: ~/.nuget/packages
+          key: nuget-${{ runner.os }}-${{ hashFiles('global.json', 'Directory.Build.props', '**/*.csproj') }}
+          restore-keys: |
+            nuget-${{ runner.os }}-
+
+      - name: Cache SonarCloud
+        if: ${{ steps.sonar-context.outputs.run == 'true' }}
+        uses: actions/cache@v6
+        with:
+          path: ~/.sonar/cache
+          key: sonar-${{ runner.os }}-dotnet-sonarscanner-${{ env.SONAR_SCANNER_VERSION }}
+          restore-keys: |
+            sonar-${{ runner.os }}-dotnet-sonarscanner-
+
+      - name: Install SonarScanner for .NET
+        if: ${{ steps.sonar-context.outputs.run == 'true' }}
+        run: |
+          dotnet tool install --global dotnet-sonarscanner --version "$SONAR_SCANNER_VERSION"
+          echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
+
+      - name: Restore
+        if: ${{ steps.sonar-context.outputs.run == 'true' }}
+        run: dotnet restore "$SOLUTION"
+
+      - name: Begin SonarCloud analysis
+        if: ${{ steps.sonar-context.outputs.run == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet sonarscanner begin \
+            /k:"$SONAR_PROJECT_KEY" \
+            /o:"$SONAR_ORGANIZATION" \
+            /d:sonar.host.url="$SONAR_HOST_URL" \
+            /d:sonar.token="$SONAR_TOKEN" \
+            /d:sonar.sourceEncoding="UTF-8" \
+            /d:sonar.qualitygate.wait=true \
+            /d:sonar.qualitygate.timeout="$SONAR_QUALITY_GATE_TIMEOUT" \
+            /d:sonar.cs.opencover.reportsPaths="TestResults/Unit/*/coverage.opencover.xml,TestResults/Integration/*/coverage.opencover.xml" \
+            /d:sonar.cs.vstest.reportsPaths="TestResults/Unit/unit-tests.trx,TestResults/Integration/integration-tests.trx" \
+            /d:sonar.coverage.exclusions="tests/**,tools/**,**/Migrations/**,**/*ModelSnapshot.cs,**/*.Designer.cs" \
+            /d:sonar.cpd.exclusions="**/Migrations/**,**/*ModelSnapshot.cs,**/*.Designer.cs,docs/openapi/**/*.json,**/packages.lock.json"
+
+      - name: Build
+        if: ${{ steps.sonar-context.outputs.run == 'true' }}
+        run: dotnet build "$SOLUTION" --configuration Release --no-restore
+
+      - name: Prepare test result directories
+        if: ${{ steps.sonar-context.outputs.run == 'true' }}
+        run: |
+          rm -rf TestResults
+          mkdir -p TestResults/Unit TestResults/Integration
+
+      - name: Run unit tests with coverage
+        if: ${{ steps.sonar-context.outputs.run == 'true' }}
+        run: >
+          dotnet test "$UNIT_TEST_PROJECT"
+          --configuration Release
+          --no-build
+          --logger "trx;LogFileName=unit-tests.trx"
+          --results-directory TestResults/Unit
+          --collect:"XPlat Code Coverage" --
+          DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover
+          "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude=[*.Test]*,[*.Tests]*,[*.UnitTests]*,[*.IntegrationTests]*"
+          "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile=**/*.generated.cs"
+
+      - name: Run integration tests with coverage
+        if: ${{ steps.sonar-context.outputs.run == 'true' }}
+        run: >
+          dotnet test "$INTEGRATION_TEST_PROJECT"
+          --configuration Release
+          --no-build
+          --logger "trx;LogFileName=integration-tests.trx"
+          --results-directory TestResults/Integration
+          --collect:"XPlat Code Coverage" --
+          DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=cobertura,opencover
+          "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Exclude=[*.Test]*,[*.Tests]*,[*.UnitTests]*,[*.IntegrationTests]*"
+          "DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.ExcludeByFile=**/*.generated.cs"
+
+      - name: End SonarCloud analysis and enforce Quality Gate
+        if: ${{ steps.sonar-context.outputs.run == 'true' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"

@@ -32,3 +32,4 @@
 | D028 | Nao ativar `dotnet format --verify-no-changes` como gate neste momento. | Accepted | O comando falha por divida de whitespace existente; habilita-lo agora deixaria o CI permanentemente vermelho sem uma entrega dedicada de cleanup. |
 | D029 | Usar cache apenas para `~/.nuget/packages`, invalidado por SDK/propriedades/manifests, sem cachear `bin`, `obj` ou containers. | Accepted | Reduz tempo de restore sem carregar outputs de build/test stale; lock files seguem como melhoria futura de reproducibilidade. |
 | D030 | Reduzir Dependency Review para `pull-requests: read` e remover comentario automatico no PR. | Accepted | O comentario exigia permissao de escrita; o check bloqueante e suficiente para esta fase. |
+| D031 | Separar SonarCloud do job independente de build/test/OpenAPI/pacotes. | Accepted | Dependabot e forks nao recebem secrets; separar jobs mantem gates locais confiaveis e preserva falha fechada do Sonar em contextos confiaveis. |

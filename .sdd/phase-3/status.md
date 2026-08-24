@@ -12,6 +12,22 @@ Fase 3: concluida localmente
 Push: pendente
 PR: pendente
 
+## Recuperacao do CI - 2026-08-24
+
+- Branch criada: `fix/ci-quality-gates`.
+- Issue relacionada: `#13`.
+- Causa PR `#24`: falha real do SonarCloud Quality Gate; `new_coverage=72.2` abaixo do threshold `80`; duplicacao em `0.9` abaixo do limite `3`.
+- Causa PRs `#25`, `#26` e `#27`: Dependabot sem `SONAR_TOKEN`; `sonarscanner begin` falhou antes de build/test/OpenAPI/pacotes.
+- Estado remoto atual do projeto SonarCloud: Quality Gate `ERROR` por `new_coverage=75.0` abaixo do threshold `80`; duplicacao `0.0` OK.
+- Correcao: `ci.yml` separado em `Build, test and quality gates` e `SonarCloud Quality Gate`.
+- Dependabot e forks: SonarCloud ignorado com notice explicito, sem `pull_request_target` e sem secrets.
+- Contextos confiaveis: `SONAR_TOKEN` ausente, scanner falho, Quality Gate vermelho ou timeout falham o job SonarCloud.
+- Validacao local: restore, build, testes unitarios, testes de integracao, cobertura, OpenAPI, JSON, sync, auditoria vulneravel e `git diff --check` passaram.
+- `actionlint`: indisponivel localmente.
+- Push: concluido para `fix/ci-quality-gates`.
+- PR: `https://github.com/rodri-oliveira-dev/web-api-core-seed/pull/29`.
+- Validacao remota inicial: CI, SonarCloud Quality Gate, CodeQL e Dependency Review passaram.
+
 ## Estado inicial do prompt 01
 
 - Branch atual: `phase/3-quality-and-safety`
