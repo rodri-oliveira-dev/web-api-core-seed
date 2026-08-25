@@ -1,7 +1,7 @@
 using System.Threading;
 using System.Threading.Tasks;
-using WebApiCoreSeed.SampleRestaurant.Intefaces;
-using WebApiCoreSeed.SampleRestaurant.Intefaces.Service;
+using WebApiCoreSeed.SampleRestaurant.Interfaces;
+using WebApiCoreSeed.SampleRestaurant.Interfaces.Service;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Persistence;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Repository;
 using WebApiCoreSeed.SampleRestaurant.Models;
@@ -9,26 +9,26 @@ using WebApiCoreSeed.SampleRestaurant.Models.Validations;
 
 namespace WebApiCoreSeed.SampleRestaurant.Services
 {
-    public class LogginService : BaseService, ILogginService
+    public class LogEntryService : BaseService, ILogEntryService
     {
-        private readonly ILogginRepository _logginRepository;
+        private readonly ILogEntryRepository _logEntryRepository;
         private readonly ISampleRestaurantUnitOfWork _unitOfWork;
 
-        public LogginService(ILogginRepository logginRepository,
+        public LogEntryService(ILogEntryRepository logEntryRepository,
                                  ISampleRestaurantUnitOfWork unitOfWork,
                                  INotificador notificador) : base(notificador)
         {
-            _logginRepository = logginRepository;
+            _logEntryRepository = logEntryRepository;
             _unitOfWork = unitOfWork;
         }
 
-        public async Task<bool> Adicionar(LogginEntity mesa, CancellationToken cancellationToken = default)
+        public async Task<bool> Adicionar(LogEntry logEntry, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (!ExecutarValidacao(new LogginValidation(), mesa)) return false;
+            if (!ExecutarValidacao(new LogEntryValidation(), logEntry)) return false;
 
-            await _logginRepository.Registrar(mesa, cancellationToken);
+            await _logEntryRepository.Registrar(logEntry, cancellationToken);
             await _unitOfWork.CommitAsync(cancellationToken);
             return true;
         }

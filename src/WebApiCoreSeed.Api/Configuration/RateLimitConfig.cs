@@ -64,7 +64,7 @@ namespace WebApiCoreSeed.Api.Configuration
                             httpContext,
                             StatusCodes.Status429TooManyRequests,
                             ApiProblemDetails.RateLimitType,
-                            "Limite de requisicoes excedido.",
+                            "Limite de requisições excedido.",
                             "A cota de requisicoes foi excedida. Aguarde antes de tentar novamente.")
                     });
                 };

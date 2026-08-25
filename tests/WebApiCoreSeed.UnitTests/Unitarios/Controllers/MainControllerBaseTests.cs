@@ -8,7 +8,7 @@ using WebApiCoreSeed.Api.Controllers;
 using WebApiCoreSeed.Api.Errors;
 using WebApiCoreSeed.Api.Results;
 using WebApiCoreSeed.Api.ViewModels;
-using WebApiCoreSeed.SampleRestaurant.Intefaces;
+using WebApiCoreSeed.SampleRestaurant.Interfaces;
 using WebApiCoreSeed.SampleRestaurant.Notificacoes;
 using Xunit;
 
@@ -126,6 +126,30 @@ public sealed class MainControllerBaseTests
     }
 
     [Fact]
+    public void ProblemDetailsQuandoNotificacaoIndicaConflitoDeveRetornar409()
+    {
+        var httpContext = new DefaultHttpContext();
+        httpContext.Request.Path = "/api/v1/resources";
+        var notifications = new[] { new Notificacao("Já existe um objeto cadastrado.") };
+
+        var problem = ApiProblemDetails.CreateFromNotifications(httpContext, notifications);
+
+        Assert.Equal(StatusCodes.Status409Conflict, problem.Status);
+        Assert.Equal(ApiProblemDetails.ConflictType, problem.Type);
+        Assert.Equal("A operação conflita com um recurso existente.", problem.Detail);
+    }
+
+    [Fact]
+    public void ProblemDetailsQuandoStatusConhecidoDeveRetornarTextoPortuguesCorreto()
+    {
+        Assert.Equal("Requisição inválida.", ApiProblemDetails.TitleForStatusCode(StatusCodes.Status400BadRequest));
+        Assert.Equal("Autenticação necessária.", ApiProblemDetails.TitleForStatusCode(StatusCodes.Status401Unauthorized));
+        Assert.Equal("Recurso não encontrado.", ApiProblemDetails.TitleForStatusCode(StatusCodes.Status404NotFound));
+        Assert.Equal("Limite de requisições excedido.", ApiProblemDetails.TitleForStatusCode(StatusCodes.Status429TooManyRequests));
+        Assert.Equal("Ocorreu um erro inesperado ao processar a requisição.", ApiProblemDetails.DetailForStatusCode(StatusCodes.Status500InternalServerError));
+    }
+
+    [Fact]
     public void NotificarErroModelInvalidaDeveUsarMensagemPadraoQuandoErroNaoPossuiTexto()
     {
         var controller = CreateController();
@@ -138,7 +162,7 @@ public sealed class MainControllerBaseTests
         var problemResult = AssertProblem(result, StatusCodes.Status400BadRequest, ApiProblemDetails.DomainRuleType);
         var problem = Assert.IsType<ProblemDetails>(problemResult.Value);
         var errors = Assert.IsType<Dictionary<string, string[]>>(problem.Extensions[ApiProblemDetails.ErrorsExtension]);
-        Assert.Contains("Valor informado invalido.", errors["notifications"]);
+        Assert.Contains("Valor informado inválido.", errors["notifications"]);
     }
 
     [Fact]

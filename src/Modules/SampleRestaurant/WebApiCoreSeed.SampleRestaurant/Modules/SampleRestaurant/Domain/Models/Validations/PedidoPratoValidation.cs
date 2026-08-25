@@ -12,7 +12,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Models.Validations
                 .NotNull().WithMessage(MensagemCampoObrigatorio);
 
             RuleFor(c => c.Observacao)
-                .MaximumLength(1000).WithMessage("O campo {PropertyName} precisa ter no maximo {MaxLength} caracteres");
+                .MaximumLength(1000).WithMessage("O campo {PropertyName} precisa ter no máximo {MaxLength} caracteres");
         }
     }
 }

@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using WebApiCoreSeed.SampleRestaurant.Intefaces;
+using WebApiCoreSeed.SampleRestaurant.Interfaces;
 
 namespace WebApiCoreSeed.Api.Controllers.V2.Controllers
 {

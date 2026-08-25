@@ -3,6 +3,7 @@
 | Prompt | Status |
 | --- | --- |
 | 01 - Development seed deterministico e idempotente | PR aberto; checks remotos passaram |
+| 02 - Normalize UTF-8 encoding and active code naming | PR aberto; checks remotos passaram |
 
 ## Prompt 01
 
@@ -18,3 +19,18 @@
 - Deprecated: `xunit 2.9.3` nos projetos de teste, fora do escopo desta issue.
 - PR: https://github.com/rodri-oliveira-dev/web-api-core-seed/pull/34.
 - Checks remotos: Build/test, CodeQL, Dependency Review e SonarCloud Quality Gate passaram.
+
+## Prompt 02
+
+- Branch: `refactor/normalize-encoding-and-naming`.
+- Issue: https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/35.
+- Nomes ativos corrigidos: `Intefaces` -> `Interfaces`, `Clains` -> `Claims`, `Loggin*` -> `LogEntry*`.
+- Identificador legado preservado: tabela `Loggin`.
+- OpenAPI: regenerado com mudancas textuais em descricoes 400/401/429.
+- Unit tests: 124 passed after coverage remediation.
+- Integration tests: 54 passed.
+- Architecture tests: 8 passed explicitamente.
+- EF pending model changes: sem alteracoes pendentes nos dois DbContexts.
+- Vulnerabilidades: nenhuma nas fontes atuais.
+- PR: https://github.com/rodri-oliveira-dev/web-api-core-seed/pull/36.
+- Checks remotos: apos remediacao de cobertura, Build/test, CodeQL, Dependency Review e SonarCloud Quality Gate passaram.

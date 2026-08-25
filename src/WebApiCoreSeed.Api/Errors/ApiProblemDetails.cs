@@ -54,7 +54,7 @@ namespace WebApiCoreSeed.Api.Errors
 
                 errors[entry.Key] = value.Errors
                     .Select(error => string.IsNullOrWhiteSpace(error.ErrorMessage)
-                        ? "Valor informado invalido."
+                        ? "Valor informado inválido."
                         : error.ErrorMessage)
                     .ToArray();
             }
@@ -67,7 +67,7 @@ namespace WebApiCoreSeed.Api.Errors
             var problemDetails = new ValidationProblemDetails(errors)
             {
                 Type = ValidationType,
-                Title = "Validacao da requisicao falhou.",
+                Title = "Validação da requisição falhou.",
                 Status = StatusCodes.Status400BadRequest,
                 Detail = "Corrija os campos indicados e tente novamente.",
                 Instance = httpContext.Request.Path
@@ -84,10 +84,10 @@ namespace WebApiCoreSeed.Api.Errors
             var isConflict = messages.Any(message => message.StartsWith("Já existe", StringComparison.OrdinalIgnoreCase));
             var statusCode = isConflict ? StatusCodes.Status409Conflict : StatusCodes.Status400BadRequest;
             var type = isConflict ? ConflictType : DomainRuleType;
-            var title = isConflict ? "Conflito com o estado atual do recurso." : "Regra de dominio violada.";
+            var title = isConflict ? "Conflito com o estado atual do recurso." : "Regra de domínio violada.";
             var detail = isConflict
-                ? "A operacao conflita com um recurso existente."
-                : "A operacao nao pode ser concluida com os dados informados.";
+                ? "A operação conflita com um recurso existente."
+                : "A operação não pode ser concluída com os dados informados.";
 
             var problemDetails = Create(httpContext, statusCode, type, title, detail);
             problemDetails.Extensions[ErrorsExtension] = new Dictionary<string, string[]>
@@ -122,12 +122,12 @@ namespace WebApiCoreSeed.Api.Errors
         {
             return statusCode switch
             {
-                StatusCodes.Status400BadRequest => "Requisicao invalida.",
-                StatusCodes.Status401Unauthorized => "Autenticacao necessaria.",
+                StatusCodes.Status400BadRequest => "Requisição inválida.",
+                StatusCodes.Status401Unauthorized => "Autenticação necessária.",
                 StatusCodes.Status403Forbidden => "Acesso negado.",
-                StatusCodes.Status404NotFound => "Recurso nao encontrado.",
+                StatusCodes.Status404NotFound => "Recurso não encontrado.",
                 StatusCodes.Status409Conflict => "Conflito.",
-                StatusCodes.Status429TooManyRequests => "Limite de requisicoes excedido.",
+                StatusCodes.Status429TooManyRequests => "Limite de requisições excedido.",
                 StatusCodes.Status500InternalServerError => "Erro interno.",
                 _ => HttpErrorMessages.RetornaMensagemErro(statusCode)
             };
@@ -136,7 +136,7 @@ namespace WebApiCoreSeed.Api.Errors
         public static string DetailForStatusCode(int statusCode)
         {
             return statusCode == StatusCodes.Status500InternalServerError
-                ? "Ocorreu um erro inesperado ao processar a requisicao."
+                ? "Ocorreu um erro inesperado ao processar a requisição."
                 : HttpErrorMessages.RetornaMensagemErro(statusCode);
         }
 

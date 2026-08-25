@@ -16,7 +16,7 @@ namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Context
         public virtual DbSet<PedidoPrato> PedidoPrato { get; set; } = null!;
         public virtual DbSet<Pedido> Pedidos { get; set; } = null!;
         public virtual DbSet<Prato> Pratos { get; set; } = null!;
-        public virtual DbSet<LogginEntity> Loggins { get; set; } = null!;
+        public virtual DbSet<LogEntry> LogEntries { get; set; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

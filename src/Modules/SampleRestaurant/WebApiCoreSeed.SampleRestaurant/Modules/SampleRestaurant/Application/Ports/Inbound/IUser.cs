@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Security.Claims;
 
-namespace WebApiCoreSeed.SampleRestaurant.Intefaces
+namespace WebApiCoreSeed.SampleRestaurant.Interfaces
 {
     public interface IUser
     {

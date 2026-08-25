@@ -12,8 +12,8 @@ using WebApiCoreSeed.Api.Configuration;
 using WebApiCoreSeed.Api.Extensions;
 using WebApiCoreSeed.Api.Results;
 using WebApiCoreSeed.Api.ViewModels;
-using WebApiCoreSeed.SampleRestaurant.Intefaces;
-using WebApiCoreSeed.SampleRestaurant.Intefaces.Service;
+using WebApiCoreSeed.SampleRestaurant.Interfaces;
+using WebApiCoreSeed.SampleRestaurant.Interfaces.Service;
 using WebApiCoreSeed.SampleRestaurant.Models;
 
 namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
@@ -44,7 +44,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// <param name="cancellationToken">Token de cancelamento da requisição.</param>
         /// <returns></returns>
         /// <response code="200">Retorna o objeto referente a ID informada</response>
-        /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
+        /// <response code="401">A chamada precisa ser efetuada por um usuário autenticado.</response>
         /// <response code="403">O usuário esta autenticado, mas o não possui permissão para executar essa ação.</response>
         /// <response code="404">Caso o objeto não seja encontrada pela ID retorna null</response>
         [HttpGet("{id:guid}")]
@@ -68,7 +68,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// <returns></returns>
         /// <response code="201">Retorna o objeto referente a ID informada</response>
         /// <response code="400">Não foi possivel executar a ação solicitada</response>
-        /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
+        /// <response code="401">A chamada precisa ser efetuada por um usuário autenticado.</response>
         /// <response code="403">O usuário esta autenticado, mas o não possui permissão para executar essa ação.</response>
         [HttpPost]
         [ClaimsAuthorize("Mesas")]
@@ -92,7 +92,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// <returns></returns>
         /// <response code="204">Objeto atualizado com sucesso</response>
         /// <response code="400">Não foi possivel executar a ação solicitada</response>
-        /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
+        /// <response code="401">A chamada precisa ser efetuada por um usuário autenticado.</response>
         /// <response code="403">O usuário esta autenticado, mas o não possui permissão para executar essa ação.</response>
         /// <response code="404">O objeto não foi encontrado.</response>
         [HttpPut("{id:guid}")]
@@ -132,7 +132,7 @@ namespace WebApiCoreSeed.Api.Controllers.V1.Controllers
         /// <returns></returns>
         /// <response code="204">Objeto excluido com sucesso</response>
         /// <response code="400">Não foi possivel executar a ação solicitada</response>
-        /// <response code="401">A chamada precisa ser efetuada por um usuario autenticado.</response>
+        /// <response code="401">A chamada precisa ser efetuada por um usuário autenticado.</response>
         /// <response code="403">O usuário esta autenticado, mas o não possui permissão para executar essa ação.</response>
         /// <response code="404">O objeto não foi encontrado.</response>
         [HttpDelete("{id:guid}")]

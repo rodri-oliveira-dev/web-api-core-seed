@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc;
-using WebApiCoreSeed.Api.Extensions.Clains;
+using WebApiCoreSeed.Api.Extensions.Claims;
 using WebApiCoreSeed.Api.Filters;
 
 namespace WebApiCoreSeed.Api.Attributes

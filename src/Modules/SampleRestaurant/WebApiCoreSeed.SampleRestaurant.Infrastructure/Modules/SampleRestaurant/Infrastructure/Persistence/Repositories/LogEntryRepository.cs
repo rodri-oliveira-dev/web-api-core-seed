@@ -1,4 +1,3 @@
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using WebApiCoreSeed.SampleRestaurant.Infrastructure.Context;
@@ -7,19 +6,19 @@ using WebApiCoreSeed.SampleRestaurant.Models;
 
 namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Repository
 {
-    public class LogginRepository : ILogginRepository
+    public class LogEntryRepository : ILogEntryRepository
     {
         private readonly SampleRestaurantDbContext _context;
 
-        public LogginRepository(SampleRestaurantDbContext context)
+        public LogEntryRepository(SampleRestaurantDbContext context)
         {
             _context = context;
         }
 
-        public Task Registrar(LogginEntity log, CancellationToken cancellationToken = default)
+        public Task Registrar(LogEntry log, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            _context.Loggins.Add(log);
+            _context.LogEntries.Add(log);
             return Task.CompletedTask;
         }
 

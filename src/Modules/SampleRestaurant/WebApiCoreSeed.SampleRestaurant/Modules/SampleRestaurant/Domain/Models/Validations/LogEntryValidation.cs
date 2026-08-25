@@ -2,9 +2,9 @@ using FluentValidation;
 
 namespace WebApiCoreSeed.SampleRestaurant.Models.Validations
 {
-    public class LogginValidation : AbstractValidator<LogginEntity>
+    public class LogEntryValidation : AbstractValidator<LogEntry>
     {
-        public LogginValidation()
+        public LogEntryValidation()
         {
             RuleFor(c => c.Message)
                 .NotEmpty().WithMessage("O campo {PropertyName} precisa ser fornecido")

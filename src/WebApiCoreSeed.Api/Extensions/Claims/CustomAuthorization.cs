@@ -2,7 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 
-namespace WebApiCoreSeed.Api.Extensions.Clains
+namespace WebApiCoreSeed.Api.Extensions.Claims
 {
     public static class CustomAuthorization
     {

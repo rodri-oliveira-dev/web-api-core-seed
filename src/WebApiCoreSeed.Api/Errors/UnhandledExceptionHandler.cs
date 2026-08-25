@@ -37,7 +37,7 @@ namespace WebApiCoreSeed.Api.Errors
 
             var detail = _environment.IsDevelopment()
                 ? exception.Message
-                : "Ocorreu um erro inesperado ao processar a requisicao.";
+                : "Ocorreu um erro inesperado ao processar a requisição.";
 
             var problemDetails = ApiProblemDetails.Create(
                 httpContext,

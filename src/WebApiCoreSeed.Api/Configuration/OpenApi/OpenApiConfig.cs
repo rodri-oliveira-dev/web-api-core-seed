@@ -78,8 +78,8 @@ namespace WebApiCoreSeed.Api.Configuration.OpenApi
             CancellationToken cancellationToken)
         {
             operation.Responses ??= new OpenApiResponses();
-            operation.Responses.TryAdd(StatusCodes.Status400BadRequest.ToString(CultureInfo.InvariantCulture), CreateProblemDetailsResponse("Requisicao invalida."));
-            operation.Responses.TryAdd(StatusCodes.Status429TooManyRequests.ToString(CultureInfo.InvariantCulture), CreateProblemDetailsResponse("Limite de requisicoes excedido."));
+            operation.Responses.TryAdd(StatusCodes.Status400BadRequest.ToString(CultureInfo.InvariantCulture), CreateProblemDetailsResponse("Requisição inválida."));
+            operation.Responses.TryAdd(StatusCodes.Status429TooManyRequests.ToString(CultureInfo.InvariantCulture), CreateProblemDetailsResponse("Limite de requisições excedido."));
 
             if (RequiresAuthorization(context))
             {
@@ -92,7 +92,7 @@ namespace WebApiCoreSeed.Api.Configuration.OpenApi
                     });
                 }
 
-                operation.Responses.TryAdd(StatusCodes.Status401Unauthorized.ToString(CultureInfo.InvariantCulture), CreateProblemDetailsResponse("Autenticacao necessaria."));
+                operation.Responses.TryAdd(StatusCodes.Status401Unauthorized.ToString(CultureInfo.InvariantCulture), CreateProblemDetailsResponse("Autenticação necessária."));
                 operation.Responses.TryAdd(StatusCodes.Status403Forbidden.ToString(CultureInfo.InvariantCulture), CreateProblemDetailsResponse("Acesso negado."));
             }
 

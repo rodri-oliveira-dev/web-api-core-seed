@@ -3,7 +3,7 @@ using WebApiCoreSeed.SampleRestaurant.Models.Enums;
 
 namespace WebApiCoreSeed.SampleRestaurant.Models
 {
-    public class LogginEntity : Entity
+    public class LogEntry : Entity
     {
         public int? EventId { get; set; }
         public string? Escopo { get; set; }

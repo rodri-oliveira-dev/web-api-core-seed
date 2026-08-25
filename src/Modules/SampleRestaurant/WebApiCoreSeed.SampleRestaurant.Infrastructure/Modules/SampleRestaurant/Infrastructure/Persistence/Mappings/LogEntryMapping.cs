@@ -6,9 +6,9 @@ using WebApiCoreSeed.SampleRestaurant.Models.Enums;
 
 namespace WebApiCoreSeed.SampleRestaurant.Infrastructure.Mappings
 {
-    public class LogginMapping : IEntityTypeConfiguration<LogginEntity>
+    public class LogEntryMapping : IEntityTypeConfiguration<LogEntry>
     {
-        public void Configure(EntityTypeBuilder<LogginEntity> builder)
+        public void Configure(EntityTypeBuilder<LogEntry> builder)
         {
             var converter = new EnumToNumberConverter<ELogLevel, int>();
 

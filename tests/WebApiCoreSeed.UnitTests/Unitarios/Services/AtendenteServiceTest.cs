@@ -1,5 +1,5 @@
 using Moq;
-using WebApiCoreSeed.SampleRestaurant.Intefaces;
+using WebApiCoreSeed.SampleRestaurant.Interfaces;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Persistence;
 using WebApiCoreSeed.SampleRestaurant.Interfaces.Repository;
 using WebApiCoreSeed.SampleRestaurant.Models;

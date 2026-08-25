@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using WebApiCoreSeed.SampleRestaurant.Models;
 
-namespace WebApiCoreSeed.SampleRestaurant.Intefaces.Service
+namespace WebApiCoreSeed.SampleRestaurant.Interfaces.Service
 {
     public interface IPedidoPratoService
     {

@@ -8,3 +8,4 @@
 | P5-D004 | Usar GUIDs deterministicas para dados do `SampleRestaurant`. | Aceita | Garante upsert previsivel sem depender de `AnyAsync()` na tabela inteira. |
 | P5-D005 | Usar transacao implicita de um unico `SaveChangesAsync` para o SampleRestaurant. | Aceita | A fronteira atomica real e local a um DbContext; transacao explicita gerava warning com MARS nas connection strings locais. |
 | P5-D006 | Criar a issue #33 porque `ISSUE_URL` veio como placeholder e nao havia issue existente com o titulo esperado. | Aceita | Permite PR com `Closes #33` conforme entrega obrigatoria. |
+| P5-D007 | Criar a issue #35 porque `ISSUE_URL` veio como placeholder e nao havia issue existente com o titulo esperado. | Aceita | Permite PR com `Closes #35` conforme entrega obrigatoria. |

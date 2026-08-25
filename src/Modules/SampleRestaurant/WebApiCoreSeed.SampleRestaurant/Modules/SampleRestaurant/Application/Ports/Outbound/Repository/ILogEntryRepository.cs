@@ -4,8 +4,8 @@ using WebApiCoreSeed.SampleRestaurant.Models;
 
 namespace WebApiCoreSeed.SampleRestaurant.Interfaces.Repository
 {
-    public interface ILogginRepository
+    public interface ILogEntryRepository
     {
-        Task Registrar(LogginEntity log, CancellationToken cancellationToken = default);
+        Task Registrar(LogEntry log, CancellationToken cancellationToken = default);
     }
 }

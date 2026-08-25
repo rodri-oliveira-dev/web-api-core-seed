@@ -2,7 +2,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Filters;
 using WebApiCoreSeed.Api.Errors;
-using WebApiCoreSeed.Api.Extensions.Clains;
+using WebApiCoreSeed.Api.Extensions.Claims;
 using WebApiCoreSeed.Api.Results;
 
 namespace WebApiCoreSeed.Api.Filters
@@ -24,8 +24,8 @@ namespace WebApiCoreSeed.Api.Filters
                     context.HttpContext,
                     StatusCodes.Status401Unauthorized,
                     ApiProblemDetails.AuthenticationType,
-                    "Autenticacao necessaria.",
-                    "A chamada precisa ser efetuada por um usuario autenticado."));
+                    "Autenticação necessária.",
+                    "A chamada precisa ser efetuada por um usuário autenticado."));
                 return;
             }
 
@@ -36,7 +36,7 @@ namespace WebApiCoreSeed.Api.Filters
                     StatusCodes.Status403Forbidden,
                     ApiProblemDetails.AuthorizationType,
                     "Acesso negado.",
-                    "O usuario esta autenticado, mas nao possui permissao para executar essa acao."));
+                    "O usuário está autenticado, mas não possui permissão para executar essa ação."));
             }
         }
     }
