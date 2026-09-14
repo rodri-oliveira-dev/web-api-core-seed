@@ -525,6 +525,14 @@
               "maximum": 2147483647,
               "minimum": 1,
               "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ],
               "format": "int32",
               "default": 1
             }
@@ -537,6 +545,14 @@
               "maximum": 50,
               "minimum": 1,
               "pattern": "^-?(?:0|[1-9]\\d*)$",
+              "anyOf": [
+                {
+                  "type": "integer"
+                },
+                {
+                  "type": "string"
+                }
+              ],
               "format": "int32",
               "default": 10
             }
@@ -1014,6 +1030,14 @@
             "maximum": 2147483647,
             "minimum": 1,
             "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
             "format": "int32"
           },
           "ativo": {
@@ -1021,13 +1045,17 @@
             "nullable": true
           },
           "localizacaoMesa": {
-            "type": "integer",
             "oneOf": [
+              {
+                "enum": [
+                  null
+                ],
+                "nullable": true
+              },
               {
                 "$ref": "#/components/schemas/ELocalizacaoMesa"
               }
-            ],
-            "nullable": true
+            ]
           },
           "id": {
             "type": "string",
@@ -1051,6 +1079,14 @@
             "maximum": 2147483647,
             "minimum": 1,
             "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
             "format": "int32"
           },
           "ativo": {
@@ -1076,18 +1112,50 @@
           },
           "page": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
             "format": "int32"
           },
           "pageSize": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
             "format": "int32"
           },
           "totalItems": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
             "format": "int32"
           },
           "totalPages": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              }
+            ],
             "format": "int32"
           },
           "hasNextPage": {
@@ -1127,6 +1195,14 @@
           },
           "preco": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
             "format": "double"
           },
           "ativo": {
@@ -1134,13 +1210,17 @@
             "nullable": true
           },
           "tipoPrato": {
-            "type": "integer",
             "oneOf": [
+              {
+                "enum": [
+                  null
+                ],
+                "nullable": true
+              },
               {
                 "$ref": "#/components/schemas/ETipoPrato"
               }
-            ],
-            "nullable": true
+            ]
           },
           "id": {
             "type": "string",
@@ -1175,6 +1255,14 @@
           },
           "preco": {
             "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?(?:[eE][+-]?\\d+)?$",
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "string"
+              }
+            ],
             "format": "double"
           },
           "ativo": {
@@ -1202,6 +1290,20 @@
           },
           "status": {
             "pattern": "^-?(?:0|[1-9]\\d*)$",
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "string"
+              },
+              {
+                "enum": [
+                  null
+                ],
+                "nullable": true
+              }
+            ],
             "format": "int32",
             "nullable": true
           },
