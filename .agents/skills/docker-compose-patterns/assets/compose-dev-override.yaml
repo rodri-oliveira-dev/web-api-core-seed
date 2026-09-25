@@ -1,0 +1,33 @@
+# Development override — loaded automatically as compose.override.yaml
+# Adds bind mounts, debug ports, and Compose Watch configuration
+# Usage: save as compose.override.yaml alongside compose.yaml
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    ports:
+      - "9229:9229" # Debugger port (8080 is already in the base file)
+    environment:
+      NODE_ENV: development
+      LOG_LEVEL: debug
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /app/src
+        - action: rebuild
+          path: ./package.json
+        - action: sync+restart
+          path: ./config
+          target: /app/config
+
+  db:
+    ports:
+      - "127.0.0.1:5432:5432" # Expose DB only to local tools
+
+  cache:
+    ports:
+      - "127.0.0.1:6379:6379" # Expose Redis only to local tools
