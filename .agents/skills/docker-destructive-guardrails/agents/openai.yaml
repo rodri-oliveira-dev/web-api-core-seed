@@ -1,0 +1,6 @@
+interface:
+  display_name: Docker Destructive Command Guardrails
+  short_description: Cross-product policy for confirming irreversible or destructive Docker operations before running them.
+  default_prompt: Use this skill before running or recommending any Docker command that deletes, wipes, resets, or otherwise irreversibly changes state.
+policy:
+  allow_implicit_invocation: true

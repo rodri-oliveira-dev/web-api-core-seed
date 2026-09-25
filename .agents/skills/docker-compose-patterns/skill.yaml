@@ -1,0 +1,20 @@
+schema: v1
+id: docker-compose-patterns
+version: 0.1.1
+title: Docker Compose Patterns
+description: Patterns for robust, maintainable Docker Compose configurations.
+owns:
+  - compose.yaml
+  - compose.override.yaml
+  - service-orchestration
+use_when:
+  - The main artifact being created, edited, or reviewed is compose.yaml or compose.override.yaml.
+  - The task involves service dependencies, readiness, health checks, networks, volumes, or overrides.
+  - The user is debugging startup ordering or service-to-service connectivity in Compose.
+do_not_use_when:
+  - The main task is creating the first Docker scaffold for a project with no existing setup.
+  - The main task is optimizing how an image is built rather than how services are wired.
+delegates_to:
+  - docker-project-foundations
+  - docker-build-strategies
+  - docker-destructive-guardrails
