@@ -12,7 +12,10 @@ Use uma skill apenas quando a descricao corresponder ao pedido atual. Em caso de
 | `integration-tests-dotnet` | planejada | Criar ou revisar testes de integracao quando a Fase 2 introduzir base moderna para isso. | Testes unitarios simples ou antes da infraestrutura de teste existir. | Futuro `WebApplicationFactory` e Testcontainers |
 | `test-anti-patterns` | pronta | Auditar qualidade dos testes atuais ou futuros. | Medir cobertura pura ou escrever testes do zero sem foco em anti-padroes. | Projeto `tests/WebApiCoreSeed.UnitTests` |
 
-| `docker-build-strategies` | pronta | Criar, revisar ou otimizar Dockerfiles, cache, imagem final, non-root e segredos de build. | Tarefas apenas de Compose sem impacto no build. | Docker/BuildKit |\n| `docker-compose-patterns` | pronta | Criar, revisar ou depurar `compose*.yaml`, health checks, dependencias, volumes e redes. | Otimizacao interna de Dockerfile. | Docker Compose v2 |\n| `docker-destructive-guardrails` | pronta | Avaliar comandos Docker destrutivos, limpeza, prune, remocao de volumes e containers. | Operacoes Docker nao destrutivas. | Docker CLI |\n
+| `docker-build-strategies` | pronta | Criar, revisar ou otimizar Dockerfiles, cache, imagem final, non-root e segredos de build. | Tarefas apenas de Compose sem impacto no build. | Docker/BuildKit |
+| `docker-compose-patterns` | pronta | Criar, revisar ou depurar `compose*.yaml`, health checks, dependencias, volumes e redes. | Otimizacao interna de Dockerfile. | Docker Compose v2 |
+| `docker-destructive-guardrails` | pronta | Avaliar comandos Docker destrutivos, limpeza, prune, remocao de volumes e containers. | Operacoes Docker nao destrutivas. | Docker CLI |
+
 ## Notas
 
 - Skills adiadas e excluidas estao registradas em `.sdd/phase-2/bootstrap-tooling/source-manifest.md`.
