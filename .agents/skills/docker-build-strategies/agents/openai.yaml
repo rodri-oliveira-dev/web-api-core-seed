@@ -1,0 +1,6 @@
+interface:
+  display_name: Docker Build Strategies
+  short_description: Strategies for efficient, secure, and optimized Docker image builds.
+  default_prompt: Use this skill when writing or optimizing Dockerfiles.
+policy:
+  allow_implicit_invocation: true

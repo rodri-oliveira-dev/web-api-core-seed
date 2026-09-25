@@ -1,0 +1,20 @@
+schema: v1
+id: docker-build-strategies
+version: 0.1.0
+title: Docker Build Strategies
+description: Strategies for efficient, secure, and optimized Docker image builds.
+owns:
+  - Dockerfile
+  - .dockerignore
+  - image-build-optimization
+use_when:
+  - The main artifact being created, edited, or reviewed is a Dockerfile.
+  - The user wants to optimize image size, build speed, cache reuse, or runtime security.
+  - The task includes improving .dockerignore or build context hygiene.
+do_not_use_when:
+  - The main task is wiring multiple services together in Compose.
+  - The project has no Docker setup yet and needs a first-pass scaffold more than deep optimization.
+delegates_to:
+  - docker-project-foundations
+  - docker-compose-patterns
+  - docker-destructive-guardrails

@@ -1,0 +1,6 @@
+interface:
+  display_name: Docker Compose Patterns
+  short_description: Patterns for robust, maintainable Docker Compose configurations.
+  default_prompt: Use this skill when creating or modifying Docker Compose files.
+policy:
+  allow_implicit_invocation: true

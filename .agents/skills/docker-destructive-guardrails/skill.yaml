@@ -1,0 +1,18 @@
+schema: v1
+id: docker-destructive-guardrails
+version: 0.1.0
+title: Docker Destructive Command Guardrails
+description: Cross-product policy for confirming irreversible or destructive Docker operations before running them.
+owns:
+  - docker-cli-destructive-commands
+use_when:
+  - The user asks to clean up, reset, wipe, or start fresh with Docker resources without naming a specific command.
+  - The agent is considering docker rm, docker rm -f, docker container prune, docker kill, docker stop, docker system prune, docker rmi, docker image rm, docker image prune -a, docker network rm, docker network prune, docker builder prune, docker buildx rm, docker context rm, or standalone (non-Compose) docker volume rm or docker volume prune as a fix for an unrelated problem.
+  - The user wants a cross-product overview of destructive commands across Docker skills.
+do_not_use_when:
+  - The destructive command in question is Compose-specific (docker compose down -v, docker compose rm -v, docker volume rm or docker volume prune in a Compose project) — use docker-compose-patterns directly. This does not include a Compose-declared external volume (external=true) not managed by that Compose project; this skill's standalone guidance still applies to that case.
+  - The task is authoring or reviewing a Dockerfile or compose.yaml with no cleanup or deletion involved.
+delegates_to:
+  - docker-compose-patterns
+  - docker-build-strategies
+  - docker-project-foundations
