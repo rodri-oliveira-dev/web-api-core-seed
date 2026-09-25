@@ -1,0 +1,68 @@
+# Version control
+.git/
+.gitignore
+
+# CI/CD
+.github/
+.gitlab-ci.yml
+.circleci/
+
+# IDE and editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Documentation
+*.md
+LICENSE
+docs/
+
+# Docker files (avoid recursive inclusion)
+Dockerfile*
+compose.yaml
+docker-compose*.yml
+docker-compose*.yaml
+.dockerignore
+
+# Environment and secrets
+.env
+.env.*
+*.pem
+*.key
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Go
+vendor/
+
+# Java
+target/
+*.class
+*.jar
+
+# Test and coverage
+coverage/
+.coverage
+htmlcov/
+.pytest_cache/
+.nyc_output/
+
+# OS files
+.DS_Store
+Thumbs.db
