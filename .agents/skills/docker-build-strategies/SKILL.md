@@ -69,14 +69,15 @@ Never bake credentials into the image. Use BuildKit secrets and SSH mounts so cr
        npm ci --omit=dev
    ```
    The secret is available only inside that `RUN`, never written to a layer. Use `required=true` when the build will always need the credential (e.g., all packages come from a private registry, so missing the secret should fail the build immediately); use `required=false` only when the secret is optional (the build can succeed with public packages alone).
-5. **Use `RUN --mount=type=ssh`** for fetching private Git repositories or modules. The build container has no `known_hosts` by default — populate it inside the same `RUN`:
+5. **Use `RUN --mount=type=ssh`** for fetching private Git repositories or modules. The build container has no trusted host keys by default. Create a minimal `github-known-hosts` file from GitHub's published SSH host keys and verify its fingerprint through a trusted channel before using it. Do **not** trust `ssh-keyscan` output by itself.
    ```dockerfile
    RUN --mount=type=ssh \
+       --mount=type=secret,id=github_known_hosts,target=/run/secrets/github_known_hosts,required=true \
        mkdir -p -m 0700 /root/.ssh && \
-       ssh-keyscan github.com >> /root/.ssh/known_hosts && \
+       install -m 0600 /run/secrets/github_known_hosts /root/.ssh/known_hosts && \
        git clone git@github.com:org/private-repo.git
    ```
-   Do NOT use `StrictHostKeyChecking=no` as a shortcut — it disables host-key verification entirely. `ssh-keyscan` pins the known fingerprint at build time.
+   This pins the SSH host identity to a key you verified independently; `ssh-keyscan` alone does not authenticate the host. Do NOT use `StrictHostKeyChecking=no` as a shortcut.
 6. **Invoke buildx with the secret and SSH sources:**
    ```bash
    # Ensure an SSH agent is running with the key loaded (or use --ssh default=<key-file>):
@@ -84,6 +85,7 @@ Never bake credentials into the image. Use BuildKit secrets and SSH mounts so cr
 
    docker buildx build \
        --secret id=npmrc,src=$HOME/.npmrc \
+       --secret id=github_known_hosts,src=./github-known-hosts \
        --ssh default \
        .
    ```
@@ -155,7 +157,7 @@ Always configure the final image to run as a non-root user.
 
 - **`scripts/verify-build.sh`** — Builds the image, reports size and configured user.
   ```bash
-  bash scripts/verify-build.sh [--help] [IMAGE_NAME]
+  bash .agents/skills/docker-build-strategies/scripts/verify-build.sh [--help] [IMAGE_NAME]
   ```
   Exit status is `0` when all Docker commands succeed or help is requested, the failing Docker command's non-zero status when verification fails, and `2` for invalid arguments.
 

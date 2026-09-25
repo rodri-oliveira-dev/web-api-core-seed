@@ -117,7 +117,7 @@ docker network rm -f <name>
 docker network prune
 ```
 
-- Removes every user-defined bridge/overlay network not currently attached to a running container. Networks with static IP assignments, custom subnets, or `external: true` references from stopped-but-not-deleted Compose projects are deleted along with that configuration.
+- Removes user-defined networks that are not referenced by any container. A network attached to a stopped container remains referenced and is not pruned. Review the unused-network set before confirming the sweep, especially when Compose projects or custom network configuration are involved.
 
 **Safer alternative**: remove a specific network by name with `docker network rm <name>` above, once confirmed unused.
 
@@ -143,9 +143,9 @@ docker buildx rm --keep-daemon <builder>
 docker buildx rm --keep-state <builder>
 ```
 
-- Removes a builder *instance* — its configuration/registration and, unless kept, its daemon/state — a different resource from the build cache covered by `docker builder prune` above.
+- Removes a builder *instance* and may also remove its associated BuildKit state, including cache/state owned by that builder depending on the driver. This is distinct from the broad cache sweep performed by `docker builder prune`, but it is not safe to describe builder removal as preserving build cache unconditionally.
 - `--all-inactive` widens this to every inactive builder at once, not just the one named.
-- `--keep-daemon`/`--keep-state` reduce what's deleted, but the builder's registration/reference itself is still removed either way.
+- `--keep-daemon` reduces daemon teardown where supported. `--keep-state` preserves BuildKit state only for drivers that support that option; otherwise removing the builder may discard that state. The builder's registration/reference itself is still removed.
 
 **Safer alternative**: remove one named builder at a time rather than `--all-inactive`, and confirm with the user which builder(s) are no longer needed.
 

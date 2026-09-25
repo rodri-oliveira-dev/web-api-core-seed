@@ -26,4 +26,4 @@ SOFTWARE.
 
 ## Docker Skills
 
-As skills `docker-build-strategies`, `docker-compose-patterns` e `docker-destructive-guardrails` foram copiadas de `https://github.com/docker/skills` na revisao `ddbf34bfd8be2fed3fe69dddd6c7590b42d45320` e mantem `license: Apache-2.0` no frontmatter. O texto integral da licenca esta em `.agents/skills/licenses/docker-skills-APACHE-2.0.txt`.
+As skills `docker-build-strategies`, `docker-compose-patterns` e `docker-destructive-guardrails` foram importadas de `https://github.com/docker/skills` na revisao `ddbf34bfd8be2fed3fe69dddd6c7590b42d45320`, receberam correcoes locais de hardening e documentacao, e mantem `license: Apache-2.0` no frontmatter. O texto integral da licenca esta em `.agents/skills/licenses/docker-skills-APACHE-2.0.txt`.

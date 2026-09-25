@@ -162,7 +162,7 @@ If the goal is only to restart services or reclaim containers/networks, use `doc
 
 - **`scripts/verify-compose.sh`** — Validates `compose.yaml` with `docker compose config --quiet`, without printing resolved configuration.
   ```bash
-  bash scripts/verify-compose.sh [--help]
+  bash .agents/skills/docker-compose-patterns/scripts/verify-compose.sh [--help]
   ```
   Exit status is `0` when the Compose configuration is valid or help is requested, the non-zero status from `docker compose config --quiet` when validation fails, and `2` for invalid arguments. Plain `docker compose config` can expose interpolated and `env_file` credentials in tool output or logs; use quiet validation by default. Compose warnings and errors are still emitted and may contain sensitive details.
 

@@ -53,9 +53,9 @@ These two `-f` flags do different things and must not be conflated. Read both en
 Grep this skill's files for the command list and confirm every one is paired with a confirmation requirement, not a "safe to run automatically" statement:
 
 ```bash
-grep -n "docker rm -f\|docker container prune\|docker kill\|docker system prune\|docker rmi\|docker image rm\|docker image prune -a\|docker network rm\|docker network prune\|docker builder prune\|docker buildx rm\|docker context rm\|docker volume rm\|docker volume prune" \
-  skills/docker-destructive-guardrails/SKILL.md \
-  skills/docker-destructive-guardrails/references/*.md
+grep -nC 3 -E "docker rm -f|docker container prune|docker kill|docker system prune|docker rmi|docker image rm|docker image prune -a|docker network rm|docker network prune|docker builder prune|docker buildx rm|docker context rm|docker volume rm|docker volume prune" \
+  .agents/skills/docker-destructive-guardrails/SKILL.md \
+  .agents/skills/docker-destructive-guardrails/references/*.md
 ```
 
 Every match should appear alongside guidance to state what will be lost and get explicit confirmation — never alongside language suggesting the command is safe to run unprompted.

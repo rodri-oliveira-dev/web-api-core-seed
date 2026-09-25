@@ -7,7 +7,7 @@ Use these checks to verify a generated Dockerfile meets quality standards.
 Run the bundled script from the project root:
 
 ```bash
-bash scripts/verify-build.sh [--help] [IMAGE_NAME]
+bash .agents/skills/docker-build-strategies/scripts/verify-build.sh [--help] [IMAGE_NAME]
 ```
 
 The image name defaults to `verify-build-test`. Exit status is `0` when the build and inspection commands succeed or help is requested, the failing Docker command's non-zero status when verification fails, and `2` for invalid arguments.
@@ -70,12 +70,17 @@ Before building, verify the Dockerfile does not `COPY` credential files or pass 
 # Credential files copied into the build context
 grep -nE "^(COPY|ADD) .*(\.npmrc|\.pypirc|\.netrc|pip\.conf|settings\.xml|\.env|\.aws/credentials|\.config/gcloud|\.azure/|\.vault-token|\.cargo/credentials|id_(rsa|dsa|ed25519|ecdsa)|service.account.*\.json|\.pem([[:space:]]|$)|\.p12([[:space:]]|$)|kubeconfig)" Dockerfile
 
+# Broad context copies require an effective .dockerignore review
+grep -nE '^(COPY|ADD)([[:space:]]+--[^[:space:]]+)*[[:space:]]+(\.?/)?\.[[:space:]]' Dockerfile
+
 # Credentials passed as build args (visible in docker history) — case-insensitive
 grep -inE "^ARG .*(TOKEN|KEY|SECRET|PASSWORD)" Dockerfile
 
 # Credentials baked into image env (visible to anyone with the image) — case-insensitive
 grep -inE "^ENV .*(TOKEN|KEY|SECRET|PASSWORD)=" Dockerfile
 ```
+
+If a broad `COPY . .` / `ADD . .` (or equivalent) is present, do not treat the static grep as sufficient. Inspect the effective ignore file first: a Dockerfile-specific `<Dockerfile>.dockerignore`, when present, takes precedence over the root `.dockerignore`. Then enumerate credential candidates in the admitted context and verify every sensitive file is excluded before the broad copy. Pay special attention to `.npmrc`, `.pypirc`, `.netrc`, `pip.conf`, Maven `settings.xml`, cloud credentials, registry credentials, SSH keys, TLS private keys, `kubeconfig`, and service-account JSON files. Also trace files copied from build stages into the runtime stage so a credential admitted by a broad copy cannot be carried forward indirectly.
 
 If the project needs registry credentials, the Dockerfile must use `RUN --mount=type=secret` and the build invocation must pass the secret:
 

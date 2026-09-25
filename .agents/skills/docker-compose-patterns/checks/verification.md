@@ -7,7 +7,7 @@ Run these checks against every generated `compose.yaml` before considering it co
 Run the bundled script from the project root:
 
 ```bash
-bash scripts/verify-compose.sh [--help]
+bash .agents/skills/docker-compose-patterns/scripts/verify-compose.sh [--help]
 ```
 
 Exit status is `0` when the Compose configuration is valid or help is requested, the non-zero status from `docker compose config --quiet` when validation fails, and `2` for invalid arguments.

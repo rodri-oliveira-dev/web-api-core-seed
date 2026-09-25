@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 # Verify Compose configuration. Run from the project root.
-# Usage: bash scripts/verify-compose.sh [--help]
+# Usage: bash .agents/skills/docker-compose-patterns/scripts/verify-compose.sh [--help]
 set -euo pipefail
 
 usage() {
-    echo "Usage: bash scripts/verify-compose.sh [--help]"
+    echo "Usage: bash .agents/skills/docker-compose-patterns/scripts/verify-compose.sh [--help]"
     echo "Validates compose.yaml with docker compose config --quiet (no rendered configuration)."
 }
 

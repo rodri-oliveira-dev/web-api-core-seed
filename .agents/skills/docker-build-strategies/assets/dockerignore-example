@@ -31,6 +31,25 @@ docker-compose*.yaml
 .env.*
 *.pem
 *.key
+*.p12
+.npmrc
+.pypirc
+.netrc
+pip.conf
+settings.xml
+.aws/credentials
+.config/gcloud/
+.azure/
+.vault-token
+.cargo/credentials
+.cargo/credentials.toml
+kubeconfig
+id_rsa
+id_dsa
+id_ed25519
+id_ecdsa
+*service-account*.json
+*service.account*.json
 
 # Node.js
 node_modules/

@@ -106,7 +106,7 @@ Antes de uma tarefa especializada, verifique `.agents/skills/` e use somente ski
 
 As skills complementam este arquivo. Em caso de conflito, este `AGENTS.md` e os arquivos SDD da fase vigente prevalecem.
 
-Para tarefas de Docker/Compose, use `docker-build-strategies` para Dockerfiles e imagens, `docker-compose-patterns` para `compose*.yaml` e `docker-destructive-guardrails` quando houver limpeza, remocao, prune, volumes ou outras operacoes destrutivas. As regras deste `AGENTS.md` e do SDD vigente continuam prevalecendo.
+Para tarefas de Docker/Compose, use `docker-build-strategies` para Dockerfiles e imagens, `docker-compose-patterns` para tarefas de Docker Compose independentemente do nome ou da extensao `.yml`/`.yaml` do arquivo (incluindo `compose*` e `docker-compose*`) e `docker-destructive-guardrails` quando houver limpeza, remocao, prune, volumes ou outras operacoes destrutivas. As regras deste `AGENTS.md` e do SDD vigente continuam prevalecendo.
 
 ## Git
 

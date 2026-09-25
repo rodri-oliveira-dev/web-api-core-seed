@@ -9,7 +9,11 @@ COPY package.json package-lock.json ./
 # Invoke with: docker buildx build --secret id=npmrc,src=$HOME/.npmrc .
 RUN --mount=type=secret,id=npmrc,target=/root/.npmrc,required=false \
     --mount=type=cache,target=/root/.npm \
-    npm ci --omit=dev
+    npm ci --omit=dev --ignore-scripts
+
+# Run dependency lifecycle scripts only after registry credentials are unmounted.
+RUN --mount=type=cache,target=/root/.npm \
+    npm rebuild --omit=dev
 
 # --- Build stage ---
 FROM node:22-alpine AS build
@@ -17,7 +21,11 @@ WORKDIR /src
 COPY package.json package-lock.json ./
 RUN --mount=type=secret,id=npmrc,target=/root/.npmrc,required=false \
     --mount=type=cache,target=/root/.npm \
-    npm ci
+    npm ci --ignore-scripts
+
+# Run dependency lifecycle scripts only after registry credentials are unmounted.
+RUN --mount=type=cache,target=/root/.npm \
+    npm rebuild
 COPY . .
 RUN npm run build
 

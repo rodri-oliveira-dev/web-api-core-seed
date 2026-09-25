@@ -9,7 +9,7 @@ services:
       dockerfile: Dockerfile
       target: development
     ports:
-      - "9229:9229" # Debugger port (8080 is already in the base file)
+      - "127.0.0.1:9229:9229" # Debugger port (8080 is already in the base file)
     environment:
       NODE_ENV: development
       LOG_LEVEL: debug

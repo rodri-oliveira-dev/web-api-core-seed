@@ -18,7 +18,7 @@ Always use `condition: service_healthy` for infrastructure services (databases, 
 
 ```yaml
 healthcheck:
-  test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres}"]
+  test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U ${POSTGRES_USER:-postgres}"]
   interval: 5s
   timeout: 3s
   retries: 3

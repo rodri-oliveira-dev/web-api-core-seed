@@ -53,16 +53,17 @@ Key points:
 - Use `-ldflags="-s -w"` to strip debug symbols and reduce binary size.
 - Cache both `/go/pkg/mod` (downloaded modules) and `/root/.cache/go-build` (compilation cache).
 - Distroless static images include a built-in `nonroot` user.
-- For `GOPRIVATE` modules fetched via Git SSH, use `--mount=type=ssh` instead of baking keys or tokens. Populate `known_hosts` inside the same `RUN`, pair the git-config rewrite with the download so the config does not persist into later stages, and set `GOPRIVATE` inline so `go mod download` skips the public proxy and checksum database (`GOPRIVATE` implies `GONOSUMDB` and `GONOPROXY`):
+- For `GOPRIVATE` modules fetched via Git SSH, use `--mount=type=ssh` instead of baking keys or tokens. Before the build, create a minimal `github-known-hosts` file from GitHub's published SSH host keys and verify its fingerprint through a trusted channel; `ssh-keyscan` output alone is not sufficient authentication. Mount that trusted file before `go mod download`, pair the git-config rewrite with the download so the config does not persist into later stages, and set `GOPRIVATE` inline so `go mod download` skips the public proxy and checksum database (`GOPRIVATE` implies `GONOSUMDB` and `GONOPROXY`):
   ```dockerfile
   RUN --mount=type=ssh \
+      --mount=type=secret,id=github_known_hosts,target=/run/secrets/github_known_hosts,required=true \
       --mount=type=cache,target=/go/pkg/mod \
       mkdir -p -m 0700 /root/.ssh && \
-      ssh-keyscan -t ed25519 github.com >> /root/.ssh/known_hosts && \
+      install -m 0600 /run/secrets/github_known_hosts /root/.ssh/known_hosts && \
       git config --global url."git@github.com:".insteadOf "https://github.com/" && \
       GOPRIVATE="github.com/your-org/*" go mod download
   ```
-  Invoke with `docker buildx build --ssh default .` (uses the host's SSH agent — ensure it is running and the key is loaded: `eval "$(ssh-agent -s)" && ssh-add ~/.ssh/id_ed25519`). To pass a key file directly without an agent, use `--ssh default=$HOME/.ssh/id_ed25519`.
+  Invoke with `docker buildx build --ssh default --secret id=github_known_hosts,src=./github-known-hosts .` (uses the host's SSH agent — ensure it is running and the key is loaded: `eval "$(ssh-agent -s)" && ssh-add ~/.ssh/id_ed25519`). To pass a key file directly without an agent, use `--ssh default=$HOME/.ssh/id_ed25519`.
 
 ## Node.js
 

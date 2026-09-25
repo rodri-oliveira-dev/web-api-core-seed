@@ -14,7 +14,7 @@ A single-page index of destructive or irreversible Docker commands documented ac
 | `docker network rm` | A specifically named network's configuration | `docker-destructive-guardrails` |
 | `docker network prune` | All unused user-defined networks and their configuration | `docker-destructive-guardrails` |
 | `docker builder prune` (esp. `-a`) | Build cache; with `-a`, also internal helper/frontend images and cache shared with other build outputs | `docker-destructive-guardrails` |
-| `docker buildx rm` | A builder instance's configuration/state (not its build cache) | `docker-destructive-guardrails` |
+| `docker buildx rm` | A builder instance and potentially its associated BuildKit state/cache; `--keep-state` preserves state only when supported by the driver | `docker-destructive-guardrails` |
 | `docker context rm` | Local context configuration (endpoint, TLS references) for a Docker host | `docker-destructive-guardrails` |
 | `docker volume rm` / `docker volume prune` (standalone, no Compose project in play) | Volume data, directly | `docker-destructive-guardrails` |
 | `docker compose down -v` / `docker compose down --volumes` | Named volumes and their data (e.g. database state) | `docker-compose-patterns` |
