@@ -4,7 +4,8 @@
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <RestoreUseStaticGraphEvaluation>true</RestoreUseStaticGraphEvaluation>
     <MicrosoftDotNetPackageVersion>10.0.12</MicrosoftDotNetPackageVersion>
-    <OpenTelemetryPackageVersion>1.18.0</OpenTelemetryPackageVersion>
+    <OpenTelemetryCorePackageVersion>1.19.1</OpenTelemetryCorePackageVersion>
+    <OpenTelemetryInstrumentationPackageVersion>1.19.0</OpenTelemetryInstrumentationPackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
