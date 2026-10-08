@@ -46,15 +46,21 @@ jobs:
           set -euo pipefail
           ref_json="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${RELEASE_TAG}" 2>/dev/null || true)"
           tag_sha="$(jq -r '.object.sha // empty' <<< "${ref_json}")"
-          if [[ -n "${tag_sha}" && "${tag_sha}" != "${GITHUB_SHA}" ]]; then
-            echo "::error::Existing tag ${RELEASE_TAG} points to ${tag_sha}, not ${GITHUB_SHA}. Do not move released tags."
-            exit 1
-          fi
           if gh release view "${RELEASE_TAG}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
-            echo "Release ${RELEASE_TAG} already exists at the expected commit; no republishing."
+            if [[ -z "${tag_sha}" ]]; then
+              echo "::error::Release exists but its tag reference is missing"
+              exit 1
+            fi
+            echo "Release ${RELEASE_TAG} already exists at ${tag_sha}; later main pushes never move this tag."
             echo "already_released=true" >> "${GITHUB_OUTPUT}"
+            echo "expected_tag_sha=${tag_sha}" >> "${GITHUB_OUTPUT}"
           else
+            if [[ -n "${tag_sha}" && "${tag_sha}" != "${GITHUB_SHA}" ]]; then
+              echo "::error::Unpublished tag ${RELEASE_TAG} points to ${tag_sha}; cannot release a different commit."
+              exit 1
+            fi
             echo "already_released=false" >> "${GITHUB_OUTPUT}"
+            echo "expected_tag_sha=${GITHUB_SHA}" >> "${GITHUB_OUTPUT}"
           fi
 
       - name: Wait for main quality gates for this exact commit
@@ -141,11 +147,11 @@ jobs:
           )
           tag_json="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${RELEASE_TAG}")"
           tag_sha="$(jq -r '.object.sha' <<< "${tag_json}")"
-          if [[ "${tag_sha}" != "${GITHUB_SHA}" ]]; then
-            echo "::error::Published tag target does not match the source commit"
+          if [[ "${tag_sha}" != "${{ steps.preflight.outputs.expected_tag_sha }}" ]]; then
+            echo "::error::Published tag changed during verification"
             exit 1
           fi
-          echo "Verified release ${RELEASE_TAG} at ${GITHUB_SHA} and downloaded SHA256 assets"
+          echo "Verified release ${RELEASE_TAG} at ${tag_sha} and downloaded SHA256 assets"
 
       - name: Close release tracking issue only after asset verification
         shell: bash
@@ -153,6 +159,7 @@ jobs:
           set -euo pipefail
           current_state="$(gh api "repos/${GITHUB_REPOSITORY}/issues/23" --jq '.state')"
           if [[ "${current_state}" != "closed" ]]; then
-            gh issue close 23 --repo "${GITHUB_REPOSITORY}" \\
-              --comment "Release [v2.0.0](https://github.com/${GITHUB_REPOSITORY}/releases/tag/v2.0.0) is published at commit ${GITHUB_SHA}. The template .nupkg and SHA256SUMS.txt were downloaded and verified by the release workflow. NuGet.org and repository metadata/licensing decisions remain explicitly out of scope; see docs/releases/release-checklist.md."
+            released_sha="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${RELEASE_TAG}" --jq '.object.sha')"
+            gh issue close 23 --repo "${GITHUB_REPOSITORY}" \
+              --comment "Release [v2.0.0](https://github.com/${GITHUB_REPOSITORY}/releases/tag/v2.0.0) is published at commit ${released_sha}. The template .nupkg and SHA256SUMS.txt were downloaded and verified by the release workflow. NuGet.org and repository metadata/licensing decisions remain explicitly out of scope; see docs/releases/release-checklist.md."
           fi
