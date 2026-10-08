@@ -57,6 +57,7 @@ public sealed class SecurityHardeningIntegrationTests
         var response = await client.GetAsync("/api/v1/Pratos?pageNumber=1&pageSize=10");
 
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("DENY", response.Headers.GetValues("X-Frame-Options").Single());
         Assert.Equal("nosniff", response.Headers.GetValues("X-Content-Type-Options").Single());
         Assert.Equal("no-referrer", response.Headers.GetValues("Referrer-Policy").Single());
         Assert.Contains("camera=()", response.Headers.GetValues("Permissions-Policy").Single());
