@@ -58,6 +58,30 @@ jobs:
       - name: Build
         run: dotnet build "$SOLUTION" --configuration Release --no-restore
 
+      - name: Verify X-Frame-Options in source and generated IIS web.config
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $paths = @(
+            'src/WebApiCoreSeed.Api/web.config'
+            'src/WebApiCoreSeed.Api/bin/Release/net10.0/web.config'
+            'tests/WebApiCoreSeed.IntegrationTests/bin/Release/net10.0/web.config'
+            'tests/WebApiCoreSeed.UnitTests/bin/Release/net10.0/web.config'
+            'tools/OpenApiGenerator/bin/Release/net10.0/web.config'
+          )
+          foreach ($path in $paths) {
+            if (-not (Test-Path -LiteralPath $path)) {
+              throw "Expected web.config missing: $path"
+            }
+            [xml]$config = Get-Content -LiteralPath $path -Raw
+            $header = $config.configuration.'system.webServer'.httpProtocol.customHeaders.add |
+              Where-Object { $_.name -eq 'X-Frame-Options' -and $_.value -eq 'DENY' }
+            if (-not $header) {
+              throw "Missing X-Frame-Options: DENY in $path"
+            }
+            Write-Host "Verified X-Frame-Options: DENY in $path"
+          }
+
       - name: Prepare test result directories
         run: |
           rm -rf TestResults
