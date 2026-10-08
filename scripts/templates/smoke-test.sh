@@ -66,7 +66,7 @@ PY
 
 echo "== Install and instantiate the packaged template =="
 dotnet new install "$package_file"
-dotnet new webapi-seed --name SampleApi --output "$work_dir/generated" --no-restore
+dotnet new webapi-seed --name SampleApi --output "$work_dir/generated"
 
 generated="$work_dir/generated"
 solution="$generated/SampleApi.slnx"
