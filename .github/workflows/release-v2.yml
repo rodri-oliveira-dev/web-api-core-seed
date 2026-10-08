@@ -46,22 +46,41 @@ jobs:
           set -euo pipefail
           ref_json="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${RELEASE_TAG}" 2>/dev/null || true)"
           tag_sha="$(jq -r '.object.sha // empty' <<< "${ref_json}")"
-          if gh release view "${RELEASE_TAG}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
-            if [[ -z "${tag_sha}" ]]; then
-              echo "::error::Release exists but its tag reference is missing"
+          # Drafts can contain uploaded assets even though publication failed.
+          # Enumerate all release pages so a draft cannot take the idempotent path.
+          release_state="$(gh api --paginate "repos/${GITHUB_REPOSITORY}/releases?per_page=100" |
+            bash scripts/releases/classify-release-state.sh "${RELEASE_TAG}")"
+          case "${release_state}" in
+            draft)
+              echo "::error::Release ${RELEASE_TAG} is a draft or lacks publication metadata. Publish or delete the incomplete draft manually before retrying; issue #23 remains open."
               exit 1
-            fi
-            echo "Release ${RELEASE_TAG} already exists at ${tag_sha}; later main pushes never move this tag."
-            echo "already_released=true" >> "${GITHUB_OUTPUT}"
-            echo "expected_tag_sha=${tag_sha}" >> "${GITHUB_OUTPUT}"
-          else
-            if [[ -n "${tag_sha}" && "${tag_sha}" != "${GITHUB_SHA}" ]]; then
-              echo "::error::Unpublished tag ${RELEASE_TAG} points to ${tag_sha}; cannot release a different commit."
+              ;;
+            invalid)
+              echo "::error::Release ${RELEASE_TAG} is duplicated, a prerelease, or has invalid metadata. Inspect Releases before retrying."
               exit 1
-            fi
-            echo "already_released=false" >> "${GITHUB_OUTPUT}"
-            echo "expected_tag_sha=${GITHUB_SHA}" >> "${GITHUB_OUTPUT}"
-          fi
+              ;;
+            published)
+              if [[ -z "${tag_sha}" ]]; then
+                echo "::error::Published release exists but the tag reference is missing."
+                exit 1
+              fi
+              echo "Published release ${RELEASE_TAG} already exists at ${tag_sha}; later main pushes never move it."
+              echo "already_released=true" >> "${GITHUB_OUTPUT}"
+              echo "expected_tag_sha=${tag_sha}" >> "${GITHUB_OUTPUT}"
+              ;;
+            missing)
+              if [[ -n "${tag_sha}" && "${tag_sha}" != "${GITHUB_SHA}" ]]; then
+                echo "::error::Unpublished tag ${RELEASE_TAG} points to ${tag_sha}; cannot release a different commit."
+                exit 1
+              fi
+              echo "already_released=false" >> "${GITHUB_OUTPUT}"
+              echo "expected_tag_sha=${GITHUB_SHA}" >> "${GITHUB_OUTPUT}"
+              ;;
+            *)
+              echo "::error::Unknown release state ${release_state}; refusing to publish."
+              exit 1
+              ;;
+          esac
 
       - name: Wait for main quality gates for this exact commit
         if: steps.preflight.outputs.already_released == 'false'
@@ -134,6 +153,15 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          # Authenticated downloads can read drafts, so require published metadata.
+          release_json="$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${RELEASE_TAG}")"
+          if ! jq -e --arg tag "${RELEASE_TAG}" \
+            '.tag_name == $tag and .draft == false and .prerelease == false and
+             ((.published_at | type) == "string") and ((.published_at | length) > 0)' \
+            <<< "${release_json}" >/dev/null; then
+            echo "::error::Release ${RELEASE_TAG} is not published and stable. Refusing to download draft assets or close #23."
+            exit 1
+          fi
           mkdir -p "${RUNNER_TEMP}/release-check"
           gh release download "${RELEASE_TAG}" \
             --repo "${GITHUB_REPOSITORY}" \
