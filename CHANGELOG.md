@@ -16,8 +16,12 @@ This changelog records notable changes to the **maintained .NET 10 codebase**. I
 - Add structured logging, OpenTelemetry, security headers, CodeQL, tests and CI quality gates.
 - Correct cache isolation, response eligibility and IIS `X-Frame-Options` configuration.
 
+### Template packaging (local preview, not published)
+- Add `webapi-seed` template identity, package project, generated project documentation and unique `UserSecretsId`.
+- Add isolated NuGet install/generation/restore/build/test/runtime smoke checks in GitHub Actions.
+- Add template installation/update/uninstallation instructions in EN/PT-BR. The local package is not published to any feed.
+
 ### Planned, not shipped
-- `dotnet new` template packaging and smoke tests ([#22](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/22)).
 - Versioned `v2.0.0` GitHub Release and release artifacts ([#23](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/23)).
 
 ## Historical snapshot
