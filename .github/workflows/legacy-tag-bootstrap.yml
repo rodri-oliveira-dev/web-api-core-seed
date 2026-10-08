@@ -27,7 +27,8 @@ jobs:
           set -euo pipefail
           # Resolve historical source SHA directly, without checking out or rebuilding
           # unsupported dependencies. Do not move or replace a pre-existing tag.
-          existing="$(gh api "repos/${REPOSITORY}/git/ref/tags/${TAG_NAME}" --jq '.object.sha' 2>/dev/null || true)"
+          existing_json="$(gh api "repos/${REPOSITORY}/git/ref/tags/${TAG_NAME}" 2>/dev/null || true)"
+          existing="$(jq -r '.object.sha // empty' <<< "${existing_json}")"
           if [[ -n "${existing}" ]]; then
             if [[ "${existing}" != "${LEGACY_SHA}" ]]; then
               echo "::error::Existing tag ${TAG_NAME} points to unexpected commit ${existing}"
