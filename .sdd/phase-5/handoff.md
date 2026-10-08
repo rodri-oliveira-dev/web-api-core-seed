@@ -86,6 +86,7 @@
 - Script de smoke aceita `TEMPLATE_PACKAGE` pre-empacotado e testa o arquivo da release (proveniencia, nomes `SampleApi`/`Acme.Api`, Docker Compose, restore, build, 2 suites de testes, health).
 - Workflow `.github/workflows/release-v2.yml` somente publica na `main` apos CI, CodeQL e template-smoke **success** no mesmo SHA; anexa pacote e `SHA256SUMS.txt` na GitHub Release e verifica download e checksum.
 - Tag `v2.0.0` nao e movimentada nem sobrescrita pelo processo em reexecucoes ou novos pushes. Restricao de imutabilidade nas Settings requer administracao.
+- Revisao #5461961414 (PR #52): introduzido classificador de release via REST com paginação e estados `missing`/`published`/`draft`/`invalid`. Draft com assets interrompidos falha antes da idempotencia; verificação final exige publicação efetiva antes de baixar assets e fechar #23. Testes de regressão do classificador fazem parte do CI.
 - Nao usar `Closes #23` no PR porque isso encerraria a issue antes da publicacao. O workflow fecha a #23 apos assets verificados, com comentario e link.
 - Verificar logs da release e estado da issue apos merge; se workflow falhar, issue permanece aberta para correcao.
 - Pendencias fora do workflow: escolher licenca (repo nao tem `LICENSE`) e atualizar descricao, homepage e topics no GitHub About; sem token administrativo disponivel.
