@@ -73,4 +73,4 @@
 - Reentradas nao movem tag; outras revisoes de main nao tentam republicar v2.0.0. A issue sera fechada **pelo workflow apenas apos a verificacao**; o PR nao deve conter `Closes #23` para evitar fechamento prematuro.
 - Documentos: notas completas de breaking changes, changelog v2, checklists EN/PT-BR, badge de release, guias de template estavel.
 - Limites nao resolvidos por este PR: metadados "About"/topics requerem token administrativo; repo ainda sem LICENSE. Nao declarar como licenciado open source sem decisao/procedencia.
-- **Status atual:** aguardando PR/revisao/merge e execucao automatica da release em main. Nenhuma tag v2.0.0 ou GitHub Release foi criada nesta preparacao.
+- **Status atual:** [PR #52](https://github.com/rodri-oliveira-dev/web-api-core-seed/pull/52) aberto sem conflitos; checks remotos em execucao, aguardando revisao/merge e execucao automatica da release em main. Nenhuma tag v2.0.0 ou GitHub Release foi criada nesta preparacao.
