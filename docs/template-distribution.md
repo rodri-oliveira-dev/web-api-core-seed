@@ -30,7 +30,7 @@ dotnet restore SampleApi.slnx
 dotnet build SampleApi.slnx --configuration Release --no-restore
 ```
 
-The example generates a full project named `SampleApi`: names, namespaces, projects, solution references and Docker commands inherit the new name.
+The example generates a full project named `SampleApi`: projects, namespaces, solution references, Dockerfile entrypoints and runtime scripts inherit the new name. Docker Compose deliberately uses a safe default project ID (`web-api-core-seed`) independent of the .NET name; set `COMPOSE_PROJECT_NAME` in the generated `.env.local` to a unique lowercase value such as `sample-api` to avoid collisions. Dotted names such as `Acme.Api` remain valid C# names and generate valid Compose configurations. The generated EN/PT-BR READMEs retain the source repository links.
 
 ### Run the generated application
 
