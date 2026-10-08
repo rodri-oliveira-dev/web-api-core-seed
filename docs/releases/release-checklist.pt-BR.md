@@ -42,3 +42,7 @@ O repositório ainda não possui arquivo `LICENSE`. Uma GitHub Release pública 
 ## Divulgação e próximos passos
 
 Após confirmar publicação e checksum, divulgue [v2.0.0](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.0) com links ao `README`, `CONTRIBUTING.md` e `SECURITY.md`. O NuGet.org não faz parte deste lançamento: o pacote está nos **assets da GitHub Release**. Aplique proteção de tags ou imutabilidade nas configurações do repositório, se disponível. Para correções posteriores, faça uma versão nova, sem editar a tag publicada.
+
+## Pós-lançamento
+
+Se algum teste ou artefato falhar, publique uma versão corretiva (por exemplo, `v2.0.1`), em vez de modificar a tag `v2.0.0`. Revise também a proteção de tags/imutabilidade de releases nas configurações do GitHub, quando disponível. A issue #23 só será encerrada pelo workflow **após** a publicação e a verificação dos artefatos.
