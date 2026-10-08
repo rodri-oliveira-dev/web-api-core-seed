@@ -53,6 +53,7 @@ required = {
 }
 missing = required.difference(files)
 if missing:
+    print("Packed projects:", sorted(item for item in files if item.endswith(".csproj"))[:25], file=sys.stderr)
     raise SystemExit(f"Missing packaged files: {sorted(missing)}")
 for filename in files:
     if filename.startswith(("content/.github/", "content/.sdd/", "content/.agents/",
