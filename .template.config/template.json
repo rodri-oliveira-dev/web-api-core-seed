@@ -23,18 +23,7 @@
       "path": "WebApiCoreSeed.slnx"
     }
   ],
-  "forms": {
-    "lowerCase": {
-      "identifier": "lowerCase"
-    }
-  },
   "symbols": {
-    "projectSlug": {
-      "type": "derived",
-      "valueSource": "name",
-      "valueTransform": "lowerCase",
-      "replaces": "web-api-core-seed"
-    },
     "userSecretsId": {
       "type": "generated",
       "generator": "guid",
