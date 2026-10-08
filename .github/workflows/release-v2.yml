@@ -10,6 +10,7 @@ on:
 permissions:
   contents: write
   actions: read
+  issues: write
 
 concurrency:
   group: release-v2.0.0
@@ -145,3 +146,13 @@ jobs:
             exit 1
           fi
           echo "Verified release ${RELEASE_TAG} at ${GITHUB_SHA} and downloaded SHA256 assets"
+
+      - name: Close release tracking issue only after asset verification
+        shell: bash
+        run: |
+          set -euo pipefail
+          current_state="$(gh api "repos/${GITHUB_REPOSITORY}/issues/23" --jq '.state')"
+          if [[ "${current_state}" != "closed" ]]; then
+            gh issue close 23 --repo "${GITHUB_REPOSITORY}" \\
+              --comment "Release [v2.0.0](https://github.com/${GITHUB_REPOSITORY}/releases/tag/v2.0.0) is published at commit ${GITHUB_SHA}. The template .nupkg and SHA256SUMS.txt were downloaded and verified by the release workflow. NuGet.org and repository metadata/licensing decisions remain explicitly out of scope; see docs/releases/release-checklist.md."
+          fi
