@@ -2,7 +2,7 @@
 
 [English](template-distribution.md) | [Português (Brasil)](template-distribution.pt-BR.md) | [Voltar ao README](../README.pt-BR.md)
 
-O repositório agora pode ser **empacotado localmente** como template NuGet. **O pacote ainda não foi publicado no NuGet.org nem existe uma GitHub Release v2.0.0**; a publicação está na [#23](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/23).
+O repositório pode ser empacotado localmente como template NuGet. Após a conclusão do [workflow v2.0.0](../.github/workflows/release-v2.yml), **o mesmo pacote validado** será anexado à [GitHub Release v2.0.0](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.0). **Não há publicação no NuGet.org.** Se a release ainda não estiver disponível, confira o workflow e a [issue #23](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/23); merge de código não comprova publicação.
 
 ## Identidade e conteúdo do pacote
 
@@ -11,7 +11,7 @@ O repositório agora pode ser **empacotado localmente** como template NuGet. **O
 | Identidade | `RodriOliveira.WebApiCoreSeed.CSharp` |
 | Nome curto | `webapi-seed` |
 | ID do pacote | `RodriOliveira.WebApiCoreSeed.Templates` |
-| Versão | `2.0.0-preview.1` (preview local) |
+| Versão | `2.0.0` (artefato estável) |
 | SDK | `global.json` — .NET 10.0.401 |
 | Token de origem | `WebApiCoreSeed`, substituído pelo nome passado em `-n` |
 
@@ -23,7 +23,7 @@ Na raiz do repositório:
 
 ```bash
 dotnet pack template-pack/WebApiCoreSeed.Templates.csproj -c Release -o ./artifacts/templates
-dotnet new install ./artifacts/templates/RodriOliveira.WebApiCoreSeed.Templates.2.0.0-preview.1.nupkg
+dotnet new install ./artifacts/templates/RodriOliveira.WebApiCoreSeed.Templates.2.0.0.nupkg
 dotnet new webapi-seed -n SampleApi
 cd SampleApi
 dotnet restore SampleApi.slnx
@@ -50,7 +50,7 @@ Para atualizar um pacote **local**, desinstale a versão anterior e instale o no
 
 ```bash
 dotnet new uninstall RodriOliveira.WebApiCoreSeed.Templates
-dotnet new install ./artifacts/templates/RodriOliveira.WebApiCoreSeed.Templates.2.0.0-preview.1.nupkg
+dotnet new install ./artifacts/templates/RodriOliveira.WebApiCoreSeed.Templates.2.0.0.nupkg
 ```
 
 Para remover o template:
@@ -59,7 +59,7 @@ Para remover o template:
 dotnet new uninstall RodriOliveira.WebApiCoreSeed.Templates
 ```
 
-Para publicação futura em feed, `dotnet new install RodriOliveira.WebApiCoreSeed.Templates` e `dotnet new update` serão aplicáveis após a release; o pacote **não está disponível publicamente** neste momento.
+Para publicação futura no **NuGet.org**, `dotnet new install RodriOliveira.WebApiCoreSeed.Templates` e `dotnet new update` poderão ser utilizados. **Atualmente a distribuição prevista é pelo asset da GitHub Release**, e não por feed NuGet.
 
 ## Parâmetros opcionais avaliados
 
@@ -67,4 +67,4 @@ Autenticação, SQL Server, Redis e OpenTelemetry fazem parte do seed mantido. N
 
 ## Qualidade
 
-Execute `bash scripts/templates/smoke-test.sh` na raiz do repositório: empacota, inspeciona, instala em ambiente isolado, gera `SampleApi`, verifica nomes e UserSecretsId, restaura, compila, executa testes unitários/integração e verifica o health endpoint da API gerada. O mesmo script roda no GitHub Actions [template-smoke](../.github/workflows/template-smoke.yml). Requer Docker e não publica pacotes.
+Execute `bash scripts/templates/smoke-test.sh` na raiz do repositório: empacota, inspeciona, instala em ambiente isolado, gera `SampleApi`, verifica nomes e UserSecretsId, restaura, compila, executa testes unitários/integração e verifica o health endpoint da API gerada. O mesmo script roda no GitHub Actions [template-smoke](../.github/workflows/template-smoke.yml). Requer Docker e não publica pacotes. Para validar o artefato exato já empacotado, defina `TEMPLATE_PACKAGE=/caminho/absoluto/pacote.nupkg` antes de executar o script; nesse modo não ocorre repack. O [workflow de release](../.github/workflows/release-v2.yml) usa esse modo antes da publicação.
