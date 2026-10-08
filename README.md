@@ -4,6 +4,8 @@
 
 [![CI](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/ci.yml/badge.svg)](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/codeql.yml/badge.svg)](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/codeql.yml)
+[![Template smoke](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/template-smoke.yml/badge.svg)](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/template-smoke.yml)
+[![Latest release](https://img.shields.io/github/v/release/rodri-oliveira-dev/web-api-core-seed?sort=semver)](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/latest)
 
 > **Project status:** maintained sample application targeting **.NET 10**, distributed as a locally installable `dotnet new` template and, **after the release workflow succeeds**, as a verified asset of [GitHub Release v2.0.0](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.0). **It is not published to NuGet.org.** The historical .NET Core 3.1 version is unsupported; see [Legacy](#legacy-version).
 
