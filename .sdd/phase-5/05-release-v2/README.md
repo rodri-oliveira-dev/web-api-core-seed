@@ -56,7 +56,7 @@ Critérios:
 
 ## 6. Delivery
 
-- PR com `Refs #23` (nao `Closes #23`).
+- [PR #52](https://github.com/rodri-oliveira-dev/web-api-core-seed/pull/52) aberto com `Refs #23` (nao `Closes #23`).
 - Revisar a publicacao em [Releases](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases) e no workflow [release-v2](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/release-v2.yml).
 - Se falhar, o problema deve ser corrigido sem mover `v2.0.0`; a issue permanece aberta ate confirmar artefatos.
 - Apos sucesso, o workflow fecha a #23 com link da release e SHA efetivamente publicado.
