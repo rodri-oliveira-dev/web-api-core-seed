@@ -109,4 +109,4 @@ Consulte [appsettings.json](../src/WebApiCoreSeed.Api/appsettings.json), [ambien
 
 ## Decisões arquiteturais
 
-O [índice ADR](adr/README.md) registra decisões sobre portas explícitas, migrations/seed e segurança/telemetria. O legado .NET Core 3.1 e suas limitações estão no [guia de migração](migration-from-legacy.md).
+O [índice ADR](adr/README.md) registra decisões sobre portas explícitas, migrations/seed e segurança/telemetria. O legado .NET Core 3.1 e suas limitações estão no [guia de migração](migration-from-legacy.pt-BR.md).
