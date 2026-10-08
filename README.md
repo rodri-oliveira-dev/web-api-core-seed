@@ -1,3 +1,7 @@
+> **Historical archive — unsupported runtime.** This branch preserves the original ASP.NET Core Web API built with **.NET Core 3.1**, which reached end of support on **December 13, 2022**. It is retained for reference only: do not deploy it in production or use it for new applications. See the maintained [.NET 10 version](https://github.com/rodri-oliveira-dev/web-api-core-seed/tree/main) for ongoing development.
+>
+> **Integrity:** the last unmodified legacy source commit is [`6ce03d7f`](https://github.com/rodri-oliveira-dev/web-api-core-seed/commit/6ce03d7f011c6809fbcbad47aa26d490f53ddf3d). This branch adds this documentation-only warning; the historical `v1.0.0-legacy` tag points at the unmodified source commit.
+
 What is the Project?
 =====================
 The objective of this project was to implement the most commonly used technologies, and to share as a base project for WEB API in NET Core 3.1
