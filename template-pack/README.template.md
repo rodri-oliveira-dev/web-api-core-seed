@@ -4,6 +4,10 @@ Generated from the [Web API Core Seed](https://github.com/rodri-oliveira-dev/web
 
 This is a starting point, **not** a production-ready application. Review the generated code, secrets, database permissions and security settings before any deployment.
 
+## Docker Compose project identity
+
+The Compose project uses the safe default `web-api-core-seed` unless you set `COMPOSE_PROJECT_NAME` (for example `my-sample-api`) in `.env.local`. Use a unique lowercase name containing only letters, digits, hyphens and underscores when running multiple generated projects on the same Docker host. This setting is intentionally independent of the .NET solution name: names like `Acme.Api` remain valid for C# while Docker project names must not contain dots.
+
 ## Prerequisites
 
 - .NET SDK version in `global.json`
