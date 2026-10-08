@@ -1,0 +1,147 @@
+name: release-v2
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+# Publish only from a reviewed main commit, after all required workflows succeeded.
+# No NuGet.org credentials are used: distribution is via GitHub Release assets.
+permissions:
+  contents: write
+  actions: read
+
+concurrency:
+  group: release-v2.0.0
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Verify and publish v2.0.0
+    runs-on: ${{ vars.RUNNER_OS || 'ubuntu-26.04' }}
+    timeout-minutes: 60
+    if: github.ref == 'refs/heads/main'
+    env:
+      GH_TOKEN: ${{ github.token }}
+      RELEASE_TAG: v2.0.0
+      PACKAGE_NAME: RodriOliveira.WebApiCoreSeed.Templates.2.0.0.nupkg
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+    steps:
+      - name: Checkout exact source commit
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up pinned .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+
+      - name: Verify release does not point to another commit
+        id: preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          ref_json="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${RELEASE_TAG}" 2>/dev/null || true)"
+          tag_sha="$(jq -r '.object.sha // empty' <<< "${ref_json}")"
+          if [[ -n "${tag_sha}" && "${tag_sha}" != "${GITHUB_SHA}" ]]; then
+            echo "::error::Existing tag ${RELEASE_TAG} points to ${tag_sha}, not ${GITHUB_SHA}. Do not move released tags."
+            exit 1
+          fi
+          if gh release view "${RELEASE_TAG}" --repo "${GITHUB_REPOSITORY}" >/dev/null 2>&1; then
+            echo "Release ${RELEASE_TAG} already exists at the expected commit; no republishing."
+            echo "already_released=true" >> "${GITHUB_OUTPUT}"
+          else
+            echo "already_released=false" >> "${GITHUB_OUTPUT}"
+          fi
+
+      - name: Wait for main quality gates for this exact commit
+        if: steps.preflight.outputs.already_released == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          workflows=(ci.yml codeql.yml template-smoke.yml)
+          for workflow in "${workflows[@]}"; do
+            passed=false
+            for attempt in $(seq 1 90); do
+              json="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow}/runs?branch=main&event=push&per_page=50")"
+              conclusion="$(jq -r --arg sha "${GITHUB_SHA}" '[.workflow_runs[] | select(.head_sha == $sha)] | sort_by(.run_attempt, .created_at) | last | .conclusion // empty' <<< "${json}")"
+              case "${conclusion}" in
+                success)
+                  echo "${workflow} succeeded for ${GITHUB_SHA}"
+                  passed=true
+                  break
+                  ;;
+                failure|cancelled|timed_out|action_required|startup_failure)
+                  echo "::error::${workflow} did not pass for ${GITHUB_SHA}: ${conclusion}"
+                  exit 1
+                  ;;
+                *)
+                  echo "Waiting for ${workflow} (${attempt}/90) to finish for ${GITHUB_SHA}"
+                  sleep 15
+                  ;;
+              esac
+            done
+            if [[ "${passed}" != true ]]; then
+              echo "::error::Timed out waiting for ${workflow} quality gate on ${GITHUB_SHA}"
+              exit 1
+            fi
+          done
+
+      - name: Pack stable template artifact
+        if: steps.preflight.outputs.already_released == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${RUNNER_TEMP}/release"
+          dotnet pack template-pack/WebApiCoreSeed.Templates.csproj \
+            --configuration Release \
+            --output "${RUNNER_TEMP}/release"
+          test -s "${RUNNER_TEMP}/release/${PACKAGE_NAME}"
+          echo "TEMPLATE_PACKAGE=${RUNNER_TEMP}/release/${PACKAGE_NAME}" >> "${GITHUB_ENV}"
+
+      - name: Verify install, generated solution, tests and API using packaged artifact
+        if: steps.preflight.outputs.already_released == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          bash scripts/templates/smoke-test.sh
+
+      - name: Generate SHA256 checksum and publish release once
+        if: steps.preflight.outputs.already_released == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd "${RUNNER_TEMP}/release"
+          sha256sum "${PACKAGE_NAME}" > SHA256SUMS.txt
+          gh release create "${RELEASE_TAG}" \
+            "${PACKAGE_NAME}" SHA256SUMS.txt \
+            --repo "${GITHUB_REPOSITORY}" \
+            --target "${GITHUB_SHA}" \
+            --title "v2.0.0 — .NET 10 modernization and dotnet new template" \
+            --notes-file "${GITHUB_WORKSPACE}/docs/releases/v2.0.0.md" \
+            --latest
+
+      - name: Download published assets and verify released artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "${RUNNER_TEMP}/release-check"
+          gh release download "${RELEASE_TAG}" \
+            --repo "${GITHUB_REPOSITORY}" \
+            --dir "${RUNNER_TEMP}/release-check" \
+            --pattern "*.nupkg" --pattern "SHA256SUMS.txt"
+          (
+            cd "${RUNNER_TEMP}/release-check"
+            test -s "${PACKAGE_NAME}"
+            test -s SHA256SUMS.txt
+            sha256sum --check SHA256SUMS.txt
+          )
+          tag_json="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${RELEASE_TAG}")"
+          tag_sha="$(jq -r '.object.sha' <<< "${tag_json}")"
+          if [[ "${tag_sha}" != "${GITHUB_SHA}" ]]; then
+            echo "::error::Published tag target does not match the source commit"
+            exit 1
+          fi
+          echo "Verified release ${RELEASE_TAG} at ${GITHUB_SHA} and downloaded SHA256 assets"
