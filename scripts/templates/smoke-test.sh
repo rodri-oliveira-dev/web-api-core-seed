@@ -23,16 +23,26 @@ export DOTNET_CLI_HOME="$work_dir/dotnet-home"
 export DOTNET_CLI_TELEMETRY_OPTOUT=1
 export DOTNET_NOLOGO=true
 
-echo "== Pack the template NuGet =="
-dotnet pack "$repo_root/template-pack/WebApiCoreSeed.Templates.csproj" --configuration Release --output "$work_dir/packages" --nologo
+if [[ -n "${TEMPLATE_PACKAGE:-}" ]]; then
+  # Release validation must consume exactly the asset that will be uploaded.
+  package_file="$(realpath -- "${TEMPLATE_PACKAGE}")"
+  if [[ ! -f "$package_file" || "$package_file" != *.nupkg ]]; then
+    echo "TEMPLATE_PACKAGE must refer to an existing .nupkg file" >&2
+    exit 1
+  fi
+  echo "== Validate prebuilt release package: $(basename "$package_file") =="
+else
+  echo "== Pack the template NuGet =="
+  dotnet pack "$repo_root/template-pack/WebApiCoreSeed.Templates.csproj" --configuration Release --output "$work_dir/packages" --nologo
 
-shopt -s nullglob
-packages=("$work_dir"/packages/RodriOliveira.WebApiCoreSeed.Templates.*.nupkg)
-if [[ "${#packages[@]}" != 1 ]]; then
-  echo "Expected exactly one .nupkg, found ${#packages[@]}" >&2
-  exit 1
+  shopt -s nullglob
+  packages=("$work_dir"/packages/RodriOliveira.WebApiCoreSeed.Templates.*.nupkg)
+  if [[ "${#packages[@]}" != 1 ]]; then
+    echo "Expected exactly one .nupkg, found ${#packages[@]}" >&2
+    exit 1
+  fi
+  package_file="${packages[0]}"
 fi
-package_file="${packages[0]}"
 
 echo "== Validate NuGet package contents (deny repository-only assets) =="
 python3 - "$package_file" <<'PY'
