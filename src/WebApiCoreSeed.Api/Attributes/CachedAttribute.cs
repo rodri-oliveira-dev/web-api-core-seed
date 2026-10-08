@@ -13,8 +13,9 @@ using WebApiCoreSeed.Api.Settings;
 namespace WebApiCoreSeed.Api.Attributes
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class CachedAttribute : Attribute, IAsyncActionFilter
+    public class CachedAttribute : Attribute, IAsyncActionFilter, IAsyncResultFilter
     {
+        private static readonly object PendingCacheKey = new();
         private readonly int _timeToLiveSeconds;
 
         public CachedAttribute(int timeToLiveSeconds)
@@ -60,34 +61,66 @@ namespace WebApiCoreSeed.Api.Attributes
 
             var executedContext = await next();
 
-            // Never cache error results, failed actions or responses setting session cookies.
+            // Defer the write until MVC has executed the result. Result filters can
+            // change headers and ObjectResult determines its effective status later.
             if (!executedContext.Canceled
                 && executedContext.Exception == null
-                && !context.HttpContext.Response.Headers.ContainsKey("Set-Cookie")
-                && executedContext.Result is ObjectResult okObjectResult
-                && (okObjectResult.StatusCode == null || okObjectResult.StatusCode == StatusCodes.Status200OK))
+                && executedContext.Result is ObjectResult)
             {
-                await cacheService.CacheResponseAsync(cacheKey, okObjectResult.Value, TimeSpan.FromSeconds(_timeToLiveSeconds), cancellationToken);
+                context.HttpContext.Items[PendingCacheKey] = cacheKey;
+            }
+        }
+
+        public async Task OnResultExecutionAsync(ResultExecutingContext context, ResultExecutionDelegate next)
+        {
+            var executedContext = await next();
+
+            if (context.HttpContext.Items.TryGetValue(PendingCacheKey, out var pendingKey)
+                && pendingKey is string cacheKey
+                && !executedContext.Canceled
+                && executedContext.Exception == null
+                && !context.HttpContext.RequestAborted.IsCancellationRequested
+                && context.HttpContext.Response.StatusCode == StatusCodes.Status200OK
+                && !context.HttpContext.Response.Headers.ContainsKey("Set-Cookie")
+                && executedContext.Result is ObjectResult objectResult)
+            {
+                var cacheService = context.HttpContext.RequestServices.GetRequiredService<IResponseCacheService>();
+                await cacheService.CacheResponseAsync(
+                    cacheKey,
+                    objectResult.Value,
+                    TimeSpan.FromSeconds(_timeToLiveSeconds),
+                    context.HttpContext.RequestAborted);
             }
         }
 
         private static string GenerateCacheKeyFromRequest(HttpRequest request)
         {
             var keyBuilder = new StringBuilder();
+            var path = request.PathBase.ToString() + request.Path.ToString();
 
-            keyBuilder.Append(request.PathBase).Append(request.Path);
+            // Encode path and each individual query value with lengths and counts:
+            // "tag=a,b" must never collide with two values "tag=a&tag=b".
+            keyBuilder.Append(path.Length).Append(':').Append(path);
+            keyBuilder.Append('|').Append(request.Query.Count).Append(':');
 
-            // Length-prefix values to avoid ambiguous keys. Hashing also prevents
-            // request query parameters from being exposed in Redis key listings.
             foreach (var (key, value) in request.Query.OrderBy(x => x.Key, StringComparer.Ordinal))
             {
-                var queryValue = value.ToString();
-                keyBuilder.Append('|').Append(key.Length).Append(':').Append(key);
-                keyBuilder.Append('=').Append(queryValue.Length).Append(':').Append(queryValue);
+                keyBuilder.Append(key.Length).Append(':').Append(key);
+                keyBuilder.Append('=').Append(value.Count).Append(':');
+                for (var index = 0; index < value.Count; index++)
+                {
+                    var queryValue = value[index];
+                    keyBuilder.Append(queryValue?.Length ?? -1).Append(':');
+                    if (queryValue is not null)
+                    {
+                        keyBuilder.Append(queryValue);
+                    }
+                }
             }
 
+            // New namespace prevents reading legacy keys with ambiguous query values.
             var hash = SHA256.HashData(Encoding.UTF8.GetBytes(keyBuilder.ToString()));
-            return "response-cache:v2:" + Convert.ToHexString(hash);
+            return "response-cache:v3:" + Convert.ToHexString(hash);
         }
     }
 }
