@@ -27,7 +27,7 @@ Critérios:
 - Antes de publicar, exige conclusao success de `ci.yml`, `codeql.yml`, `template-smoke.yml` no **mesmo SHA**.
 - Faz pack da versao 2.0.0, chama `TEMPLATE_PACKAGE=...` em `scripts/templates/smoke-test.sh` e so entao publica.
 - Release via `gh release create --target <SHA> --notes-file docs/releases/v2.0.0.md`. Download e SHA-256 validam os assets publicados.
-- Tag nao pode ser movida. Ao receber pushes futuros, workflow encontra release existente e verifica assets sem criar nova tag.
+- Tag nao pode ser movida. Ao receber pushes futuros, workflow encontra release **publicada** e verifica assets sem criar nova tag. A revisao [#5461961414](https://github.com/rodri-oliveira-dev/web-api-core-seed/pull/52#pullrequestreview-5461961414) identificou que `gh release create` pode deixar uma release **draft** com assets caso falhe a publicacao. O preflight agora enumera e classifica releases inclusive drafts e falha fechado se detectar rascunho ou metadados inconsistentes. A conferência final exige `draft=false`, `prerelease=false` e data efetiva de publicacao antes dos downloads e do encerramento da #23; CI executa as regressões em `scripts/releases/test-release-state.sh`.
 - Issue #23 tem fechamento deliberadamente fora do PR para evitar fechamento antes da release. Workflow fecha apos confirmar integridade.
 - Licenciamento, About/topics e branch/tag protection sao acoes administrativas documentadas, nao executadas com privilégio indisponível.
 
