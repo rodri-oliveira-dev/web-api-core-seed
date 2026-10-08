@@ -23,6 +23,7 @@
   <ItemGroup>
     <Content Include="../.template.config/template.json" PackagePath="content/.template.config/template.json" />
     <Content Include="README.template.md" PackagePath="content/README.md" />
+    <Content Include="README.template.pt-BR.md" PackagePath="content/README.pt-BR.md" />
     <Content Include="../src/**/*" Exclude="../src/**/bin/**;../src/**/obj/**;../src/**/TestResults/**" PackagePath="content/src/%(RecursiveDir)" />
     <Content Include="../tests/**/*" Exclude="../tests/**/bin/**;../tests/**/obj/**;../tests/**/TestResults/**" PackagePath="content/tests/%(RecursiveDir)" />
     <Content Include="../tools/**/*" Exclude="../tools/**/bin/**;../tools/**/obj/**" PackagePath="content/tools/%(RecursiveDir)" />
