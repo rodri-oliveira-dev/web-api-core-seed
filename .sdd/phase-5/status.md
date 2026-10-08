@@ -57,7 +57,7 @@
 - Identidade: `RodriOliveira.WebApiCoreSeed.CSharp` / `webapi-seed`; pacote `RodriOliveira.WebApiCoreSeed.Templates`.
 - Arquivos principais: `.template.config/template.json`, `template-pack/WebApiCoreSeed.Templates.csproj`, READMEs de template EN/PT-BR, `scripts/templates/smoke-test.sh` e `.github/workflows/template-smoke.yml`.
 - Docs de distribuicao EN/PT-BR, README principal EN/PT-BR, CHANGELOG e validador de docs atualizados.
-- Template substitui `WebApiCoreSeed` pelo `-n` solicitado e atribui `UserSecretsId` novo. Allowlist exclui arquivos SDD, CI e administracao do projeto de origem.
+- Template substitui `WebApiCoreSeed` pelo `-n` solicitado e atribui `UserSecretsId` novo. Allowlist exclui arquivos SDD, CI e administracao do projeto de origem. Compose usa nome seguro com `COMPOSE_PROJECT_NAME` opcional; links de origem nao sofrem substituicao.
 - Testes previstos no workflow: empacotar `.nupkg`, inspecionar conteudo, instalar localmente, gerar `SampleApi`, restore, build, testes unitarios e integrados com Docker, iniciar API e validar `/health/live`.
 - Resultado dos checks: pendente da execucao no PR; nao relatar como aprovados sem evidencia.
 - Proxima entrega apos merge: [#23](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/23), release v2.0.0 e eventual publicacao do pacote no feed.
