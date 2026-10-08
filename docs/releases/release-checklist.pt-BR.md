@@ -4,7 +4,7 @@
 
 ## Processo de publicação
 
-O workflow `release-v2.yml` inicia ao fazer merge para a **`main`** (com `workflow_dispatch` para reexecuções manuais **selecionando a `main`**).
+O workflow `release-v2.yml` inicia ao fazer merge para a **`main`** (com `workflow_dispatch` para reexecuções manuais **selecionando a `main`**). O job **`build-verify`** tem somente permissões de leitura: aguarda os gates do mesmo SHA e empacota/testa sem token com escrita. O job **`publish`**, separado, baixa os artefatos verificados e usa permissões de escrita restritas apenas para criar a release e encerrar a issue. As actions são fixadas por SHA completo; o polling tem prazo global de 25 minutos e rejeita resultados de gates reprovados, ignorados, neutros ou obsoletos.
 
 1. Confere se já existem a GitHub Release e a tag `v2.0.0`; **nunca** substitui ou move referências históricas.
 2. Exige `ci`, `codeql` e `template-smoke` concluídos com sucesso no mesmo commit. O `ci` também avalia o SonarCloud Quality Gate em contextos confiáveis.
