@@ -45,7 +45,7 @@ dotnet ef database update --project src/Modules/SampleRestaurant/WebApiCoreSeed.
 
 Gere um script SQL idempotente substituindo `database update` por `migrations script --idempotent --output <caminho>` e mantendo os argumentos `--project`, `--startup-project` e `--context`. Revise o script antes de qualquer execução não local. Nomes históricos como `Loggin` são contratos de compatibilidade; não os renomeie sem plano de migração.
 
-Use `dotnet ef migrations has-pending-model-changes` com os mesmos argumentos de contexto para detectar alterações não migradas. Os testes de integração com Docker/Testcontainers incluem o cenário de upgrade do esquema legado. Veja [migração do legado](../migration-from-legacy.md).
+Use `dotnet ef migrations has-pending-model-changes` com os mesmos argumentos de contexto para detectar alterações não migradas. Os testes de integração com Docker/Testcontainers incluem o cenário de upgrade do esquema legado. Veja [migração do legado](../migration-from-legacy.pt-BR.md).
 
 ## O seed é uma operação separada
 
