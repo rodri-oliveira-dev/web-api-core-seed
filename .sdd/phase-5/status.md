@@ -70,6 +70,7 @@
 - Versao do pacote alterada de `2.0.0-preview.1` para **`2.0.0`**, alinhando tag, nome do asset, notas e instalacao.
 - `scripts/templates/smoke-test.sh` aceita `TEMPLATE_PACKAGE` para validar o asset exato sem repack.
 - `release-v2.yml` executa em push/dispatch na main, aguarda CI/CodeQL/template-smoke **no mesmo commit**, empacota o NuGet estavel, valida API gerada, testes e health, calcula SHA-256, cria `v2.0.0`/GitHub Release, baixa os assets e confere checksum/tag.
+- Revisao [#5461961414](https://github.com/rodri-oliveira-dev/web-api-core-seed/pull/52#pullrequestreview-5461961414): release em draft com assets enviados nao pode ser confundida com publicada. Preflight agora diferencia estados e falha fechado; gate final exige metadata de publicacao antes de fechar #23. Testes automatizados em `scripts/releases/test-release-state.sh` no CI.
 - Reentradas nao movem tag; outras revisoes de main nao tentam republicar v2.0.0. A issue sera fechada **pelo workflow apenas apos a verificacao**; o PR nao deve conter `Closes #23` para evitar fechamento prematuro.
 - Documentos: notas completas de breaking changes, changelog v2, checklists EN/PT-BR, badge de release, guias de template estavel.
 - Limites nao resolvidos por este PR: metadados "About"/topics requerem token administrativo; repo ainda sem LICENSE. Nao declarar como licenciado open source sem decisao/procedencia.
