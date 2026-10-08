@@ -4,7 +4,6 @@
 
 [![CI](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/ci.yml/badge.svg)](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/codeql.yml/badge.svg)](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/codeql.yml)
-[![Licença](https://img.shields.io/github/license/rodri-oliveira-dev/web-api-core-seed)](LICENSE)
 
 > **Estado do projeto:** aplicação de exemplo mantida em **.NET 10**. O repositório **ainda não é distribuído como template instalável via `dotnet new`**; essa evolução está na [#22](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/22). A versão histórica .NET Core 3.1 está fora de suporte; consulte [Versão legada](#versão-legada).
 
@@ -12,7 +11,7 @@
 
 Web API Core Seed é uma API REST de referência em ASP.NET Core que demonstra autenticação, domínio de restaurante modular, portas explícitas de persistência, SQL Server, cache de respostas opcional no Redis, OpenTelemetry e validações automatizadas. É uma **aplicação funcional** para estudo e referência, não um blueprint pronto para produção.
 
-A solução ativa é `WebApiCoreSeed.slnx`. O ponto de entrada está em `src/WebApiCoreSeed.Api/Program.cs`. O domínio demonstrativo é separado dos elementos reutilizáveis de HTTP/hospedagem; veja [arquitetura e fluxo de requisição](docs/architecture.md).
+A solução ativa é `WebApiCoreSeed.slnx`. O ponto de entrada está em `src/WebApiCoreSeed.Api/Program.cs`. O domínio demonstrativo é separado dos elementos reutilizáveis de HTTP/hospedagem; veja [arquitetura e fluxo de requisição](docs/architecture.pt-BR.md).
 
 ## Pré-requisitos
 
@@ -92,7 +91,7 @@ No primeiro setup local, o Compose aplica automaticamente migrations do **Identi
 docker compose --env-file .env.local up migrations
 ```
 
-Para alterações manuais com EF Core, instale `dotnet-ef` 10 e configure os User Secrets. **Cada DbContext pertence ao respectivo projeto de Infrastructure.** Os comandos para criar, aplicar, gerar scripts e revisar migrations dos dois contextos estão em [migrations EF Core](docs/development/ef-core-migrations.md). Não execute comandos de migrations ou seed de desenvolvimento em produção sem um plano de implantação revisado.
+Para alterações manuais com EF Core, instale `dotnet-ef` 10 e configure os User Secrets. **Cada DbContext pertence ao respectivo projeto de Infrastructure.** Os comandos para criar, aplicar, gerar scripts e revisar migrations dos dois contextos estão em [migrations EF Core](docs/development/ef-core-migrations.pt-BR.md). Não execute comandos de migrations ou seed de desenvolvimento em produção sem um plano de implantação revisado.
 
 ## Gerar dados de exemplo (seed)
 
@@ -124,13 +123,13 @@ curl -i http://localhost:8080/health/ready
 curl -X POST http://localhost:8080/api/v2/entrar -H "Content-Type: application/json" -d '{"email":"developer@example.local","password":"<sua senha local do seed>"}'
 ```
 
-Não publique tokens nem senhas em issues ou logs. Consulte os [contratos da API](docs/openapi/) e a [arquitetura](docs/architecture.md).
+Não publique tokens nem senhas em issues ou logs. Consulte os [contratos da API](docs/openapi/) e a [arquitetura](docs/architecture.pt-BR.md).
 
 ## Arquitetura
 
 A API HTTP é o composition root. `SampleRestaurant` contém domínio, services de aplicação e portas explícitas; `SampleRestaurant.Infrastructure` implementa repositórios EF Core e Unit of Work. `Identity.Infrastructure` mantém o DbContext Identity e as migrations. A API contém controllers, autenticação, autorização, rate limiting, tratamento de erros, cache e telemetria. O **repositório genérico mencionado no projeto histórico não faz parte do design ativo do SampleRestaurant**.
 
-Consulte [arquitetura](docs/architecture.md), [ADRs](docs/adr/) e o [guia de migração do legado](docs/migration-from-legacy.md).
+Consulte [arquitetura](docs/architecture.pt-BR.md), [ADRs](docs/adr/) e o [guia de migração do legado](docs/migration-from-legacy.md).
 
 ## Configuração e observabilidade
 
@@ -141,7 +140,7 @@ Consulte [arquitetura](docs/architecture.md), [ADRs](docs/adr/) e o [guia de mig
 - `OpenTelemetry:Enabled` ativa traces/métricas; exportação OTLP é desabilitada até configurar `OpenTelemetry:Otlp:Enabled` e endpoint.
 - `SeqSettings:Enabled` habilita exportação opcional para Seq; Serilog emite logs no console.
 
-Compose usa variáveis com dois sublinhados, como `AppSettings__Secret`. No host use User Secrets. Consulte [arquitetura](docs/architecture.md) e [desenvolvimento em contêineres](docs/development/containerized-local-development.md).
+Compose usa variáveis com dois sublinhados, como `AppSettings__Secret`. No host use User Secrets. Consulte [arquitetura](docs/architecture.pt-BR.md) e [desenvolvimento em contêineres](docs/development/containerized-local-development.md).
 
 ## Solução de problemas
 
