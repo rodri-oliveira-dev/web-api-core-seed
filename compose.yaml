@@ -1,4 +1,4 @@
-name: web-api-core-seed
+name: ${COMPOSE_PROJECT_NAME:-web-api-core-seed}
 
 services:
   sqlserver:
