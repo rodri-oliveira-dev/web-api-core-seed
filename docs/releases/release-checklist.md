@@ -28,7 +28,7 @@ dotnet new install ./RodriOliveira.WebApiCoreSeed.Templates.2.0.0.nupkg
 dotnet new webapi-seed -n SampleApi
 ```
 
-**If the release workflow fails**, inspect its GitHub Actions run; do not manually create/retag `v2.0.0` without understanding the blocker. Do not close #23 solely because the PR merged if the release did not publish.
+**If the release workflow fails**, inspect its GitHub Actions run; do not manually create/retag `v2.0.0` without understanding the blocker. The release workflow closes #23 itself **only after downloading and verifying published assets**. The PR deliberately references #23 without an auto-closing keyword, preventing premature closure if publication fails.
 
 ## Repository About / branding (requires repository administration)
 
