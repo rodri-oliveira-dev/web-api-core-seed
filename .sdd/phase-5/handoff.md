@@ -80,7 +80,7 @@
 
 ## Prompt 05 - Release v2.0.0 e encerramento do roadmap
 
-- Issue #23; branch `release/v2.0.0-productization` criada da main contendo merges #49/#50/#51.
+- Issue #23; [PR #52](https://github.com/rodri-oliveira-dev/web-api-core-seed/pull/52) aberto sobre a branch `release/v2.0.0-productization`, criada da main contendo merges #49/#50/#51.
 - Preparacao de release em `docs/releases/v2.0.0.md`, `docs/releases/release-checklist.md` e versao PT-BR, changelog e READMEs.
 - Pacote passa a `RodriOliveira.WebApiCoreSeed.Templates.2.0.0.nupkg`, sem publicar no NuGet.org.
 - Script de smoke aceita `TEMPLATE_PACKAGE` pre-empacotado e testa o arquivo da release (proveniencia, nomes `SampleApi`/`Acme.Api`, Docker Compose, restore, build, 2 suites de testes, health).
