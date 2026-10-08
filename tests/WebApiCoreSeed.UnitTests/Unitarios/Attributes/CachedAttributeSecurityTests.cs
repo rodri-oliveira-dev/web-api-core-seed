@@ -33,12 +33,15 @@ public sealed class CachedAttributeSecurityTests
             context.HttpContext.Request.Headers.Cookie = "session=example";
         }
 
+        var filter = new CachedAttribute(20);
         var nextCalls = 0;
-        await new CachedAttribute(20).OnActionExecutionAsync(context, () =>
+        var result = new OkObjectResult(new { id = 1 });
+        await filter.OnActionExecutionAsync(context, () =>
         {
             nextCalls++;
-            return Task.FromResult(Success(actionContext, filters));
+            return Task.FromResult(Executed(actionContext, filters, result));
         });
+        await ExecuteResultAsync(filter, actionContext, filters, result);
 
         Assert.Equal(1, nextCalls);
         cache.Verify(c => c.GetCachedResponseAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
@@ -52,25 +55,49 @@ public sealed class CachedAttributeSecurityTests
     public async Task RespostasDeErroNaoDevemSerArmazenadas(int statusCode)
     {
         var (context, cache, filters, actionContext) = CreateContext();
-        await new CachedAttribute(20).OnActionExecutionAsync(context, () =>
-            Task.FromResult(new ActionExecutedContext(actionContext, filters, new object())
-            {
-                Result = new ObjectResult("error") { StatusCode = statusCode }
-            }));
+        var filter = new CachedAttribute(20);
+        var result = new ObjectResult("error") { StatusCode = statusCode };
+
+        await filter.OnActionExecutionAsync(context, () =>
+            Task.FromResult(Executed(actionContext, filters, result)));
+        await ExecuteResultAsync(filter, actionContext, filters, result,
+            () => context.HttpContext.Response.StatusCode = statusCode);
 
         cache.Verify(c => c.GetCachedResponseAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
         cache.Verify(c => c.CacheResponseAsync(It.IsAny<string>(), It.IsAny<object?>(), It.IsAny<TimeSpan>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Fact]
-    public async Task RespostaComSetCookieNaoDeveSerArmazenada()
+    public async Task ObjectResultSemStatusMasComProblemDetails500NaoDeveSerArmazenado()
     {
         var (context, cache, filters, actionContext) = CreateContext();
-        context.HttpContext.Response.Headers.SetCookie = "session=value; HttpOnly";
+        var filter = new CachedAttribute(20);
+        var result = new ObjectResult(new ProblemDetails { Status = StatusCodes.Status500InternalServerError });
+        Assert.Null(result.StatusCode);
 
-        await new CachedAttribute(20).OnActionExecutionAsync(context, () =>
-            Task.FromResult(Success(actionContext, filters)));
+        await filter.OnActionExecutionAsync(context, () =>
+            Task.FromResult(Executed(actionContext, filters, result)));
+        // The ObjectResult executor sets the effective HTTP status during result execution.
+        await ExecuteResultAsync(filter, actionContext, filters, result,
+            () => context.HttpContext.Response.StatusCode = StatusCodes.Status500InternalServerError);
 
+        cache.Verify(c => c.CacheResponseAsync(It.IsAny<string>(), It.IsAny<object?>(), It.IsAny<TimeSpan>(), It.IsAny<CancellationToken>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task SetCookieAdicionadoDuranteExecucaoDoResultadoImpedeGravacao()
+    {
+        var (context, cache, filters, actionContext) = CreateContext();
+        var filter = new CachedAttribute(20);
+        var result = new OkObjectResult(new { id = 1 });
+
+        await filter.OnActionExecutionAsync(context, () =>
+            Task.FromResult(Executed(actionContext, filters, result)));
+        // Simulate a result filter setting the cookie after action filters have completed.
+        await ExecuteResultAsync(filter, actionContext, filters, result,
+            () => context.HttpContext.Response.Headers.SetCookie = "session=value; HttpOnly");
+
+        cache.Verify(c => c.GetCachedResponseAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Once);
         cache.Verify(c => c.CacheResponseAsync(It.IsAny<string>(), It.IsAny<object?>(), It.IsAny<TimeSpan>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
@@ -89,14 +116,57 @@ public sealed class CachedAttributeSecurityTests
             .Callback<string, object?, TimeSpan, CancellationToken>((key, _, _, _) => writeKey = key)
             .Returns(Task.CompletedTask);
 
-        await new CachedAttribute(20).OnActionExecutionAsync(context, () =>
-            Task.FromResult(Success(actionContext, filters)));
+        var filter = new CachedAttribute(20);
+        var result = new OkObjectResult(new { id = 1 });
+        await filter.OnActionExecutionAsync(context, () =>
+            Task.FromResult(Executed(actionContext, filters, result)));
+        await ExecuteResultAsync(filter, actionContext, filters, result);
 
         Assert.NotNull(readKey);
         Assert.Equal(readKey, writeKey);
-        Assert.StartsWith("response-cache:v2:", readKey, StringComparison.Ordinal);
+        Assert.StartsWith("response-cache:v3:", readKey, StringComparison.Ordinal);
         Assert.DoesNotContain("private-secret", readKey, StringComparison.Ordinal);
         Assert.DoesNotContain("access_token", readKey, StringComparison.Ordinal);
+        cache.Verify(c => c.CacheResponseAsync(It.IsAny<string>(), It.IsAny<object?>(), TimeSpan.FromSeconds(20), It.IsAny<CancellationToken>()), Times.Once);
+    }
+
+    [Fact]
+    public async Task ValoresDeQueryDistintosNuncaDevemColidirPorVirgulas()
+    {
+        var singleValue = await GetReadCacheKeyAsync("?tag=a%2Cb");
+        var multipleValues = await GetReadCacheKeyAsync("?tag=a&tag=b");
+
+        Assert.NotEqual(singleValue, multipleValues);
+    }
+
+    [Fact]
+    public async Task OrdemDeParametrosDeQueryNaoMudaChave()
+    {
+        var firstOrder = await GetReadCacheKeyAsync("?page=1&tag=a&tag=b");
+        var secondOrder = await GetReadCacheKeyAsync("?tag=a&tag=b&page=1");
+
+        Assert.Equal(firstOrder, secondOrder);
+    }
+
+    [Fact]
+    public async Task CacheHitNaoGeraNovaGravacao()
+    {
+        var (context, cache, filters, actionContext) = CreateContext();
+        cache.Setup(c => c.GetCachedResponseAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .ReturnsAsync("{\"id\":1}");
+        var filter = new CachedAttribute(20);
+        var nextCalls = 0;
+
+        await filter.OnActionExecutionAsync(context, () =>
+        {
+            nextCalls++;
+            return Task.FromResult(Executed(actionContext, filters, new OkObjectResult(new { id = 1 })));
+        });
+        var result = Assert.IsType<ContentResult>(context.Result);
+        await ExecuteResultAsync(filter, actionContext, filters, result);
+
+        Assert.Equal(0, nextCalls);
+        cache.Verify(c => c.CacheResponseAsync(It.IsAny<string>(), It.IsAny<object?>(), It.IsAny<TimeSpan>(), It.IsAny<CancellationToken>()), Times.Never);
     }
 
     [Theory]
@@ -106,6 +176,40 @@ public sealed class CachedAttributeSecurityTests
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new CachedAttribute(seconds));
     }
+
+    private static async Task<string> GetReadCacheKeyAsync(string query)
+    {
+        var (context, cache, filters, actionContext) = CreateContext();
+        context.HttpContext.Request.QueryString = new QueryString(query);
+        string? readKey = null;
+        cache.Setup(c => c.GetCachedResponseAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            .Callback<string, CancellationToken>((key, _) => readKey = key)
+            .ReturnsAsync((string?)null);
+
+        await new CachedAttribute(20).OnActionExecutionAsync(context, () =>
+            Task.FromResult(Executed(actionContext, filters, new OkObjectResult(new { id = 1 }))));
+
+        return Assert.IsType<string>(readKey);
+    }
+
+    private static async Task ExecuteResultAsync(
+        CachedAttribute filter,
+        ActionContext actionContext,
+        List<IFilterMetadata> filters,
+        IActionResult result,
+        Action? duringResult = null)
+    {
+        var context = new ResultExecutingContext(actionContext, filters, result, new object());
+        await filter.OnResultExecutionAsync(context, () =>
+        {
+            duringResult?.Invoke();
+            return Task.FromResult(new ResultExecutedContext(actionContext, filters, result, new object()));
+        });
+    }
+
+    private static ActionExecutedContext Executed(
+        ActionContext actionContext, List<IFilterMetadata> filters, IActionResult result)
+        => new(actionContext, filters, new object()) { Result = result };
 
     private static (ActionExecutingContext Context, Mock<IResponseCacheService> Cache,
         List<IFilterMetadata> Filters, ActionContext ActionContext) CreateContext(
@@ -139,10 +243,4 @@ public sealed class CachedAttributeSecurityTests
 
         return (context, cache, filters, actionContext);
     }
-
-    private static ActionExecutedContext Success(ActionContext actionContext, List<IFilterMetadata> filters)
-        => new(actionContext, filters, new object())
-        {
-            Result = new OkObjectResult(new { id = 1 })
-        };
 }
