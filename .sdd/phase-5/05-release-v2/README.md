@@ -23,7 +23,7 @@ Critérios:
 ## 3. Design
 
 - Branch `release/v2.0.0-productization` da `main` contem release workflow, version bump, docs EN/PT-BR e smoke parametrizavel.
-- `release-v2.yml` dispara ao fazer push em `main` e aceita `workflow_dispatch`; nunca roda em PR.
+- `release-v2.yml` dispara ao fazer push em `main` e aceita `workflow_dispatch` apenas a partir da `main`; nunca publica em PR ou a partir de outra branch.
 - Antes de publicar, exige conclusao success de `ci.yml`, `codeql.yml`, `template-smoke.yml` no **mesmo SHA**.
 - Faz pack da versao 2.0.0, chama `TEMPLATE_PACKAGE=...` em `scripts/templates/smoke-test.sh` e so entao publica.
 - Release via `gh release create --target <SHA> --notes-file docs/releases/v2.0.0.md`. Download e SHA-256 validam os assets publicados.
