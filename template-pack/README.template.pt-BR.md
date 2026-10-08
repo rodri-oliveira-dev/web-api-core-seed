@@ -6,6 +6,10 @@ Projeto gerado pelo template [Web API Core Seed](https://github.com/rodri-olivei
 
 Este projeto é um ponto de partida, **não uma aplicação pronta para produção**. Revise segurança, configuração e permissões antes de implantá-lo.
 
+## Identidade no Docker Compose
+
+Por padrão o Compose utiliza o nome seguro `web-api-core-seed`. Para executar múltiplos projetos gerados no mesmo Docker host, defina `COMPOSE_PROJECT_NAME` em `.env.local` (por exemplo, `meu-sample-api`) com letras minúsculas, números, hífens e underscores. O nome é independente do nome .NET: `Acme.Api` é válido para C#, mas o Docker Compose não aceita ponto no nome do projeto.
+
 ## Pré-requisitos
 
 - SDK .NET definido em `global.json`.
