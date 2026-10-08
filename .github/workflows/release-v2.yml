@@ -5,189 +5,243 @@ on:
     branches: ["main"]
   workflow_dispatch:
 
-# Publish only from a reviewed main commit, after all required workflows succeeded.
-# No NuGet.org credentials are used: distribution is via GitHub Release assets.
-permissions:
-  contents: write
-  actions: read
-  issues: write
+# Job-level least privilege: build/test never receive a write-capable token.
+permissions: {}
 
 concurrency:
   group: release-v2.0.0
   cancel-in-progress: false
 
 jobs:
-  publish:
-    name: Verify and publish v2.0.0
-    runs-on: ${{ vars.RUNNER_OS || 'ubuntu-26.04' }}
-    timeout-minutes: 60
+  build-verify:
+    name: Verify source checks and release package (read only)
     if: github.ref == 'refs/heads/main'
+    runs-on: ${{ vars.RUNNER_OS || 'ubuntu-26.04' }}
+    timeout-minutes: 55
+    # contents: read for release/tag inspection, actions: read for main quality-gate status.
+    permissions:
+      contents: read
+      actions: read
+    outputs:
+      already_released: ${{ steps.preflight.outputs.already_released }}
+      expected_tag_sha: ${{ steps.preflight.outputs.expected_tag_sha }}
     env:
-      GH_TOKEN: ${{ github.token }}
       RELEASE_TAG: v2.0.0
       PACKAGE_NAME: RodriOliveira.WebApiCoreSeed.Templates.2.0.0.nupkg
       DOTNET_NOLOGO: true
       DOTNET_CLI_TELEMETRY_OPTOUT: true
     steps:
-      - name: Checkout exact source commit
-        uses: actions/checkout@v7
+      - name: Checkout exact source commit (no persisted credentials)
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
 
       - name: Set up pinned .NET SDK
-        uses: actions/setup-dotnet@v6
+        uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6
         with:
           global-json-file: global.json
 
-      - name: Verify release does not point to another commit
+      - name: Inspect tag and release state, rejecting drafts or GitHub API outages
         id: preflight
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          ref_json="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${RELEASE_TAG}" 2>/dev/null || true)"
-          tag_sha="$(jq -r '.object.sha // empty' <<< "${ref_json}")"
-          # Drafts can contain uploaded assets even though publication failed.
-          # Enumerate all release pages so a draft cannot take the idempotent path.
+          error_file="$(mktemp)"
+          trap 'rm -f "$error_file"' EXIT
+          if ref_json="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${RELEASE_TAG}" 2>"$error_file")"; then
+            tag_sha="$(jq -er '.object.sha | select(type == "string" and test("^[0-9a-f]{40}$"))' <<< "$ref_json")"
+          elif grep -Eq 'HTTP 404([^0-9]|$)' "$error_file"; then
+            tag_sha=""
+          else
+            cat "$error_file" >&2
+            echo "::error::Failed to query tag ${RELEASE_TAG}; not treating a non-404 error as absence."
+            exit 1
+          fi
+
+          # An authenticated list may contain unpublished draft releases with uploaded assets.
           release_state="$(gh api --paginate "repos/${GITHUB_REPOSITORY}/releases?per_page=100" |
             bash scripts/releases/classify-release-state.sh "${RELEASE_TAG}")"
-          case "${release_state}" in
-            draft)
-              echo "::error::Release ${RELEASE_TAG} is a draft or lacks publication metadata. Publish or delete the incomplete draft manually before retrying; issue #23 remains open."
-              exit 1
-              ;;
-            invalid)
-              echo "::error::Release ${RELEASE_TAG} is duplicated, a prerelease, or has invalid metadata. Inspect Releases before retrying."
+          case "$release_state" in
+            draft|invalid)
+              echo "::error::Release ${RELEASE_TAG} is $release_state; inspect or repair it manually before retrying."
               exit 1
               ;;
             published)
-              if [[ -z "${tag_sha}" ]]; then
-                echo "::error::Published release exists but the tag reference is missing."
+              if [[ -z "$tag_sha" ]]; then
+                echo "::error::Published release exists without a valid Git tag."
                 exit 1
               fi
-              echo "Published release ${RELEASE_TAG} already exists at ${tag_sha}; later main pushes never move it."
-              echo "already_released=true" >> "${GITHUB_OUTPUT}"
-              echo "expected_tag_sha=${tag_sha}" >> "${GITHUB_OUTPUT}"
+              echo "already_released=true" >> "$GITHUB_OUTPUT"
+              echo "expected_tag_sha=$tag_sha" >> "$GITHUB_OUTPUT"
               ;;
             missing)
-              if [[ -n "${tag_sha}" && "${tag_sha}" != "${GITHUB_SHA}" ]]; then
-                echo "::error::Unpublished tag ${RELEASE_TAG} points to ${tag_sha}; cannot release a different commit."
+              if [[ -n "$tag_sha" && "$tag_sha" != "$GITHUB_SHA" ]]; then
+                echo "::error::Existing unpublished tag points to $tag_sha, not $GITHUB_SHA."
                 exit 1
               fi
-              echo "already_released=false" >> "${GITHUB_OUTPUT}"
-              echo "expected_tag_sha=${GITHUB_SHA}" >> "${GITHUB_OUTPUT}"
+              echo "already_released=false" >> "$GITHUB_OUTPUT"
+              echo "expected_tag_sha=$GITHUB_SHA" >> "$GITHUB_OUTPUT"
               ;;
             *)
-              echo "::error::Unknown release state ${release_state}; refusing to publish."
+              echo "::error::Unexpected release state '$release_state'."
               exit 1
               ;;
           esac
 
-      - name: Wait for main quality gates for this exact commit
+      - name: Wait for CI, CodeQL and template-smoke on this exact main commit
         if: steps.preflight.outputs.already_released == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          workflows=(ci.yml codeql.yml template-smoke.yml)
-          for workflow in "${workflows[@]}"; do
-            passed=false
-            for attempt in $(seq 1 90); do
-              json="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow}/runs?branch=main&event=push&per_page=50")"
-              conclusion="$(jq -r --arg sha "${GITHUB_SHA}" '[.workflow_runs[] | select(.head_sha == $sha)] | sort_by(.run_attempt, .created_at) | last | .conclusion // empty' <<< "${json}")"
-              case "${conclusion}" in
+          # One 25-minute deadline for all three gates, well below the 55-minute job timeout.
+          deadline=$((SECONDS + 1500))
+          for workflow in ci.yml codeql.yml template-smoke.yml; do
+            while true; do
+              if (( SECONDS >= deadline )); then
+                echo "::error::Global gate deadline exceeded while waiting for $workflow on $GITHUB_SHA."
+                exit 1
+              fi
+              data="$(gh api "repos/${GITHUB_REPOSITORY}/actions/workflows/$workflow/runs?branch=main&event=push&per_page=100")"
+              conclusion="$(jq -r --arg sha "$GITHUB_SHA" '
+                [.workflow_runs[] | select(.head_sha == $sha)] |
+                sort_by(.run_attempt, .created_at) | last | .conclusion // "pending"
+              ' <<< "$data")"
+              case "$conclusion" in
                 success)
-                  echo "${workflow} succeeded for ${GITHUB_SHA}"
-                  passed=true
+                  echo "$workflow passed for $GITHUB_SHA"
                   break
                   ;;
-                failure|cancelled|timed_out|action_required|startup_failure)
-                  echo "::error::${workflow} did not pass for ${GITHUB_SHA}: ${conclusion}"
+                failure|cancelled|timed_out|action_required|startup_failure|skipped|neutral|stale)
+                  echo "::error::$workflow concluded $conclusion for $GITHUB_SHA."
                   exit 1
                   ;;
-                *)
-                  echo "Waiting for ${workflow} (${attempt}/90) to finish for ${GITHUB_SHA}"
+                pending|null|"")
+                  echo "Waiting for $workflow ($conclusion) on $GITHUB_SHA"
                   sleep 15
+                  ;;
+                *)
+                  echo "::error::Unexpected conclusion '$conclusion' for $workflow."
+                  exit 1
                   ;;
               esac
             done
-            if [[ "${passed}" != true ]]; then
-              echo "::error::Timed out waiting for ${workflow} quality gate on ${GITHUB_SHA}"
-              exit 1
-            fi
           done
 
-      - name: Pack stable template artifact
+      - name: Pack stable template package
         if: steps.preflight.outputs.already_released == 'false'
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p "${RUNNER_TEMP}/release"
+          mkdir -p "$RUNNER_TEMP/release"
           dotnet pack template-pack/WebApiCoreSeed.Templates.csproj \
-            --configuration Release \
-            --output "${RUNNER_TEMP}/release"
-          test -s "${RUNNER_TEMP}/release/${PACKAGE_NAME}"
-          echo "TEMPLATE_PACKAGE=${RUNNER_TEMP}/release/${PACKAGE_NAME}" >> "${GITHUB_ENV}"
+            --configuration Release --output "$RUNNER_TEMP/release"
+          test -s "$RUNNER_TEMP/release/$PACKAGE_NAME"
+          echo "TEMPLATE_PACKAGE=$RUNNER_TEMP/release/$PACKAGE_NAME" >> "$GITHUB_ENV"
 
-      - name: Verify install, generated solution, tests and API using packaged artifact
+      - name: Test the exact packaged artifact (no write token)
         if: steps.preflight.outputs.already_released == 'false'
+        shell: bash
+        run: bash scripts/templates/smoke-test.sh
+
+      - name: Stage release notes alongside the verified package
+        if: steps.preflight.outputs.already_released == 'false'
+        run: cp docs/releases/v2.0.0.md "$RUNNER_TEMP/release/v2.0.0.md"
+
+      - name: Upload verified release inputs
+        if: steps.preflight.outputs.already_released == 'false'
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
+        with:
+          name: verified-v2.0.0-inputs
+          path: ${{ runner.temp }}/release/
+          if-no-files-found: error
+          retention-days: 7
+
+  publish:
+    name: Publish and verify GitHub Release (no builds)
+    needs: build-verify
+    if: github.ref == 'refs/heads/main'
+    runs-on: ${{ vars.RUNNER_OS || 'ubuntu-26.04' }}
+    timeout-minutes: 15
+    # contents: write creates the tag/release; issues: write closes #23 after verification.
+    # actions: read retrieves the verified package uploaded by the read-only job.
+    permissions:
+      contents: write
+      issues: write
+      actions: read
+    env:
+      RELEASE_TAG: v2.0.0
+      PACKAGE_NAME: RodriOliveira.WebApiCoreSeed.Templates.2.0.0.nupkg
+    steps:
+      - name: Download only the verified package and release notes
+        if: needs.build-verify.outputs.already_released == 'false'
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: verified-v2.0.0-inputs
+          path: ${{ runner.temp }}/release/
+
+      - name: Generate checksum and publish exactly once
+        if: needs.build-verify.outputs.already_released == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
           set -euo pipefail
-          bash scripts/templates/smoke-test.sh
-
-      - name: Generate SHA256 checksum and publish release once
-        if: steps.preflight.outputs.already_released == 'false'
-        shell: bash
-        run: |
-          set -euo pipefail
-          cd "${RUNNER_TEMP}/release"
-          sha256sum "${PACKAGE_NAME}" > SHA256SUMS.txt
-          gh release create "${RELEASE_TAG}" \
-            "${PACKAGE_NAME}" SHA256SUMS.txt \
-            --repo "${GITHUB_REPOSITORY}" \
-            --target "${GITHUB_SHA}" \
+          cd "$RUNNER_TEMP/release"
+          test -s "$PACKAGE_NAME"
+          test -s v2.0.0.md
+          sha256sum "$PACKAGE_NAME" > SHA256SUMS.txt
+          gh release create "$RELEASE_TAG" "$PACKAGE_NAME" SHA256SUMS.txt \
+            --repo "$GITHUB_REPOSITORY" \
+            --target "$GITHUB_SHA" \
             --title "v2.0.0 — .NET 10 modernization and dotnet new template" \
-            --notes-file "${GITHUB_WORKSPACE}/docs/releases/v2.0.0.md" \
-            --latest
+            --notes-file v2.0.0.md --latest
 
-      - name: Download published assets and verify released artifact
+      - name: Validate public publication, tag and downloaded assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_TAG_SHA: ${{ needs.build-verify.outputs.expected_tag_sha }}
         shell: bash
         run: |
           set -euo pipefail
-          # Authenticated downloads can read drafts, so require published metadata.
           release_json="$(gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${RELEASE_TAG}")"
-          if ! jq -e --arg tag "${RELEASE_TAG}" \
-            '.tag_name == $tag and .draft == false and .prerelease == false and
-             ((.published_at | type) == "string") and ((.published_at | length) > 0)' \
-            <<< "${release_json}" >/dev/null; then
-            echo "::error::Release ${RELEASE_TAG} is not published and stable. Refusing to download draft assets or close #23."
+          if ! jq -e --arg tag "$RELEASE_TAG" '
+            .tag_name == $tag and .draft == false and .prerelease == false and
+            ((.published_at | type) == "string") and ((.published_at | length) > 0)
+          ' <<< "$release_json" >/dev/null; then
+            echo "::error::Release ${RELEASE_TAG} is not published and stable."
             exit 1
           fi
-          mkdir -p "${RUNNER_TEMP}/release-check"
-          gh release download "${RELEASE_TAG}" \
-            --repo "${GITHUB_REPOSITORY}" \
-            --dir "${RUNNER_TEMP}/release-check" \
+
+          mkdir -p "$RUNNER_TEMP/release-check"
+          gh release download "$RELEASE_TAG" --repo "$GITHUB_REPOSITORY" \
+            --dir "$RUNNER_TEMP/release-check" \
             --pattern "*.nupkg" --pattern "SHA256SUMS.txt"
           (
-            cd "${RUNNER_TEMP}/release-check"
-            test -s "${PACKAGE_NAME}"
+            cd "$RUNNER_TEMP/release-check"
+            test -s "$PACKAGE_NAME"
             test -s SHA256SUMS.txt
             sha256sum --check SHA256SUMS.txt
           )
-          tag_json="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${RELEASE_TAG}")"
-          tag_sha="$(jq -r '.object.sha' <<< "${tag_json}")"
-          if [[ "${tag_sha}" != "${{ steps.preflight.outputs.expected_tag_sha }}" ]]; then
-            echo "::error::Published tag changed during verification"
+          tag_sha="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${RELEASE_TAG}" --jq '.object.sha')"
+          if [[ "$tag_sha" != "$EXPECTED_TAG_SHA" ]]; then
+            echo "::error::Released tag $tag_sha differs from verified source $EXPECTED_TAG_SHA."
             exit 1
           fi
-          echo "Verified release ${RELEASE_TAG} at ${tag_sha} and downloaded SHA256 assets"
+          echo "Published release and checksum verified at commit $tag_sha"
 
-      - name: Close release tracking issue only after asset verification
+      - name: Close #23 only after public release verification
+        env:
+          GH_TOKEN: ${{ github.token }}
+          EXPECTED_TAG_SHA: ${{ needs.build-verify.outputs.expected_tag_sha }}
         shell: bash
         run: |
           set -euo pipefail
           current_state="$(gh api "repos/${GITHUB_REPOSITORY}/issues/23" --jq '.state')"
-          if [[ "${current_state}" != "closed" ]]; then
-            released_sha="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${RELEASE_TAG}" --jq '.object.sha')"
-            gh issue close 23 --repo "${GITHUB_REPOSITORY}" \
-              --comment "Release [v2.0.0](https://github.com/${GITHUB_REPOSITORY}/releases/tag/v2.0.0) is published at commit ${released_sha}. The template .nupkg and SHA256SUMS.txt were downloaded and verified by the release workflow. NuGet.org and repository metadata/licensing decisions remain explicitly out of scope; see docs/releases/release-checklist.md."
+          if [[ "$current_state" != "closed" ]]; then
+            gh issue close 23 --repo "$GITHUB_REPOSITORY" \
+              --comment "Release [v2.0.0](https://github.com/${GITHUB_REPOSITORY}/releases/tag/v2.0.0) was published and its package/checksum were verified at commit $EXPECTED_TAG_SHA. GitHub Release assets are the distribution channel; no NuGet.org publication is claimed."
           fi
