@@ -168,7 +168,7 @@ O código .NET Core 3.1 original e intacto está preservado na tag [`v1.0.0-lega
 
 ## Instalar como template `dotnet new` local
 
-O template pode ser empacotado e instalado **localmente** antes da publicação no NuGet.org:
+O template pode ser empacotado e instalado **localmente**, usando o arquivo `.nupkg` gerado no repositório:
 
 ```bash
 dotnet pack template-pack/WebApiCoreSeed.Templates.csproj -c Release -o ./artifacts/templates
