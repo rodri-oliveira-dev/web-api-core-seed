@@ -14,7 +14,24 @@ The `migrations` service in `compose.yaml` applies `ApplicationDbContext` and th
 
 - Install the SDK pinned by `global.json` and the compatible `dotnet-ef` **10.x** tool: `dotnet tool install --global dotnet-ef --version "10.*"` (or update an existing tool within the 10.x channel).
 - Prepare SQL Server, e.g. `docker compose --env-file .env.local up -d sqlserver`.
-- Configure the API project User Secrets for `ConnectionStrings:DefaultConnection` and `AppSettings:Secret` using the setup script described in the README.
+- Configure the API project User Secrets for `ConnectionStrings:DefaultConnection` and `AppSettings:Secret` using the setup script described in the README **for application runtime**. The EF design-time factories in the two Infrastructure projects do **not** load the API's User Secrets. They load `appsettings.json`, `appsettings.Development.json` and environment variables. Consequently, `dotnet ef` requires `ConnectionStrings__DefaultConnection` in the invoking shell, even after User Secrets are configured.
+- Supply the **same local SQL Server connection string** as a temporary environment variable, using the exact double-underscore key. Enter it interactively to avoid putting credentials in shell history:
+
+  **Bash**
+  ```bash
+  read -r -s -p "Local EF SQL Server connection string: " ConnectionStrings__DefaultConnection
+  printf '\n'
+  export ConnectionStrings__DefaultConnection
+  ```
+
+  **PowerShell**
+  ```powershell
+  $secureConnectionString = Read-Host "Local EF SQL Server connection string" -AsSecureString
+  $env:ConnectionStrings__DefaultConnection = [System.Net.NetworkCredential]::new("", $secureConnectionString).Password
+  Remove-Variable secureConnectionString
+  ```
+
+  Use the host-accessible address (usually `localhost,1433`), not Compose's `sqlserver` service name. Keep the variable available in the **same terminal** while running the `dotnet ef` commands below. Never commit it, paste it into issue comments, or run these examples against production. Afterwards, clear it with `unset ConnectionStrings__DefaultConnection` (Bash) or `Remove-Item Env:\ConnectionStrings__DefaultConnection` (PowerShell).
 - Run in the Development environment with a trusted local database, not against production.
 
 ## Identity DbContext
