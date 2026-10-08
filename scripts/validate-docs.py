@@ -21,6 +21,7 @@ DOCUMENTS = (
     "docs/development/ef-core-migrations.md",
     "docs/development/ef-core-migrations.pt-BR.md",
     "docs/migration-from-legacy.md",
+    "docs/migration-from-legacy.pt-BR.md",
     "docs/adr/README.md",
     "docs/adr/0001-explicit-ports-and-modules.md",
     "docs/adr/0002-separate-dbcontexts-and-explicit-seed.md",
@@ -28,6 +29,7 @@ DOCUMENTS = (
 )
 LANGUAGE_PAIRS = (
     ("README.md", "README.pt-BR.md"),
+    ("docs/migration-from-legacy.md", "docs/migration-from-legacy.pt-BR.md"),
     ("docs/architecture.md", "docs/architecture.pt-BR.md"),
     ("docs/development/ef-core-migrations.md", "docs/development/ef-core-migrations.pt-BR.md"),
 )
