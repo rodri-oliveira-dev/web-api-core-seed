@@ -4,7 +4,7 @@
 
 ## Release mechanics
 
-The `release-v2.yml` workflow executes on the **merge commit pushed to `main`** (and supports `workflow_dispatch` for safe retries). It does not publish on pull requests or branches.
+The `release-v2.yml` workflow executes on the **merge commit pushed to `main`** (and supports `workflow_dispatch` for safe retries **only when manually dispatched from `main`**). It does not publish on pull requests or branches.
 
 1. Check for an existing `v2.0.0` GitHub Release or tag; never overwrite, delete or move an existing tag.
 2. Require `ci`, `codeql`, and `template-smoke` to conclude **success on that exact commit**. `ci` also enforces the SonarCloud Quality Gate in trusted contexts.
