@@ -24,10 +24,10 @@
     <Content Include="../.template.config/template.json" PackagePath="content/.template.config/template.json" />
     <Content Include="README.template.md" PackagePath="content/README.md" />
     <Content Include="README.template.pt-BR.md" PackagePath="content/README.pt-BR.md" />
-    <Content Include="../src/**/*" Exclude="../src/**/bin/**;../src/**/obj/**;../src/**/TestResults/**" PackagePath="content/src/%(RecursiveDir)" />
-    <Content Include="../tests/**/*" Exclude="../tests/**/bin/**;../tests/**/obj/**;../tests/**/TestResults/**" PackagePath="content/tests/%(RecursiveDir)" />
-    <Content Include="../tools/**/*" Exclude="../tools/**/bin/**;../tools/**/obj/**" PackagePath="content/tools/%(RecursiveDir)" />
-    <Content Include="../docs/openapi/**/*" PackagePath="content/docs/openapi/%(RecursiveDir)" />
+    <Content Include="../src/**/*" Exclude="../src/**/bin/**;../src/**/obj/**;../src/**/TestResults/**" PackagePath="content/src/" />
+    <Content Include="../tests/**/*" Exclude="../tests/**/bin/**;../tests/**/obj/**;../tests/**/TestResults/**" PackagePath="content/tests/" />
+    <Content Include="../tools/**/*" Exclude="../tools/**/bin/**;../tools/**/obj/**" PackagePath="content/tools/" />
+    <Content Include="../docs/openapi/**/*" PackagePath="content/docs/openapi/" />
     <Content Include="../scripts/docker/apply-migrations.sh" PackagePath="content/scripts/docker/" />
     <Content Include="../scripts/setup/configure-user-secrets.sh" PackagePath="content/scripts/setup/" />
     <Content Include="../scripts/setup/configure-user-secrets.ps1" PackagePath="content/scripts/setup/" />
