@@ -1,0 +1,31 @@
+name: template-smoke
+
+on:
+  pull_request:
+    branches: ["main"]
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pack-install-build-run:
+    name: Package, install and smoke-test dotnet new
+    runs-on: ${{ vars.RUNNER_OS || 'ubuntu-26.04' }}
+    timeout-minutes: 30
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+      - name: Set up .NET SDK
+        uses: actions/setup-dotnet@v6
+        with:
+          global-json-file: global.json
+      - name: Smoke-test packaged template with fresh SampleApi
+        shell: bash
+        run: bash scripts/templates/smoke-test.sh
