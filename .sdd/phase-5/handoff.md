@@ -64,3 +64,16 @@
 - Estado dos checks no head original do PR: build/testes/documentacao/OpenAPI/CodeQL/Dependency Review aprovados; SonarCloud Quality Gate **reprovado**. Registrar o resultado do ultimo head antes do merge; nao afirmar validacao que ainda esteja pendente.
 - Pendencias posteriores: issue #22 (`dotnet new`) e #23 (v2.0.0); release e empacotamento nao feitos. O PR #50 permanece aberto, sem merge.
 - Detalhes das etapas da entrega em [03-onboarding-architecture/README.md](03-onboarding-architecture/README.md).
+
+## Prompt 04 - Template dotnet new (issue #22)
+
+- Origem: `main` apos merge do PR #50.
+- Branch: `feat/issue-22-dotnet-new-template`.
+- Escopo: geracao/empacotamento de template de solucao .NET 10; nenhuma alteracao de comportamento na API de origem.
+- Comandos para teste no repositorio: `dotnet pack template-pack/WebApiCoreSeed.Templates.csproj -c Release -o ./artifacts/templates`, `dotnet new install ./artifacts/templates/RodriOliveira.WebApiCoreSeed.Templates.2.0.0-preview.1.nupkg`, `dotnet new webapi-seed -n SampleApi`.
+- A validacao formal de ponta a ponta e `bash scripts/templates/smoke-test.sh` (precisa do SDK .NET e Docker), executada no GitHub Actions `template-smoke.yml`.
+- O pacote usa lista explicita dos arquivos reutilizaveis, conta com READMEs gerados em dois idiomas e evita levar dados internos de CI/SDD.
+- `sourceName` altera nomes/paths/namespace, `projectSlug` transforma nome de instancia e o simbolo `userSecretsId` gera GUID novo.
+- Flags opcionais de remocao de componentes adiadas ate haver testes das combinacoes; Redis e OpenTelemetry podem ser configurados em runtime.
+- Revisar os resultados reais do CI, smoke, SonarCloud e CodeQL antes do merge. O PR incluira `Closes #22` e nao sera mergeado automaticamente.
+- Publicacao externa e v2.0.0 continuam na issue #23.
