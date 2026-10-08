@@ -91,7 +91,7 @@ For first-time local setup, Compose applies **Identity and SampleRestaurant** mi
 docker compose --env-file .env.local up migrations
 ```
 
-For manual EF Core changes, install the compatible `dotnet-ef` 10 CLI and configure host database secrets. **Each DbContext has its own Infrastructure project.** Commands for creating, applying, scripting and reviewing migrations for both contexts are in [EF Core migrations](docs/development/ef-core-migrations.md). Never run development migration or seed commands against production databases without a reviewed deployment plan.
+For manual EF Core changes, install the compatible `dotnet-ef` 10 CLI. **The design-time factories do not load the API's User Secrets:** supply the local SQL connection through the temporary `ConnectionStrings__DefaultConnection` environment variable in the same terminal as `dotnet ef`. Each DbContext has its own Infrastructure project. See the [EF Core migrations guide](docs/development/ef-core-migrations.md) for secure Bash/PowerShell setup and full commands. Never run development migration or seed commands against production databases without a reviewed deployment plan.
 
 ## Seed sample data
 
