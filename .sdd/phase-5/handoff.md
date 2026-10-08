@@ -73,7 +73,7 @@
 - Comandos para teste no repositorio: `dotnet pack template-pack/WebApiCoreSeed.Templates.csproj -c Release -o ./artifacts/templates`, `dotnet new install ./artifacts/templates/RodriOliveira.WebApiCoreSeed.Templates.2.0.0-preview.1.nupkg`, `dotnet new webapi-seed -n SampleApi`.
 - A validacao formal de ponta a ponta e `bash scripts/templates/smoke-test.sh` (precisa do SDK .NET e Docker), executada no GitHub Actions `template-smoke.yml`.
 - O pacote usa lista explicita dos arquivos reutilizaveis, conta com READMEs gerados em dois idiomas e evita levar dados internos de CI/SDD.
-- `sourceName` altera nomes/paths/namespace, `projectSlug` transforma nome de instancia e o simbolo `userSecretsId` gera GUID novo.
+- `sourceName` altera nomes/paths/namespaces e `userSecretsId` gera GUID novo. O Compose mantem nome padrao seguro com override `COMPOSE_PROJECT_NAME`; eliminou-se a substituicao global de slug, pois alterava links de proveniencia e produzia caracteres invalidos para nomes com ponto. A regressao valida o nome `Acme.Api` no Compose e links originais em ambos os READMEs.
 - Flags opcionais de remocao de componentes adiadas ate haver testes das combinacoes; Redis e OpenTelemetry podem ser configurados em runtime.
 - Revisar os resultados reais do CI, smoke, SonarCloud e CodeQL antes do merge. O PR incluira `Closes #22` e nao sera mergeado automaticamente.
 - Publicacao externa e v2.0.0 continuam na issue #23.
