@@ -107,6 +107,40 @@ if "<UserSecretsId>" not in text:
 print("Identifier replacement and unique UserSecretsId passed")
 PY
 
+echo "== Verify source links and dotted .NET project names =="
+dotnet new webapi-seed --name Acme.Api --output "$work_dir/dotted"
+test -f "$work_dir/dotted/Acme.Api.slnx"
+
+python3 - "$generated" "$work_dir/dotted" <<'PY'
+import sys
+from pathlib import Path
+
+for raw_root in sys.argv[1:]:
+    root = Path(raw_root)
+    for readme in ("README.md", "README.pt-BR.md"):
+        content = (root / readme).read_text(encoding="utf-8")
+        if "https://github.com/rodri-oliveira-dev/web-api-core-seed" not in content:
+            raise SystemExit(f"Original source repository URL was modified: {root / readme}")
+    compose = (root / "compose.yaml").read_text(encoding="utf-8")
+    if not compose.startswith("name: " + chr(36) + "{COMPOSE_PROJECT_NAME:-web-api-core-seed}"):
+        raise SystemExit(f"Compose fallback name is not safe: {root}")
+print("Original provenance links and safe Compose fallback verified in both generated projects")
+PY
+
+docker compose --env-file "$work_dir/dotted/.env.local.example" --file "$work_dir/dotted/compose.yaml" config --format json >"$work_dir/dotted-compose.json"
+COMPOSE_PROJECT_NAME=acme-api docker compose --env-file "$work_dir/dotted/.env.local.example" --file "$work_dir/dotted/compose.yaml" config --format json >"$work_dir/overridden-compose.json"
+python3 - "$work_dir/dotted-compose.json" "$work_dir/overridden-compose.json" <<'PY'
+import json
+import sys
+
+default_config, custom_config = (json.load(open(path, encoding="utf-8")) for path in sys.argv[1:])
+if default_config["name"] != "web-api-core-seed":
+    raise SystemExit(f"Unsafe or unexpected default Compose name: {default_config['name']}")
+if custom_config["name"] != "acme-api":
+    raise SystemExit(f"COMPOSE_PROJECT_NAME override not respected: {custom_config['name']}")
+print("Dotted .NET name produces valid Docker Compose config, with a working project-name override")
+PY
+
 echo "== Restore, build and test generated solution =="
 dotnet restore "$solution"
 dotnet build "$solution" --configuration Release --no-restore
