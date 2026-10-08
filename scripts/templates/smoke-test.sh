@@ -12,7 +12,7 @@ cleanup() {
     wait "$api_pid" 2>/dev/null || true
   fi
   if [[ -n "$package_file" ]]; then
-    dotnet new uninstall "$package_file" >/dev/null 2>&1 || true
+    dotnet new uninstall RodriOliveira.WebApiCoreSeed.Templates >/dev/null 2>&1 || true
   fi
   rm -rf "$work_dir"
 }
@@ -155,5 +155,5 @@ fi
 echo "Generated API liveness probe passed"
 
 echo "== Uninstall package =="
-dotnet new uninstall "$package_file"
+dotnet new uninstall RodriOliveira.WebApiCoreSeed.Templates
 echo "Template smoke test passed"
