@@ -4,7 +4,7 @@
 
 ## Release mechanics
 
-The `release-v2.yml` workflow executes on the **merge commit pushed to `main`** (and supports `workflow_dispatch` for safe retries **only when manually dispatched from `main`**). It does not publish on pull requests or branches.
+The `release-v2.yml` workflow executes on the **merge commit pushed to `main`** (and supports `workflow_dispatch` for safe retries **only when manually dispatched from `main`**). It does not publish on pull requests or other branches. Its **read-only `build-verify` job** checks the exact commit's quality gates, packs the template and runs its smoke suite without a write-capable token. The separate **`publish` job** downloads the verified package and notes, creates the release with narrowly scoped write permissions, and verifies the public assets. Actions are pinned to full commit SHAs. The quality-gate polling shares a single 25-minute deadline, and any failed, skipped, neutral or stale gate is rejected.
 
 1. Check for an existing `v2.0.0` GitHub Release or tag; never overwrite, delete or move an existing tag.
 2. Require `ci`, `codeql`, and `template-smoke` to conclude **success on that exact commit**. `ci` also enforces the SonarCloud Quality Gate in trusted contexts.
