@@ -1,5 +1,18 @@
 # Status - Phase 1
 
+## Remote reconciliation (2026-10-08)
+
+Phase 1 was completed locally before these refs were published. The original status tables below record that earlier handoff and are retained for historical traceability. **The remote archival references are now published and verified:**
+
+| Reference | Verified commit | Meaning |
+| --- | --- | --- |
+| `v1.0.0-legacy` | `6ce03d7f011c6809fbcbad47aa26d490f53ddf3d` | Exact unmodified historical snapshot (lightweight tag) |
+| `legacy/netcoreapp3.1` | `20db8f0db1ef2daff0b855a358b45c249f4fd64d` | Descends from historical snapshot, with only the end-of-support README notice |
+| `main` | Active modern branch | Contains the supported .NET 10 solution and archival documentation |
+
+The tag is intentionally anchored at the original historical commit. The archival branch has a documentation-only commit, so the two references need **not** have identical head SHAs. The legacy runtime is unsupported and was not rebuilt during archival publication. Closing the tracking issue is delegated to the Phase 1 PR.
+
+
 ## Current State
 
 | Field | Value |
