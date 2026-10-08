@@ -2,7 +2,7 @@
 
 [English](template-distribution.md) | [Português (Brasil)](template-distribution.pt-BR.md) | [Back to README](../README.md)
 
-The repository can now be **packed locally** as a .NET template NuGet. **This is not a published NuGet.org package or v2.0.0 GitHub Release**; publication is tracked in [#23](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/23).
+The repository can be packed locally as a .NET template NuGet. On completion of the [v2.0.0 release workflow](../.github/workflows/release-v2.yml), the **same tested package** will also be attached to [GitHub Release v2.0.0](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.0). **It is not published on NuGet.org.** If the Release link is not yet available, check the release workflow and [#23](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/23); do not assume publication merely because code was merged.
 
 ## Identity and package layout
 
@@ -11,7 +11,7 @@ The repository can now be **packed locally** as a .NET template NuGet. **This is
 | Template identity | `RodriOliveira.WebApiCoreSeed.CSharp` |
 | Short name | `webapi-seed` |
 | Package ID | `RodriOliveira.WebApiCoreSeed.Templates` |
-| Package version | `2.0.0-preview.1` (local preview) |
+| Package version | `2.0.0` (stable release artifact) |
 | Target SDK | `global.json` — .NET 10.0.401 |
 | Source token | `WebApiCoreSeed`, replaced with the supplied `-n` name |
 
@@ -23,7 +23,7 @@ From the root of the repository:
 
 ```bash
 dotnet pack template-pack/WebApiCoreSeed.Templates.csproj -c Release -o ./artifacts/templates
-dotnet new install ./artifacts/templates/RodriOliveira.WebApiCoreSeed.Templates.2.0.0-preview.1.nupkg
+dotnet new install ./artifacts/templates/RodriOliveira.WebApiCoreSeed.Templates.2.0.0.nupkg
 dotnet new webapi-seed -n SampleApi
 cd SampleApi
 dotnet restore SampleApi.slnx
@@ -46,11 +46,11 @@ The generated project contains unit/integration tests and sample domain data. In
 
 ### Update or uninstall
 
-For **local** package upgrades, first uninstall the previously installed package, then install the new preview `.nupkg`:
+For **local** package upgrades, first uninstall the previously installed package, then install the new `.nupkg`:
 
 ```bash
 dotnet new uninstall RodriOliveira.WebApiCoreSeed.Templates
-dotnet new install ./artifacts/templates/RodriOliveira.WebApiCoreSeed.Templates.2.0.0-preview.1.nupkg
+dotnet new install ./artifacts/templates/RodriOliveira.WebApiCoreSeed.Templates.2.0.0.nupkg
 ```
 
 To remove the template:
@@ -59,7 +59,7 @@ To remove the template:
 dotnet new uninstall RodriOliveira.WebApiCoreSeed.Templates
 ```
 
-For a future **feed-published** package, `dotnet new install RodriOliveira.WebApiCoreSeed.Templates` and `dotnet new update` become appropriate after release; do not assume this NuGet ID is available online today.
+For a future **NuGet.org-published** package, `dotnet new install RodriOliveira.WebApiCoreSeed.Templates` and `dotnet new update` would become appropriate. **Neither command is a substitute for downloading the GitHub Release asset**, as no NuGet.org feed was selected.
 
 ## Options evaluated
 
@@ -67,4 +67,4 @@ Authentication, SQL Server, Redis and OpenTelemetry are **part of the maintained
 
 ## Quality checks
 
-Run `bash scripts/templates/smoke-test.sh` from the repository to pack, inspect, install into an isolated CLI home, generate `SampleApi`, verify rename/secrets isolation, restore, build, run unit/integration tests and probe a started generated API. GitHub Actions runs the same script in [template-smoke](../.github/workflows/template-smoke.yml). The script requires Docker for integration tests and does not publish any package.
+Run `bash scripts/templates/smoke-test.sh` from the repository to pack, inspect, install into an isolated CLI home, generate `SampleApi`, verify rename/secrets isolation, restore, build, run unit/integration tests and probe a started generated API. GitHub Actions runs the same script in [template-smoke](../.github/workflows/template-smoke.yml). The script requires Docker for integration tests and does not publish any package. To test an existing downloaded release asset, set `TEMPLATE_PACKAGE=/absolute/path/to/package.nupkg` before running the script; it will **not repack the source**. The [release workflow](../.github/workflows/release-v2.yml) uses this mode to verify the precise asset it publishes.
