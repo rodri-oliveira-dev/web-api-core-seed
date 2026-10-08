@@ -13,7 +13,7 @@ O workflow `release-v2.yml` inicia ao fazer merge para a **`main`** (com `workfl
 5. Calcula SHA-256, publica release com notas e anexa o `.nupkg` e `SHA256SUMS.txt`.
 6. Baixa os artefatos publicados, confere checksum e verifica a tag.
 
-A execução é idempotente: nunca força ou move tags. Se a publicação não ocorrer, verifique os logs antes de considerar a issue concluída.
+A execução é idempotente: nunca força ou move tags. O PR de preparação **não fecha automaticamente** a #23: somente o workflow a encerra **depois** da publicação e verificação dos artefatos. Se a publicação não ocorrer, confira os logs.
 
 ## Conferência da publicação
 
