@@ -1,6 +1,6 @@
 # Migration guide: .NET Core 3.1 to the maintained .NET 10 application
 
-[Back to README](../README.md) | [Historical baseline](../LEGACY.md)
+[English](migration-from-legacy.md) | [Português (Brasil)](migration-from-legacy.pt-BR.md) | [Back to README](../README.md) | [Historical baseline](../LEGACY.md)
 
 > This is a migration **comparison and planning guide**, not an automatic code/database conversion tool. No production deployment or data migration is implied.
 
