@@ -5,7 +5,7 @@
 [![CI](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/ci.yml/badge.svg)](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/codeql.yml/badge.svg)](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/codeql.yml)
 
-> **Estado do projeto:** aplicação de exemplo mantida em **.NET 10**. O repositório **ainda não é distribuído como template instalável via `dotnet new`**; essa evolução está na [#22](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/22). A versão histórica .NET Core 3.1 está fora de suporte; consulte [Versão legada](#versão-legada).
+> **Estado do projeto:** aplicação de exemplo mantida em **.NET 10**, agora empacotável localmente como template `dotnet new`. **O pacote NuGet ainda não foi publicado em um feed**; a distribuição pública faz parte da [#23](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/23). O .NET Core 3.1 histórico está fora de suporte; veja [Versão legada](#versão-legada).
 
 ## Visão geral
 
@@ -164,9 +164,24 @@ Consulte [CONTRIBUTING.md](CONTRIBUTING.md), [Código de Conduta](CODE_OF_CONDUC
 
 O código .NET Core 3.1 original e intacto está preservado na tag [`v1.0.0-legacy`](https://github.com/rodri-oliveira-dev/web-api-core-seed/tree/v1.0.0-legacy); a branch [`legacy/netcoreapp3.1`](https://github.com/rodri-oliveira-dev/web-api-core-seed/tree/legacy/netcoreapp3.1) adiciona um aviso de fim de suporte. .NET Core 3.1 encerrou suporte em 13 de dezembro de 2022. Veja [LEGACY.md](LEGACY.md) e o [guia de migração](docs/migration-from-legacy.pt-BR.md).
 
+## Instalar como template `dotnet new` local
+
+O template pode ser empacotado e instalado **localmente** antes da publicação no NuGet.org:
+
+```bash
+dotnet pack template-pack/WebApiCoreSeed.Templates.csproj -c Release -o ./artifacts/templates
+dotnet new install ./artifacts/templates/RodriOliveira.WebApiCoreSeed.Templates.2.0.0-preview.1.nupkg
+dotnet new webapi-seed -n SampleApi
+cd SampleApi
+dotnet restore SampleApi.slnx
+dotnet build SampleApi.slnx
+```
+
+O gerador renomeia os projetos/namespaces e cria um `UserSecretsId` único. Para executar a API gerada, use as instruções de Docker Compose do novo README. Para desinstalar: `dotnet new uninstall RodriOliveira.WebApiCoreSeed.Templates`. Veja o [guia completo em português](docs/template-distribution.pt-BR.md) para atualização, configurações e validações.
+
 ## Roadmap
 
-Próximas etapas: [empacotamento `dotnet new` (#22)](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/22) e [release v2.0.0 (#23)](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/23). **Nenhuma dessas entregas é declarada concluída aqui.**
+O empacotamento e o smoke test do template estão no repositório; **a publicação do pacote e da release v2.0.0** permanecem na [#23](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/23). Nenhuma publicação externa é declarada concluída.
 
 ## Recursos para estudar
 

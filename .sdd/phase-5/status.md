@@ -4,7 +4,8 @@
 | --- | --- |
 | 01 - Development seed deterministico e idempotente | PR aberto; checks remotos passaram |
 | 02 - Normalize UTF-8 encoding and active code naming | PR aberto; checks remotos passaram |
-| 03 - Bilingual onboarding, architecture and contributor documentation | PR #50 aberto; revisao Codex em remediacao; SonarCloud Quality Gate reavaliando |
+| 03 - Bilingual onboarding, architecture and contributor documentation | PR #50 mergeado; issues #21/#1 encerradas |
+| 04 - dotnet new template package (issue #22) | Em implementacao na branch feat/issue-22-dotnet-new-template; PR e checks pendentes |
 
 ## Prompt 01
 
@@ -48,3 +49,15 @@
   - Registros SDD de status, handoff e decisoes agora incluem esta entrega e o novo gate.
 - Validacao do primeiro head do PR (`b1d76b9b1c`): gate de docs, build Release, unit tests, integration tests, OpenAPI, vulnerability audit, CodeQL e Dependency Review passaram. O job `SonarCloud Quality Gate` **falhou** apesar do build e testes passarem; o motivo exato do gate nao foi exposto no log do scanner. Os novos commits requerem revalidacao. Nao declarar Sonar aprovado antes de confirmacao.
 - Proximo passo: corrigir qualquer gate remanescente e concluir review do PR; depois da incorporacao, seguir com #22 (`dotnet new`) e #23 (release v2.0.0).
+
+## Prompt 04 - dotnet new Template Package
+
+- Branch: `feat/issue-22-dotnet-new-template` (criada da `main` em 2026-10-08).
+- Issue: [#22](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/22).
+- Identidade: `RodriOliveira.WebApiCoreSeed.CSharp` / `webapi-seed`; pacote `RodriOliveira.WebApiCoreSeed.Templates`.
+- Arquivos principais: `.template.config/template.json`, `template-pack/WebApiCoreSeed.Templates.csproj`, READMEs de template EN/PT-BR, `scripts/templates/smoke-test.sh` e `.github/workflows/template-smoke.yml`.
+- Docs de distribuicao EN/PT-BR, README principal EN/PT-BR, CHANGELOG e validador de docs atualizados.
+- Template substitui `WebApiCoreSeed` pelo `-n` solicitado e atribui `UserSecretsId` novo. Allowlist exclui arquivos SDD, CI e administracao do projeto de origem. Compose usa nome seguro com `COMPOSE_PROJECT_NAME` opcional; links de origem nao sofrem substituicao.
+- Testes previstos no workflow: empacotar `.nupkg`, inspecionar conteudo, instalar localmente, gerar `SampleApi`, restore, build, testes unitarios e integrados com Docker, iniciar API e validar `/health/live`.
+- Resultado dos checks: pendente da execucao no PR; nao relatar como aprovados sem evidencia.
+- Proxima entrega apos merge: [#23](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/23), release v2.0.0 e eventual publicacao do pacote no feed.

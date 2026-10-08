@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json.schemastore.org/template",
+  "author": "Rodrigo de Oliveira",
+  "classifications": [
+    "Web",
+    "Web API",
+    "ASP.NET Core",
+    "Hexagonal",
+    "Clean Architecture"
+  ],
+  "identity": "RodriOliveira.WebApiCoreSeed.CSharp",
+  "name": "Web API Core Seed (.NET 10)",
+  "shortName": "webapi-seed",
+  "description": "Modular ASP.NET Core Web API seed with EF Core, Identity, Redis, OpenTelemetry and tests.",
+  "sourceName": "WebApiCoreSeed",
+  "preferNameDirectory": true,
+  "tags": {
+    "language": "C#",
+    "type": "project"
+  },
+  "primaryOutputs": [
+    {
+      "path": "WebApiCoreSeed.slnx"
+    }
+  ],
+  "symbols": {
+    "userSecretsId": {
+      "type": "generated",
+      "generator": "guid",
+      "replaces": "c52dbe85-d94e-4cc2-9856-529f22712174"
+    }
+  },
+  "sources": [
+    {
+      "source": "./",
+      "target": "./",
+      "exclude": [
+        ".template.config/**",
+        "**/[Bb]in/**",
+        "**/[Oo]bj/**",
+        "**/TestResults/**",
+        "**/.vs/**",
+        "**/.git/**",
+        "**/*.user",
+        "**/*.nupkg",
+        "**/*.snupkg"
+      ]
+    }
+  ]
+}
