@@ -2,10 +2,10 @@
 
 | Prompt | Status |
 | --- | --- |
-| 01 - Development seed deterministico e idempotente | PR aberto; checks remotos passaram |
-| 02 - Normalize UTF-8 encoding and active code naming | PR aberto; checks remotos passaram |
+| 01 - Development seed deterministico e idempotente | PR #34 mergeado; checks remotos passaram |
+| 02 - Normalize UTF-8 encoding and active code naming | PR #36 mergeado; checks remotos passaram |
 | 03 - Bilingual onboarding, architecture and contributor documentation | PR #50 mergeado; issues #21/#1 encerradas |
-| 04 - dotnet new template package (issue #22) | Em implementacao na branch feat/issue-22-dotnet-new-template; PR e checks pendentes |
+| 04 - dotnet new template package (issue #22) | PR #51 mergeado; issue #22 encerrada; CI/template-smoke/CodeQL na main aprovados |
 
 ## Prompt 01
 
@@ -61,3 +61,18 @@
 - Testes previstos no workflow: empacotar `.nupkg`, inspecionar conteudo, instalar localmente, gerar `SampleApi`, restore, build, testes unitarios e integrados com Docker, iniciar API e validar `/health/live`.
 - Resultado dos checks: pendente da execucao no PR; nao relatar como aprovados sem evidencia.
 - Proxima entrega apos merge: [#23](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/23), release v2.0.0 e eventual publicacao do pacote no feed.
+
+## Prompt 05 - GitHub Release v2.0.0 (#23)
+
+- Base: `main` apos os merges #49, #50 e #51; todos confirmados como merged. Branch: `release/v2.0.0-productization`.
+- Issue: [#23](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/23).
+- Runtime/toolchain: .NET 10; distribuicao escolhida: **GitHub Release assets** (sem feed NuGet.org).
+- Versao do pacote alterada de `2.0.0-preview.1` para **`2.0.0`**, alinhando tag, nome do asset, notas e instalacao.
+- `scripts/templates/smoke-test.sh` aceita `TEMPLATE_PACKAGE` para validar o asset exato sem repack.
+- `release-v2.yml` executa em push/dispatch na main, aguarda CI/CodeQL/template-smoke **no mesmo commit**, empacota o NuGet estavel, valida API gerada, testes e health, calcula SHA-256, cria `v2.0.0`/GitHub Release, baixa os assets e confere checksum/tag.
+- Revisao [#5462068123](https://github.com/rodri-oliveira-dev/web-api-core-seed/pull/52#pullrequestreview-5462068123): jobs separados por privilegio, actions SHA-pin, erros HTTP da consulta de tag, timeout global e gate nao-sucesso, interpolacao shell protegida e documentacao de dispatch corrigida. Run 37834123837: test de span de servidor intermitente (139/140 aprovados), ajuste deterministico no teste de observabilidade, aguardando novo smoke.
+- Revisao [#5461961414](https://github.com/rodri-oliveira-dev/web-api-core-seed/pull/52#pullrequestreview-5461961414): release em draft com assets enviados nao pode ser confundida com publicada. Preflight agora diferencia estados e falha fechado; gate final exige metadata de publicacao antes de fechar #23. Testes automatizados em `scripts/releases/test-release-state.sh` no CI.
+- Reentradas nao movem tag; outras revisoes de main nao tentam republicar v2.0.0. A issue sera fechada **pelo workflow apenas apos a verificacao**; o PR nao deve conter `Closes #23` para evitar fechamento prematuro.
+- Documentos: notas completas de breaking changes, changelog v2, checklists EN/PT-BR, badge de release, guias de template estavel.
+- Limites nao resolvidos por este PR: metadados "About"/topics requerem token administrativo; repo ainda sem LICENSE. Nao declarar como licenciado open source sem decisao/procedencia.
+- **Status atual:** [PR #52](https://github.com/rodri-oliveira-dev/web-api-core-seed/pull/52) aberto sem conflitos; checks remotos em execucao, aguardando revisao/merge e execucao automatica da release em main. Nenhuma tag v2.0.0 ou GitHub Release foi criada nesta preparacao.

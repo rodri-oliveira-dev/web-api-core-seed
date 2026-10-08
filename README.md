@@ -4,8 +4,10 @@
 
 [![CI](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/ci.yml/badge.svg)](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/codeql.yml/badge.svg)](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/codeql.yml)
+[![Template smoke](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/template-smoke.yml/badge.svg)](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/template-smoke.yml)
+[![Latest release](https://img.shields.io/github/v/release/rodri-oliveira-dev/web-api-core-seed?sort=semver)](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/latest)
 
-> **Project status:** maintained sample application targeting **.NET 10**, now locally packable as a `dotnet new` template. **The NuGet package is not yet published to a package feed**; distribution is part of [#23](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/23). The historical .NET Core 3.1 version is unsupported; see [Legacy](#legacy-version).
+> **Project status:** maintained sample application targeting **.NET 10**, distributed as a locally installable `dotnet new` template and, **after the release workflow succeeds**, as a verified asset of [GitHub Release v2.0.0](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.0). **It is not published to NuGet.org.** The historical .NET Core 3.1 version is unsupported; see [Legacy](#legacy-version).
 
 ## Overview
 
@@ -170,7 +172,7 @@ The template can be packed and installed **locally** without waiting for NuGet.o
 
 ```bash
 dotnet pack template-pack/WebApiCoreSeed.Templates.csproj -c Release -o ./artifacts/templates
-dotnet new install ./artifacts/templates/RodriOliveira.WebApiCoreSeed.Templates.2.0.0-preview.1.nupkg
+dotnet new install ./artifacts/templates/RodriOliveira.WebApiCoreSeed.Templates.2.0.0.nupkg
 dotnet new webapi-seed -n SampleApi
 cd SampleApi
 dotnet restore SampleApi.slnx
@@ -181,7 +183,7 @@ The template renames projects/namespaces and generates a unique `UserSecretsId`.
 
 ## Roadmap
 
-Template packaging and automated smoke tests are implemented in the repository; **publishing the package and the v2.0.0 release** remains tracked in [#23](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/23). No external release is claimed here.
+**v2.0.0 release publication** is gated by [CI, CodeQL and template-smoke](.github/workflows/release-v2.yml) on the merged `main` commit. Download and verify the attached package from the [GitHub Release](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.0) **only after** the workflow succeeds. See the [release checklist](docs/releases/release-checklist.md). NuGet.org publication has not been selected.
 
 ## Learning resources
 

@@ -1,29 +1,43 @@
 # Changelog
 
-This changelog records notable changes to the **maintained .NET 10 codebase**. It does not imply that a public `v2.0.0` release or NuGet template package has been published. See [issue #23](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/23) for release preparation.
+This changelog documents the maintained .NET 10 application. See [v2.0.0 release notes](docs/releases/v2.0.0.md) and the [publication checklist](docs/releases/release-checklist.md).
 
 ## [Unreleased]
 
-### Documentation
-- Rewrite onboarding guides in English and Brazilian Portuguese, including executable development/test/migration/seed commands.
-- Document architecture, configuration, request flow, key ADRs, legacy migration, contribution policy and vulnerability disclosure.
+Post-v2.0.0 changes will be listed here. The 2.0.0 tag and release are published by [release-v2.yml](.github/workflows/release-v2.yml) only after the exact `main` commit passes the required quality and artifact smoke checks.
 
-### Modernization already merged into `main`
-- Migrate active application and tooling to .NET 10 and `WebApiCoreSeed.slnx`.
-- Modernize hosting, Problem Details, API versioning/OpenAPI and native rate limiting.
-- Separate sample domain, explicit persistence ports, Unit of Work and EF Core migration ownership.
-- Add deterministic development seed with non-production safeguards and containerized local development.
-- Add structured logging, OpenTelemetry, security headers, CodeQL, tests and CI quality gates.
-- Correct cache isolation, response eligibility and IIS `X-Frame-Options` configuration.
+## [2.0.0]
 
-### Template packaging (local preview, not published)
-- Add `webapi-seed` template identity, package project, generated project documentation and unique `UserSecretsId`.
-- Add isolated NuGet install/generation/restore/build/test/runtime smoke checks in GitHub Actions.
-- Add template installation/update/uninstallation instructions in EN/PT-BR. The local package is not published to any feed.
+### Runtime and architecture — breaking changes
 
-### Planned, not shipped
-- Versioned `v2.0.0` GitHub Release and release artifacts ([#23](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/23)).
+- Replace the historical .NET Core 3.1 application with a supported **.NET 10** sample using `WebApiCoreSeed.slnx` and SDK pinning via `global.json`.
+- Replace generic legacy business/data patterns with explicit SampleRestaurant application/repository ports, infrastructure adapters and Unit of Work.
+- Introduce separate EF Core migration ownership for Identity and SampleRestaurant; existing production schemas require deliberate upgrade assessment, **not** automatic conversion.
+- Modernize API contracts with versioned OpenAPI and Scalar, native rate limiting, JWT/Identity integration and standardized Problem Details.
+- Preserve legacy naming where necessary for database compatibility.
+
+### Developer experience, security and observability
+
+- Add Docker Compose SQL Server/Redis development stack, container migrations, non-production-only idempotent seed and User Secrets configuration scripts.
+- Add security headers, safer public-response Redis caching, Serilog and OpenTelemetry with opt-in external telemetry.
+- Add unit/integration tests, Testcontainers coverage, OpenAPI governance, CodeQL, dependency review and SonarCloud quality gates.
+- Add English/Portuguese onboarding, architecture and migration guides, ADRs, contribution and security policies.
+- Package `RodriOliveira.WebApiCoreSeed.Templates` version **2.0.0**, with `dotnet new webapi-seed`, source/namespace substitution, per-instance UserSecretsId and generated EN/PT-BR guides.
+- Validate package content, install, generated `SampleApi`, dotted project names, build, unit/integration tests and live HTTP health checks.
+
+### Delivery
+
+- Add controlled release workflow that waits for successful CI, CodeQL and template smoke checks at the **exact released commit**.
+- Publish the verified NuGet template file and SHA256 checksum as **GitHub Release assets**, not to NuGet.org.
+- Record breaking changes and operator verification in `docs/releases/`.
+
+### Known limitations
+
+- Example is not a production deployment blueprint; SQL Server, Redis, secrets, custom auth and telemetry configurations must be reviewed.
+- Generation-time flags for omitting application components are intentionally deferred.
+- GitHub repository metadata (old .NET Core 3.1 description/topics) requires administrator access to update.
+- **No `LICENSE` file is present yet**; the owner must choose a license and confirm any third-party rights before advertising the code as legally open-source licensed.
 
 ## Historical snapshot
 
-The tag [`v1.0.0-legacy`](https://github.com/rodri-oliveira-dev/web-api-core-seed/tree/v1.0.0-legacy) points to the untouched legacy .NET Core 3.1 source commit. It is an **archival tag**, not evidence of a current supported release. See [LEGACY.md](LEGACY.md) for limitations and [migration guidance](docs/migration-from-legacy.md) for compatibility considerations.
+The archived tag [`v1.0.0-legacy`](https://github.com/rodri-oliveira-dev/web-api-core-seed/tree/v1.0.0-legacy) preserves the original .NET Core 3.1 code at commit `6ce03d7f`. It is not a supported release; see [LEGACY.md](LEGACY.md) and [migration guidance](docs/migration-from-legacy.md).

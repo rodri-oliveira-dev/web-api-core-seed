@@ -42,6 +42,10 @@ jobs:
       - name: Validate documentation links and bilingual structure
         run: python3 scripts/validate-docs.py
 
+      - name: Verify release state classification (draft safety regressions)
+        shell: bash
+        run: bash scripts/releases/test-release-state.sh
+
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v6
         with:

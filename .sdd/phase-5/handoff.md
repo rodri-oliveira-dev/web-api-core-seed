@@ -77,3 +77,19 @@
 - Flags opcionais de remocao de componentes adiadas ate haver testes das combinacoes; Redis e OpenTelemetry podem ser configurados em runtime.
 - Revisar os resultados reais do CI, smoke, SonarCloud e CodeQL antes do merge. O PR incluira `Closes #22` e nao sera mergeado automaticamente.
 - Publicacao externa e v2.0.0 continuam na issue #23.
+
+## Prompt 05 - Release v2.0.0 e encerramento do roadmap
+
+- Issue #23; [PR #52](https://github.com/rodri-oliveira-dev/web-api-core-seed/pull/52) aberto sobre a branch `release/v2.0.0-productization`, criada da main contendo merges #49/#50/#51.
+- Preparacao de release em `docs/releases/v2.0.0.md`, `docs/releases/release-checklist.md` e versao PT-BR, changelog e READMEs.
+- Pacote passa a `RodriOliveira.WebApiCoreSeed.Templates.2.0.0.nupkg`, sem publicar no NuGet.org.
+- Script de smoke aceita `TEMPLATE_PACKAGE` pre-empacotado e testa o arquivo da release (proveniencia, nomes `SampleApi`/`Acme.Api`, Docker Compose, restore, build, 2 suites de testes, health).
+- Workflow `.github/workflows/release-v2.yml` somente publica na `main` apos CI, CodeQL e template-smoke **success** no mesmo SHA; anexa pacote e `SHA256SUMS.txt` na GitHub Release e verifica download e checksum.
+- Tag `v2.0.0` nao e movimentada nem sobrescrita pelo processo em reexecucoes ou novos pushes. Restricao de imutabilidade nas Settings requer administracao.
+- Revisao #5461961414 (PR #52): introduzido classificador de release via REST com paginação e estados `missing`/`published`/`draft`/`invalid`. Draft com assets interrompidos falha antes da idempotencia; verificação final exige publicação efetiva antes de baixar assets e fechar #23.
+- Revisao #5462068123 (PR #52): privilegios de escrita removidos do job de empacotamento e smoke, que agora roda read-only separado do job de publicação; actions fixadas por SHA; 404 de consulta da tag tratado especificamente; prazo global de gates com falha imediata para conclusoes nao aprovadas; SHA esperado entregue por env, sem interpolacao shell. Run #37834123837 mostrou teste unitario OpenTelemetry flutuante de span ASP.NET Core (139 de 140 testes aprovados); estabilizado na suite gerada. Testes de regressão do classificador fazem parte do CI.
+- Nao usar `Closes #23` no PR porque isso encerraria a issue antes da publicacao. O workflow fecha a #23 apos assets verificados, com comentario e link.
+- Verificar logs da release e estado da issue apos merge; se workflow falhar, issue permanece aberta para correcao.
+- Pendencias fora do workflow: escolher licenca (repo nao tem `LICENSE`) e atualizar descricao, homepage e topics no GitHub About; sem token administrativo disponivel.
+- Checagens anteriores da `main` apos PR #51: template-smoke, CI incluindo SonarCloud e CodeQL **success**. O PR novo deve passar checks proprios antes do merge.
+- Status deste handoff e **pre-publicacao**, nao equivale a uma GitHub Release ja concluida.

@@ -64,18 +64,36 @@ namespace WebApiCoreSeed.UnitTests.Integracao
         [Fact]
         public async Task RequestAspNetCoreDeveProduzirSpanServidor()
         {
-            using var factory = new ObservabilityApiFactory();
-            using var client = factory.CreateApiClient();
+            using var factory = new ObservabilityApiFactory(new Dictionary<string, string>
+            {
+                ["OpenTelemetry:Tracing:SamplingRatio"] = "1.0"
+            });
             var activities = new ConcurrentBag<Activity>();
 
+            // Register before WebApplicationFactory starts the host: ASP.NET Core
+            // instrumentation may initialize its ActivitySource on first request.
             using var listener = CreateActivityListener(activities);
+            using var client = factory.CreateApiClient();
 
-            var response = await client.GetAsync("/api/v1/Pratos?pageNumber=1&pageSize=10");
-
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            Assert.Contains(activities, activity =>
+            static bool IsServerSpan(Activity activity) =>
                 activity.Kind == ActivityKind.Server
-                && activity.Source.Name.Contains("AspNetCore", StringComparison.OrdinalIgnoreCase));
+                && activity.Source.Name.Contains("AspNetCore", StringComparison.OrdinalIgnoreCase);
+
+            // TestServer instrumentation may publish the stopped Activity after
+            // the HTTP response completes; probe again without weakening the assertion.
+            for (var attempt = 0; attempt < 3; attempt++)
+            {
+                using var response = await client.GetAsync("/api/v1/Pratos?pageNumber=1&pageSize=10");
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                if (activities.Any(IsServerSpan))
+                {
+                    break;
+                }
+
+                await Task.Delay(TimeSpan.FromMilliseconds(100));
+            }
+
+            Assert.Contains(activities, IsServerSpan);
         }
 
         [Fact]

@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <PackageId>RodriOliveira.WebApiCoreSeed.Templates</PackageId>
-    <PackageVersion>2.0.0-preview.1</PackageVersion>
+    <PackageVersion>2.0.0</PackageVersion>
     <Title>Web API Core Seed .NET project templates</Title>
     <Authors>Rodrigo de Oliveira</Authors>
     <Description>Installable .NET 10 Web API seed template with authentication, SQL Server, Redis, OpenTelemetry and tests.</Description>
