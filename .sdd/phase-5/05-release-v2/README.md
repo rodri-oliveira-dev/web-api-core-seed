@@ -23,7 +23,7 @@ Critérios:
 ## 3. Design
 
 - Branch `release/v2.0.0-productization` da `main` contem release workflow, version bump, docs EN/PT-BR e smoke parametrizavel.
-- `release-v2.yml` dispara ao fazer push em `main` e aceita `workflow_dispatch` apenas a partir da `main`; nunca publica em PR ou a partir de outra branch.
+- `release-v2.yml` dispara ao fazer push em `main` e aceita `workflow_dispatch` apenas a partir da `main`; nunca publica em PR ou a partir de outra branch. Review #5462068123: implementados dois jobs (`build-verify` read-only sem token de escrita nos testes e `publish` com permissões restritas), SHA pin nas actions, 404 distinguido de erros de API, deadline global 25 min para gates, conclusoes `skipped`/`neutral`/`stale` tratadas como falha e `EXPECTED_TAG_SHA` passado via ambiente. Falha do template-smoke run 37834123837: teste de span de servidor OpenTelemetry falhou (139/140 passaram); teste estabilizado registrando listener antes de iniciar o host, amostragem em 100% e até 3 requisições com asserção final obrigatória.
 - Antes de publicar, exige conclusao success de `ci.yml`, `codeql.yml`, `template-smoke.yml` no **mesmo SHA**.
 - Faz pack da versao 2.0.0, chama `TEMPLATE_PACKAGE=...` em `scripts/templates/smoke-test.sh` e so entao publica.
 - Release via `gh release create --target <SHA> --notes-file docs/releases/v2.0.0.md`. Download e SHA-256 validam os assets publicados.
