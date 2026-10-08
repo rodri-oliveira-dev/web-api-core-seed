@@ -1,5 +1,16 @@
 # Legacy Runtime And Usage
 
+> **Unsupported historical version:** .NET Core 3.1 reached end of support on December 13, 2022. This document describes historical behavior, not a supported deployment target.
+
+## Preserved source references
+
+- Historical source commit: [`6ce03d7f`](https://github.com/rodri-oliveira-dev/web-api-core-seed/commit/6ce03d7f011c6809fbcbad47aa26d490f53ddf3d).
+- Immutable source snapshot: [`v1.0.0-legacy`](https://github.com/rodri-oliveira-dev/web-api-core-seed/tree/v1.0.0-legacy), referencing that exact original commit.
+- Archival maintenance branch: [`legacy/netcoreapp3.1`](https://github.com/rodri-oliveira-dev/web-api-core-seed/tree/legacy/netcoreapp3.1), based on the same source commit with a README-only end-of-support notice.
+
+The tag keeps the original historical files unmodified. The archival branch adds a documentation warning only; no legacy application code or dependencies have been modernized. The active application on `main` now targets .NET 10. Historical build/restore/test outcomes recorded below remain unchanged.
+
+
 This document records the confirmed legacy behavior of `rodri-oliveira-dev/web-api-core-seed` for Phase 1 preservation. It intentionally does not modernize runtime, dependencies, architecture, code, migrations, tests, or configuration.
 
 ## 1. Support State

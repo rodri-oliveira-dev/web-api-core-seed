@@ -3,9 +3,14 @@ Legacy preservation notice
 
 > **Attention:** this repository preserves a legacy ASP.NET Core Web API originally built for .NET Core 3.1. .NET Core 3.1 reached end of support on December 13, 2022.
 
-The active solution is being modernized incrementally on Phase 2, now targets .NET 10, and uses `WebApiCoreSeed.slnx`. The legacy baseline remains preserved separately so modernization work can compare against the original behavior without changing the historical reference.
+The maintained solution targets .NET 10 and uses `WebApiCoreSeed.slnx`. The original .NET Core 3.1 source remains available as a separate, immutable historical snapshot for migration comparisons.
 
-The preserved legacy version is identified by the tag `v1.0.0-legacy` and by the branch `legacy/netcoreapp3.1`.
+Historical references:
+
+- [`v1.0.0-legacy`](https://github.com/rodri-oliveira-dev/web-api-core-seed/tree/v1.0.0-legacy) points at the original, unmodified source commit [`6ce03d7f`](https://github.com/rodri-oliveira-dev/web-api-core-seed/commit/6ce03d7f011c6809fbcbad47aa26d490f53ddf3d).
+- [`legacy/netcoreapp3.1`](https://github.com/rodri-oliveira-dev/web-api-core-seed/tree/legacy/netcoreapp3.1) retains the same legacy application code and adds an explicit unsupported-runtime warning to its README.
+
+**The legacy branch and tag must not be used for new development or production deployments.**
 
 See [LEGACY.md](LEGACY.md) for the documented legacy requirements, commands, migrations, seed status, limitations, and validation notes.
 
