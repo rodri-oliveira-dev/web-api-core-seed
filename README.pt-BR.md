@@ -129,7 +129,7 @@ Não publique tokens nem senhas em issues ou logs. Consulte os [contratos da API
 
 A API HTTP é o composition root. `SampleRestaurant` contém domínio, services de aplicação e portas explícitas; `SampleRestaurant.Infrastructure` implementa repositórios EF Core e Unit of Work. `Identity.Infrastructure` mantém o DbContext Identity e as migrations. A API contém controllers, autenticação, autorização, rate limiting, tratamento de erros, cache e telemetria. O **repositório genérico mencionado no projeto histórico não faz parte do design ativo do SampleRestaurant**.
 
-Consulte [arquitetura](docs/architecture.pt-BR.md), [ADRs](docs/adr/) e o [guia de migração do legado](docs/migration-from-legacy.md).
+Consulte [arquitetura](docs/architecture.pt-BR.md), [ADRs](docs/adr/) e o [guia de migração do legado](docs/migration-from-legacy.pt-BR.md).
 
 ## Configuração e observabilidade
 
@@ -162,7 +162,7 @@ Consulte [CONTRIBUTING.md](CONTRIBUTING.md), [Código de Conduta](CODE_OF_CONDUC
 
 ## Versão legada
 
-O código .NET Core 3.1 original e intacto está preservado na tag [`v1.0.0-legacy`](https://github.com/rodri-oliveira-dev/web-api-core-seed/tree/v1.0.0-legacy); a branch [`legacy/netcoreapp3.1`](https://github.com/rodri-oliveira-dev/web-api-core-seed/tree/legacy/netcoreapp3.1) adiciona um aviso de fim de suporte. .NET Core 3.1 encerrou suporte em 13 de dezembro de 2022. Veja [LEGACY.md](LEGACY.md) e o [guia de migração](docs/migration-from-legacy.md).
+O código .NET Core 3.1 original e intacto está preservado na tag [`v1.0.0-legacy`](https://github.com/rodri-oliveira-dev/web-api-core-seed/tree/v1.0.0-legacy); a branch [`legacy/netcoreapp3.1`](https://github.com/rodri-oliveira-dev/web-api-core-seed/tree/legacy/netcoreapp3.1) adiciona um aviso de fim de suporte. .NET Core 3.1 encerrou suporte em 13 de dezembro de 2022. Veja [LEGACY.md](LEGACY.md) e o [guia de migração](docs/migration-from-legacy.pt-BR.md).
 
 ## Roadmap
 
