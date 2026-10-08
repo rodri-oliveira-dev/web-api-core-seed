@@ -14,7 +14,24 @@ O serviço `migrations` do `compose.yaml` aplica `ApplicationDbContext` e depois
 
 - Instale o SDK definido em `global.json` e `dotnet-ef` **10.x**: `dotnet tool install --global dotnet-ef --version "10.*"` (ou atualize a ferramenta existente dentro da série 10).
 - Prepare o SQL Server: `docker compose --env-file .env.local up -d sqlserver`.
-- Configure os User Secrets da API para `ConnectionStrings:DefaultConnection` e `AppSettings:Secret` conforme o README.
+- Configure os User Secrets da API para `ConnectionStrings:DefaultConnection` e `AppSettings:Secret` conforme o README **para a execução da aplicação**. As factories de design-time EF dos dois projetos de Infrastructure **não** carregam os User Secrets da API. Elas leem `appsettings.json`, `appsettings.Development.json` e variáveis de ambiente. Portanto, o `dotnet ef` exige `ConnectionStrings__DefaultConnection` no terminal mesmo depois de configurar User Secrets.
+- Informe a **mesma connection string local do SQL Server** como variável de ambiente temporária, usando exatamente a chave com dois sublinhados. A entrada interativa evita colocar credenciais no histórico do shell:
+
+  **Bash**
+  ```bash
+  read -r -s -p "Connection string SQL Server local para EF: " ConnectionStrings__DefaultConnection
+  printf '\n'
+  export ConnectionStrings__DefaultConnection
+  ```
+
+  **PowerShell**
+  ```powershell
+  $secureConnectionString = Read-Host "Connection string SQL Server local para EF" -AsSecureString
+  $env:ConnectionStrings__DefaultConnection = [System.Net.NetworkCredential]::new("", $secureConnectionString).Password
+  Remove-Variable secureConnectionString
+  ```
+
+  Para execução no host, use o endereço acessível ao host (geralmente `localhost,1433`), não o nome do serviço Compose `sqlserver`. Mantenha a variável no **mesmo terminal** dos comandos `dotnet ef` abaixo. Nunca versione, divulgue em issues ou execute contra produção. Depois, remova com `unset ConnectionStrings__DefaultConnection` (Bash) ou `Remove-Item Env:\ConnectionStrings__DefaultConnection` (PowerShell).
 - Trabalhe no ambiente Development e em banco local descartável, não em produção.
 
 ## DbContext Identity
