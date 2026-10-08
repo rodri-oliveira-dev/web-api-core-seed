@@ -51,3 +51,16 @@
   - SonarCloud Quality Gate falhou inicialmente por cobertura de codigo novo (`new_coverage` 66.0 abaixo do limiar 80).
   - Foram adicionados testes focados para `LogEntryValidation`, `LogEntryService`, `LogEntryRepository` e textos normalizados de Problem Details antes do novo push.
   - Rodada final passou Build/test, CodeQL, Dependency Review e SonarCloud Quality Gate.
+
+## Prompt 03 - Documentacao Bilingue e Onboarding (PR #50)
+
+- Branch: `docs/issue-21-onboarding-architecture`; base `main`.
+- Issues: [#21](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/21) e [#1](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/1), referenciadas como `Closes` no PR.
+- Objetivo: tornar a aplicacao real .NET 10 executavel a partir de um checkout limpo, em ingles e PT-BR; responder diretamente a pergunta da issue #1.
+- Entregue: README EN/PT-BR, diagramas Mermaid, arquitetura modular/hexagonal com limites pragmaticos, guias de migrations e migracao legada EN/PT-BR, politica de contribuicao, seguranca, changelog, codigo de conduta e ADRs 0001-0003.
+- Mudanca de CI: `python3 scripts/validate-docs.py` verifica referencias internas e paridade de hierarquia de titulos entre os pares de idiomas. Foi validado no job de build inicial do PR.
+- Correcao da review #5461397982: as factories design-time de Identity e SampleRestaurant usam arquivos JSON e `AddEnvironmentVariables` (nao User Secrets). Ambos os guias de EF e os READMEs explicam a variavel `ConnectionStrings__DefaultConnection`, com comandos Bash/PowerShell para leitura interativa e limpeza posterior.
+- Codigo funcional, banco, migrations e `v1.0.0-legacy` nao alterados pela entrega documental.
+- Estado dos checks no head original do PR: build/testes/documentacao/OpenAPI/CodeQL/Dependency Review aprovados; SonarCloud Quality Gate **reprovado**. Registrar o resultado do ultimo head antes do merge; nao afirmar validacao que ainda esteja pendente.
+- Pendencias posteriores: issue #22 (`dotnet new`) e #23 (v2.0.0); release e empacotamento nao feitos. O PR #50 permanece aberto, sem merge.
+- Detalhes das etapas da entrega em [03-onboarding-architecture/README.md](03-onboarding-architecture/README.md).
