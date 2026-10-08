@@ -13,7 +13,7 @@ The `release-v2.yml` workflow executes on the **merge commit pushed to `main`** 
 5. Generate `SHA256SUMS.txt`; publish GitHub Release `v2.0.0` on the validated commit with notes from `docs/releases/v2.0.0.md` and both artifacts.
 6. Download the uploaded assets, check the SHA-256 and confirm the tag points at the verified source commit.
 
-**Idempotency:** if a release exists, the workflow verifies its tag target and required attached assets; it does not overwrite assets or tags. If a tag exists without a release due to a partial run, rerunning will only complete publication if the tag points at the same verified commit. Later `main` pushes do not move `v2.0.0`.
+**Idempotency and failed uploads:** the preflight enumerates GitHub Releases (including authenticated draft entries) and classifies them as missing, published, draft or invalid. A **draft release is an error**, even when its `.nupkg` and checksum assets are already present: complete or remove the interrupted draft manually before retrying. The workflow never treats draft assets as a successful publication and never closes #23 in that case. Published releases are verified again via their explicit `draft=false`, `prerelease=false` and non-empty `published_at` metadata **before downloading assets**; only then can #23 close. Existing tags are never moved. Later `main` pushes do not move `v2.0.0`. The state parser has regression fixtures in `scripts/releases/test-release-state.sh` and runs in CI.
 
 **Version alignment:** package version is `2.0.0`, matching the GitHub Release and documentation. The preserved legacy tag remains separate.
 
