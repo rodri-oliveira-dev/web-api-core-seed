@@ -13,7 +13,7 @@ O workflow `release-v2.yml` inicia ao fazer merge para a **`main`** (com `workfl
 5. Calcula SHA-256, publica release com notas e anexa o `.nupkg` e `SHA256SUMS.txt`.
 6. Baixa os artefatos publicados, confere checksum e verifica a tag.
 
-A execução é idempotente: nunca força ou move tags. O PR de preparação **não fecha automaticamente** a #23: somente o workflow a encerra **depois** da publicação e verificação dos artefatos. Se a publicação não ocorrer, confira os logs.
+**Rascunhos e idempotência:** o workflow identifica releases ausentes, publicadas, em rascunho ou inconsistentes. Uma release **draft** gera falha explícita mesmo quando o pacote e o checksum já tiverem sido enviados: finalize ou remova o rascunho manualmente antes de executar novamente. A etapa de conferência exige `draft=false`, `prerelease=false` e `published_at` preenchido **antes de baixar os artefatos ou encerrar a #23**. A tag nunca é movida. A classificação possui testes de regressão em `scripts/releases/test-release-state.sh`, executados no CI. O PR **não fecha automaticamente** a #23; somente o workflow a encerra após verificar uma release realmente publicada.
 
 ## Conferência da publicação
 
