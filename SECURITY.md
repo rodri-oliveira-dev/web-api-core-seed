@@ -8,7 +8,7 @@
 | --- | --- | --- |
 | `main` (.NET 10) | Actively developed | Security fixes considered and tracked on the maintained branch |
 | `v1.0.0-legacy` and `legacy/netcoreapp3.1` (.NET Core 3.1) | Historical, unsupported | **No security fixes or backports promised** |
-| Future `v2.0.0` | Not yet released | Follow [#23](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/23) |
+| `v2.0.0` (.NET 10), after [release publication](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.0) | Versioned release | Security fixes are considered on the maintained .NET 10 line; no fixed SLA |
 
 The legacy runtime reached end of support on December 13, 2022. Do not deploy it in production.
 
