@@ -4,7 +4,6 @@
 
 [![CI](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/ci.yml/badge.svg)](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/codeql.yml/badge.svg)](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/codeql.yml)
-[![License](https://img.shields.io/github/license/rodri-oliveira-dev/web-api-core-seed)](LICENSE)
 
 > **Project status:** actively maintained sample application targeting **.NET 10**. This repository is **not yet distributed as an installable `dotnet new` template**; that work is tracked in [#22](https://github.com/rodri-oliveira-dev/web-api-core-seed/issues/22). The historical .NET Core 3.1 version is unsupported; see [Legacy](#legacy-version).
 
