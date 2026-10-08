@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -18,11 +19,7 @@ namespace WebApiCoreSeed.Api.Attributes
 
         public CachedAttribute(int timeToLiveSeconds)
         {
-            if (timeToLiveSeconds <= 0)
-            {
-                _timeToLiveSeconds = 0;
-            }
-
+            ArgumentOutOfRangeException.ThrowIfNegativeOrZero(timeToLiveSeconds);
             _timeToLiveSeconds = timeToLiveSeconds;
         }
 
@@ -30,7 +27,14 @@ namespace WebApiCoreSeed.Api.Attributes
         {
             var cacheSettings = context.HttpContext.RequestServices.GetRequiredService<RedisCacheSettings>();
 
-            if (!cacheSettings.Enabled)
+            // Only share cache entries for public, anonymous GET requests. An authenticated
+            // request (or one carrying credentials) may produce user-specific content.
+            var request = context.HttpContext.Request;
+            if (!cacheSettings.Enabled
+                || !HttpMethods.IsGet(request.Method)
+                || context.HttpContext.User.Identity?.IsAuthenticated == true
+                || request.Headers.ContainsKey("Authorization")
+                || request.Headers.ContainsKey("Cookie"))
             {
                 await next();
                 return;
@@ -56,7 +60,12 @@ namespace WebApiCoreSeed.Api.Attributes
 
             var executedContext = await next();
 
-            if (executedContext.Result is ObjectResult okObjectResult)
+            // Never cache error results, failed actions or responses setting session cookies.
+            if (!executedContext.Canceled
+                && executedContext.Exception == null
+                && !context.HttpContext.Response.Headers.ContainsKey("Set-Cookie")
+                && executedContext.Result is ObjectResult okObjectResult
+                && (okObjectResult.StatusCode == null || okObjectResult.StatusCode == StatusCodes.Status200OK))
             {
                 await cacheService.CacheResponseAsync(cacheKey, okObjectResult.Value, TimeSpan.FromSeconds(_timeToLiveSeconds), cancellationToken);
             }
@@ -66,17 +75,19 @@ namespace WebApiCoreSeed.Api.Attributes
         {
             var keyBuilder = new StringBuilder();
 
-            keyBuilder.Append(request.Path);
+            keyBuilder.Append(request.PathBase).Append(request.Path);
 
-            foreach (var (key, value) in request.Query.OrderBy(x => x.Key))
+            // Length-prefix values to avoid ambiguous keys. Hashing also prevents
+            // request query parameters from being exposed in Redis key listings.
+            foreach (var (key, value) in request.Query.OrderBy(x => x.Key, StringComparer.Ordinal))
             {
-                keyBuilder.Append('|');
-                keyBuilder.Append(key);
-                keyBuilder.Append('-');
-                keyBuilder.Append(value);
+                var queryValue = value.ToString();
+                keyBuilder.Append('|').Append(key.Length).Append(':').Append(key);
+                keyBuilder.Append('=').Append(queryValue.Length).Append(':').Append(queryValue);
             }
 
-            return keyBuilder.ToString();
+            var hash = SHA256.HashData(Encoding.UTF8.GetBytes(keyBuilder.ToString()));
+            return "response-cache:v2:" + Convert.ToHexString(hash);
         }
     }
 }
