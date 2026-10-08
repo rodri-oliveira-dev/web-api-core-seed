@@ -91,7 +91,7 @@ No primeiro setup local, o Compose aplica automaticamente migrations do **Identi
 docker compose --env-file .env.local up migrations
 ```
 
-Para alterações manuais com EF Core, instale `dotnet-ef` 10 e configure os User Secrets. **Cada DbContext pertence ao respectivo projeto de Infrastructure.** Os comandos para criar, aplicar, gerar scripts e revisar migrations dos dois contextos estão em [migrations EF Core](docs/development/ef-core-migrations.pt-BR.md). Não execute comandos de migrations ou seed de desenvolvimento em produção sem um plano de implantação revisado.
+Para alterações manuais com EF Core, instale `dotnet-ef` 10. **As factories de design-time não carregam User Secrets da API:** forneça a conexão local pela variável temporária `ConnectionStrings__DefaultConnection` no mesmo terminal dos comandos `dotnet ef`. Cada DbContext pertence ao respectivo projeto de Infrastructure. Consulte o [guia de migrations EF Core](docs/development/ef-core-migrations.pt-BR.md) para configurar com segurança em Bash/PowerShell e executar os comandos. Não execute migrations ou seed de desenvolvimento em produção sem um plano de implantação revisado.
 
 ## Gerar dados de exemplo (seed)
 
