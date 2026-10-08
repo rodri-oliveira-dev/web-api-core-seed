@@ -4,7 +4,7 @@
 
 ## Processo de publicação
 
-O workflow `release-v2.yml` inicia ao fazer merge para a **`main`** (com `workflow_dispatch` para reexecuções).
+O workflow `release-v2.yml` inicia ao fazer merge para a **`main`** (com `workflow_dispatch` para reexecuções manuais **selecionando a `main`**).
 
 1. Confere se já existem a GitHub Release e a tag `v2.0.0`; **nunca** substitui ou move referências históricas.
 2. Exige `ci`, `codeql` e `template-smoke` concluídos com sucesso no mesmo commit. O `ci` também avalia o SonarCloud Quality Gate em contextos confiáveis.
