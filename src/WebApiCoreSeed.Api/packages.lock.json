@@ -203,9 +203,9 @@
       },
       "Scalar.AspNetCore": {
         "type": "Direct",
-        "requested": "[2.17.3, )",
-        "resolved": "2.17.3",
-        "contentHash": "TwAf1zy/MH2famozcDqk9+/jD37VAbonRXfnjAso0Q2YKeWtA0kH59WxhuevvAxWDL3jUU3TDpNmUFS2gF9bHw=="
+        "requested": "[2.18.0, )",
+        "resolved": "2.18.0",
+        "contentHash": "wwI3khcYNM7oL6axr4a41G29fJYOS3ckusgYZ4NiIccL8Amh2LOeu4HSK1SrQWiMJNrgoFqyWfDkOkunQCiRDw=="
       },
       "Serilog.AspNetCore": {
         "type": "Direct",
@@ -252,11 +252,11 @@
       },
       "StackExchange.Redis": {
         "type": "Direct",
-        "requested": "[3.2.1, )",
-        "resolved": "3.2.1",
-        "contentHash": "jIeqcfmZJ+LUBsVEs0qQ5DRJFMLT4xmV8qVKtox3CiQox6ivaU5Mo4bBs8XsPZ/wvjGUQ4TiYLvWwBTvEBSAbA==",
+        "requested": "[3.3.1, )",
+        "resolved": "3.3.1",
+        "contentHash": "AnA3ZuYnOQl2Hh/PXqV+JagA6QO8hiHovHBOc0PKz+uafVSsI0lYPQy8D0rklCC5Wpmc9MznEw+Lpt8e+LaB9w==",
         "dependencies": {
-          "RESPite": "3.2.1",
+          "RESPite": "3.3.1",
           "System.IO.Hashing": "10.0.12"
         }
       },
@@ -563,8 +563,8 @@
       },
       "RESPite": {
         "type": "Transitive",
-        "resolved": "3.2.1",
-        "contentHash": "xgf0teM++NNTWxlXBv91K8qKW4ULhQNcmO1/rAI/4qVFgaZdWCKD1SeImGtUnCq/orIWkke5GQ4Q40239S/utw=="
+        "resolved": "3.3.1",
+        "contentHash": "1Ky6rOjP9YjA8eXWWSJDTSRgVQiRXwsKnET+X5hDuONJqq8KbYLQrTUjMg8gsdyKzwj74ivEioTuQd4mVhthdQ=="
       },
       "Serilog": {
         "type": "Transitive",
@@ -734,7 +734,7 @@
       "webapicoreseed.samplerestaurant": {
         "type": "Project",
         "dependencies": {
-          "FluentValidation": "[12.1.1, )"
+          "FluentValidation": "[12.2.0, )"
         }
       },
       "webapicoreseed.samplerestaurant.infrastructure": {
@@ -746,9 +746,9 @@
       },
       "FluentValidation": {
         "type": "CentralTransitive",
-        "requested": "[12.1.1, )",
-        "resolved": "12.1.1",
-        "contentHash": "EPpkIe1yh1a0OXyC100oOA8WMbZvqUu5plwhvYcb7oSELfyUZzfxV48BLhvs3kKo4NwG7MGLNgy1RJiYtT8Dpw=="
+        "requested": "[12.2.0, )",
+        "resolved": "12.2.0",
+        "contentHash": "DR3lFbdnKucaaj1/8zMNOACMz/64igzox1yVZSFVsLxYB5mxAB+wFP1WZ8fjwrZnbU1KA1DoMzHKYKxUfuZ4wQ=="
       },
       "Microsoft.EntityFrameworkCore.Design": {
         "type": "CentralTransitive",
