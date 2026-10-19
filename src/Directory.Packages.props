@@ -11,7 +11,7 @@
     <PackageVersion Include="Asp.Versioning.OpenApi" Version="10.2.3" />
     <PackageVersion Include="AutoMapper" Version="16.2.0" />
     <PackageVersion Include="FluentValidation" Version="12.2.0" />
-    <PackageVersion Include="KubernetesClient" Version="19.0.2" />
+    <PackageVersion Include="KubernetesClient" Version="21.0.8" />
     <PackageVersion Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="$(MicrosoftDotNetPackageVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="$(MicrosoftDotNetPackageVersion)" />
     <PackageVersion Include="Microsoft.AspNetCore.Identity.UI" Version="$(MicrosoftDotNetPackageVersion)" />
@@ -34,6 +34,6 @@
     <PackageVersion Include="Serilog.Expressions" Version="5.0.0" />
     <PackageVersion Include="Serilog.Sinks.Console" Version="6.1.1" />
     <PackageVersion Include="Serilog.Sinks.Seq" Version="9.1.0" />
-    <PackageVersion Include="StackExchange.Redis" Version="3.3.1" />
+    <PackageVersion Include="StackExchange.Redis" Version="3.4.5" />
   </ItemGroup>
 </Project>
