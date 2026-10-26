@@ -3,9 +3,9 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
     <RestoreUseStaticGraphEvaluation>true</RestoreUseStaticGraphEvaluation>
-    <MicrosoftDotNetPackageVersion>10.0.13</MicrosoftDotNetPackageVersion>
-    <OpenTelemetryCorePackageVersion>1.20.0</OpenTelemetryCorePackageVersion>
-    <OpenTelemetryInstrumentationPackageVersion>1.20.0</OpenTelemetryInstrumentationPackageVersion>
+    <MicrosoftDotNetPackageVersion>10.0.14</MicrosoftDotNetPackageVersion>
+    <OpenTelemetryCorePackageVersion>1.20.1</OpenTelemetryCorePackageVersion>
+    <OpenTelemetryInstrumentationPackageVersion>1.20.1</OpenTelemetryInstrumentationPackageVersion>
   </PropertyGroup>
 
   <ItemGroup>
