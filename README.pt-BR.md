@@ -7,7 +7,7 @@
 [![Template smoke](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/template-smoke.yml/badge.svg)](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/template-smoke.yml)
 [![Última release](https://img.shields.io/github/v/release/rodri-oliveira-dev/web-api-core-seed?sort=semver)](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/latest)
 
-> **Estado do projeto:** aplicação de exemplo mantida em **.NET 10**, distribuída como template `dotnet new` instalável localmente e, **após sucesso do workflow de release**, como asset verificado da [GitHub Release v2.0.0](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.0). **Não há publicação no NuGet.org.** O .NET Core 3.1 histórico está fora de suporte; veja [Versão legada](#versão-legada).
+> **Estado do projeto:** aplicação de exemplo mantida em **.NET 10**, distribuída como template `dotnet new` instalável localmente e, **após sucesso do workflow de release**, como asset verificado da [GitHub Release v2.0.1](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.1). **Não há publicação no NuGet.org.** O .NET Core 3.1 histórico está fora de suporte; veja [Versão legada](#versão-legada).
 
 ## Visão geral
 
@@ -172,7 +172,7 @@ O template pode ser empacotado e instalado **localmente**, usando o arquivo `.nu
 
 ```bash
 dotnet pack template-pack/WebApiCoreSeed.Templates.csproj -c Release -o ./artifacts/templates
-dotnet new install ./artifacts/templates/RodriOliveira.WebApiCoreSeed.Templates.2.0.0.nupkg
+dotnet new install ./artifacts/templates/RodriOliveira.WebApiCoreSeed.Templates.2.0.1.nupkg
 dotnet new webapi-seed -n SampleApi
 cd SampleApi
 dotnet restore SampleApi.slnx
@@ -183,7 +183,7 @@ O gerador renomeia os projetos/namespaces e cria um `UserSecretsId` único. Para
 
 ## Roadmap
 
-A **publicação da v2.0.0** depende de [CI, CodeQL e template-smoke](.github/workflows/release-v2.yml) no commit incorporado à `main`. Baixe e confira o pacote na [GitHub Release](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.0) **apenas após** o sucesso do workflow. Veja o [checklist de release](docs/releases/release-checklist.pt-BR.md). Não foi escolhido um feed NuGet.org.
+A **publicação da v2.0.1** depende de [CI, CodeQL e template-smoke](.github/workflows/release-v2.yml) no commit incorporado à `main`. Baixe e confira o pacote na [GitHub Release](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.1) **apenas após** o sucesso do workflow. Veja o [checklist de release](docs/releases/release-checklist.pt-BR.md). Não foi escolhido um feed NuGet.org.
 
 ## Recursos para estudar
 

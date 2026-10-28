@@ -103,7 +103,7 @@ if tuple(int(part) for part in sdk_version.split(".")) < (10, 0, 403):
 
 dockerfile = Path(sys.argv[2]).read_text(encoding="utf-8")
 for image, minimum in (("sdk", (10, 0, 403)), ("aspnet", (10, 0, 14))):
-    match = re.search(r"^FROM mcr\\.microsoft\\.com/dotnet/" + image + r":(\\d+)\\.(\\d+)\\.(\\d+)(?:[-@\\s]|$)", dockerfile, re.MULTILINE)
+    match = re.search(r"^FROM mcr\.microsoft\.com/dotnet/" + image + r":(\d+)\.(\d+)\.(\d+)(?:[-@\s]|$)", dockerfile, re.MULTILINE)
     if match is None or tuple(int(part) for part in match.groups()) < minimum:
         raise SystemExit(f"Template Dockerfile has no serviced {image} image (minimum {'.'.join(map(str, minimum))})")
 print("Generated global.json and Dockerfile use serviced .NET SDK/runtime baselines")
