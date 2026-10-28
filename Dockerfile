@@ -1,9 +1,9 @@
-FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS runtime
+FROM mcr.microsoft.com/dotnet/aspnet:10.0.14 AS runtime
 WORKDIR /app
 ENV ASPNETCORE_HTTP_PORTS=8080
 EXPOSE 8080
 
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS restore
+FROM mcr.microsoft.com/dotnet/sdk:10.0.403 AS restore
 WORKDIR /src
 COPY global.json ./
 COPY Directory.Build.props ./
