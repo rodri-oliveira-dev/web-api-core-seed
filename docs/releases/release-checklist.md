@@ -13,7 +13,7 @@ The `release-v2.yml` workflow executes on the **merge commit pushed to `main`** 
 5. Generate `SHA256SUMS.txt`; publish GitHub Release `v2.0.1` on the validated commit with notes from `docs/releases/v2.0.1.md` and both artifacts.
 6. Download the uploaded assets, check the SHA-256 and confirm the tag points at the verified source commit.
 
-**Idempotency and failed uploads:** the preflight enumerates GitHub Releases (including authenticated draft entries) and classifies them as missing, published, draft or invalid. A **draft release is an error**, even when its `.nupkg` and checksum assets are already present: complete or remove the interrupted draft manually before retrying. The workflow never treats draft assets as a successful publication . Published releases are verified again via their explicit `draft=false`, `prerelease=false` and non-empty `published_at` metadata **before downloading assets**; only then is publication considered complete. Existing tags are never moved. Later `main` pushes do not move `v2.0.1`. The state parser has regression fixtures in `scripts/releases/test-release-state.sh` and runs in CI.
+**Idempotency and failed uploads:** the preflight enumerates GitHub Releases (including authenticated draft entries) and classifies them as missing, published, draft or invalid. A **draft release is an error**, even when its `.nupkg` and checksum assets are already present: complete or remove the interrupted draft manually before retrying. The workflow never treats draft assets as a successful publication. Published releases are verified again via their explicit `draft=false`, `prerelease=false` and non-empty `published_at` metadata **before downloading assets**; only then is publication considered complete. Existing tags are never moved. Later `main` pushes do not move `v2.0.1`. The state parser has regression fixtures in `scripts/releases/test-release-state.sh` and runs in CI.
 
 **Version alignment:** package version is `2.0.1`, matching the GitHub Release and documentation. The preserved legacy tag remains separate.
 
@@ -43,7 +43,7 @@ The GitHub Actions `GITHUB_TOKEN` cannot edit repository metadata requiring `Adm
 
 At release preparation, no `LICENSE` file exists. Before advertising the project as open source or redistributing third-party code, the owner must select a license and verify provenance. **Do not invent or apply a license without that decision.** A public GitHub Release without a license is a public source distribution, not a grant of open-source rights.
 
-## Announcing the relaunch
+## Announcing the patch release
 
 Once the release is visible and checksum passes, link [release v2.0.1](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.1) in the repository README, GitHub About section and an optional professional announcement. Point contributors to `CONTRIBUTING.md`, report security concerns privately via `SECURITY.md`, and mention that NuGet.org publication is **not** included.
 
