@@ -1,10 +1,19 @@
 # Changelog
 
-This changelog documents the maintained .NET 10 application. See [v2.0.0 release notes](docs/releases/v2.0.0.md) and the [publication checklist](docs/releases/release-checklist.md).
+This changelog documents the maintained .NET 10 application. See [v2.0.1 release notes](docs/releases/v2.0.1.md) and the [publication checklist](docs/releases/release-checklist.md).
 
 ## [Unreleased]
 
-Post-v2.0.0 changes will be listed here. The 2.0.0 tag and release are published by [release-v2.yml](.github/workflows/release-v2.yml) only after the exact `main` commit passes the required quality and artifact smoke checks.
+Changes after v2.0.1 will be listed here. The release workflow creates new immutable tags only after the exact `main` commit passes required checks.
+
+## [2.0.1]
+
+### Security and delivery
+
+- Incorporate the October 25, 2026 .NET 10 out-of-band security servicing baseline in generated projects (SDK `10.0.403`, ASP.NET Core runtime image `10.0.14`), following the security update merged in PR #57.
+- Publish a new template artifact `RodriOliveira.WebApiCoreSeed.Templates.2.0.1.nupkg` through GitHub Releases. Existing v2.0.0 tags and assets remain unchanged.
+- Align the release workflow, package metadata and documentation; validate the version and patched SDK/Docker image references inside the exact packaged artifact before publication.
+- This patch updates new template-generated projects. Existing deployments must separately install serviced runtimes or rebuild and redeploy containers.
 
 ## [2.0.0]
 
