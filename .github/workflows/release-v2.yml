@@ -9,7 +9,7 @@ on:
 permissions: {}
 
 concurrency:
-  group: release-v2.0.0
+  group: release-v2.0.1
   cancel-in-progress: false
 
 jobs:
@@ -26,8 +26,8 @@ jobs:
       already_released: ${{ steps.preflight.outputs.already_released }}
       expected_tag_sha: ${{ steps.preflight.outputs.expected_tag_sha }}
     env:
-      RELEASE_TAG: v2.0.0
-      PACKAGE_NAME: RodriOliveira.WebApiCoreSeed.Templates.2.0.0.nupkg
+      RELEASE_TAG: v2.0.1
+      PACKAGE_NAME: RodriOliveira.WebApiCoreSeed.Templates.2.0.1.nupkg
       DOTNET_NOLOGO: true
       DOTNET_CLI_TELEMETRY_OPTOUT: true
     steps:
@@ -137,6 +137,12 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/release"
+          expected_version="${RELEASE_TAG#v}"
+          actual_version="$(dotnet msbuild template-pack/WebApiCoreSeed.Templates.csproj -nologo -getProperty:PackageVersion | tr -d '\r' | tail -n 1)"
+          if [[ "$actual_version" != "$expected_version" ]]; then
+            echo "::error::PackageVersion $actual_version does not match release tag $RELEASE_TAG."
+            exit 1
+          fi
           dotnet pack template-pack/WebApiCoreSeed.Templates.csproj \
             --configuration Release --output "$RUNNER_TEMP/release"
           test -s "$RUNNER_TEMP/release/$PACKAGE_NAME"
@@ -149,13 +155,13 @@ jobs:
 
       - name: Stage release notes alongside the verified package
         if: steps.preflight.outputs.already_released == 'false'
-        run: cp docs/releases/v2.0.0.md "$RUNNER_TEMP/release/v2.0.0.md"
+        run: cp docs/releases/v2.0.1.md "$RUNNER_TEMP/release/v2.0.1.md"
 
       - name: Upload verified release inputs
         if: steps.preflight.outputs.already_released == 'false'
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7
         with:
-          name: verified-v2.0.0-inputs
+          name: verified-v2.0.1-inputs
           path: ${{ runner.temp }}/release/
           if-no-files-found: error
           retention-days: 7
@@ -166,21 +172,20 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ${{ vars.RUNNER_OS || 'ubuntu-26.04' }}
     timeout-minutes: 15
-    # contents: write creates the tag/release; issues: write closes #23 after verification.
+    # contents: write creates the tag/release after the read-only quality gates.
     # actions: read retrieves the verified package uploaded by the read-only job.
     permissions:
       contents: write
-      issues: write
       actions: read
     env:
-      RELEASE_TAG: v2.0.0
-      PACKAGE_NAME: RodriOliveira.WebApiCoreSeed.Templates.2.0.0.nupkg
+      RELEASE_TAG: v2.0.1
+      PACKAGE_NAME: RodriOliveira.WebApiCoreSeed.Templates.2.0.1.nupkg
     steps:
       - name: Download only the verified package and release notes
         if: needs.build-verify.outputs.already_released == 'false'
         uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
         with:
-          name: verified-v2.0.0-inputs
+          name: verified-v2.0.1-inputs
           path: ${{ runner.temp }}/release/
 
       - name: Generate checksum and publish exactly once
@@ -192,13 +197,13 @@ jobs:
           set -euo pipefail
           cd "$RUNNER_TEMP/release"
           test -s "$PACKAGE_NAME"
-          test -s v2.0.0.md
+          test -s v2.0.1.md
           sha256sum "$PACKAGE_NAME" > SHA256SUMS.txt
           gh release create "$RELEASE_TAG" "$PACKAGE_NAME" SHA256SUMS.txt \
             --repo "$GITHUB_REPOSITORY" \
             --target "$GITHUB_SHA" \
-            --title "v2.0.0 — .NET 10 modernization and dotnet new template" \
-            --notes-file v2.0.0.md --latest
+            --title "v2.0.1 — .NET 10 security-serviced template" \
+            --notes-file v2.0.1.md --latest
 
       - name: Validate public publication, tag and downloaded assets
         env:
@@ -232,16 +237,3 @@ jobs:
             exit 1
           fi
           echo "Published release and checksum verified at commit $tag_sha"
-
-      - name: Close #23 only after public release verification
-        env:
-          GH_TOKEN: ${{ github.token }}
-          EXPECTED_TAG_SHA: ${{ needs.build-verify.outputs.expected_tag_sha }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          current_state="$(gh api "repos/${GITHUB_REPOSITORY}/issues/23" --jq '.state')"
-          if [[ "$current_state" != "closed" ]]; then
-            gh issue close 23 --repo "$GITHUB_REPOSITORY" \
-              --comment "Release [v2.0.0](https://github.com/${GITHUB_REPOSITORY}/releases/tag/v2.0.0) was published and its package/checksum were verified at commit $EXPECTED_TAG_SHA. GitHub Release assets are the distribution channel; no NuGet.org publication is claimed."
-          fi

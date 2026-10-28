@@ -90,6 +90,25 @@ test -f "$integration_project"
 test -f "$generated/.env.local.example"
 test -f "$generated/README.md"
 
+echo "== Verify security-serviced .NET baseline in generated template =="
+python3 - "$generated/global.json" "$generated/Dockerfile" <<'PY'
+import json
+import re
+import sys
+from pathlib import Path
+
+sdk_version = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))["sdk"]["version"]
+if tuple(int(part) for part in sdk_version.split(".")) < (10, 0, 403):
+    raise SystemExit(f"Template SDK is below the serviced 10.0.403 baseline: {sdk_version}")
+
+dockerfile = Path(sys.argv[2]).read_text(encoding="utf-8")
+for image, minimum in (("sdk", (10, 0, 403)), ("aspnet", (10, 0, 14))):
+    match = re.search(r"^FROM mcr\\.microsoft\\.com/dotnet/" + image + r":(\\d+)\\.(\\d+)\\.(\\d+)(?:[-@\\s]|$)", dockerfile, re.MULTILINE)
+    if match is None or tuple(int(part) for part in match.groups()) < minimum:
+        raise SystemExit(f"Template Dockerfile has no serviced {image} image (minimum {'.'.join(map(str, minimum))})")
+print("Generated global.json and Dockerfile use serviced .NET SDK/runtime baselines")
+PY
+
 for forbidden in .github .sdd .agents template-pack .template.config AGENTS.md CHANGELOG.md; do
   if [[ -e "$generated/$forbidden" ]]; then
     echo "Repository-only file present in generated output: $forbidden" >&2
