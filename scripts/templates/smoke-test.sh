@@ -45,16 +45,47 @@ else
 fi
 
 echo "== Validate NuGet package contents (deny repository-only assets) =="
-python3 - "$package_file" <<'PY'
+python3 - "$package_file" "$repo_root/template-pack/WebApiCoreSeed.Templates.csproj" <<'PY'
+import json
+import re
 import sys
+from pathlib import Path
+from xml.etree import ElementTree
 from zipfile import ZipFile
 
 with ZipFile(sys.argv[1]) as pkg:
     files = [item.filename for item in pkg.infolist()]
+    config = json.loads(pkg.read("content/global.json"))
+    dockerfile = pkg.read("content/Dockerfile").decode("utf-8")
+    nuspec_paths = [path for path in files if path.endswith(".nuspec")]
+    if len(nuspec_paths) != 1:
+        raise SystemExit(f"Expected one package nuspec, found: {nuspec_paths}")
+    nuspec = ElementTree.fromstring(pkg.read(nuspec_paths[0]))
+
+# Check the shipped template, not merely the repository working copy.
+expected_version = ElementTree.parse(sys.argv[2]).getroot().findtext("./PropertyGroup/PackageVersion")
+package_version = nuspec.findtext(".//{*}metadata/{*}version")
+if not expected_version or package_version != expected_version:
+    raise SystemExit(f"Package version {package_version} != project version {expected_version}")
+
+sdk_version = config.get("sdk", {}).get("version", "")
+if sdk_version != "10.0.403":
+    raise SystemExit(f"Template must ship the serviced .NET 10 SDK 10.0.403, got {sdk_version}")
+
+for image, version, stage in (
+    ("sdk", "10.0.403", "restore"),
+    ("aspnet", "10.0.14", "runtime"),
+):
+    expected_from = f"FROM mcr.microsoft.com/dotnet/{image}:{version} AS {stage}"
+    if not re.search(rf"^{re.escape(expected_from)}$", dockerfile, re.MULTILINE):
+        raise SystemExit(f"Packaged Dockerfile missing patched image: {expected_from}")
+
 required = {
     "content/.template.config/template.json",
     "content/WebApiCoreSeed.slnx",
     "content/README.md",
+    "content/global.json",
+    "content/Dockerfile",
     "content/.env.local.example",
     "content/.gitignore",
     "content/compose.yaml",
