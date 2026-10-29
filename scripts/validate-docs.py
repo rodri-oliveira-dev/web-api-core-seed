@@ -25,6 +25,7 @@ DOCUMENTS = (
     "docs/template-distribution.md",
     "docs/template-distribution.pt-BR.md",
     "docs/releases/v2.0.0.md",
+    "docs/releases/v2.0.1.md",
     "docs/releases/release-checklist.md",
     "docs/releases/release-checklist.pt-BR.md",
     "docs/adr/README.md",
