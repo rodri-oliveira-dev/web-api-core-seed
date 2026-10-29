@@ -7,7 +7,7 @@
 [![Template smoke](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/template-smoke.yml/badge.svg)](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/template-smoke.yml)
 [![Última release](https://img.shields.io/github/v/release/rodri-oliveira-dev/web-api-core-seed?sort=semver)](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/latest)
 
-> **Estado do projeto:** aplicação de exemplo mantida em **.NET 10**, distribuída como template `dotnet new` instalável localmente e, **após sucesso do workflow de release**, como asset verificado da [GitHub Release v2.0.1](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.1). **Não há publicação no NuGet.org.** O .NET Core 3.1 histórico está fora de suporte; veja [Versão legada](#versão-legada).
+> **Estado do projeto:** aplicação de exemplo mantida em **.NET 10**, distribuída como template `dotnet new` instalável localmente e, como asset verificado da [GitHub Release v2.0.1](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.1). **Não há publicação no NuGet.org.** O .NET Core 3.1 histórico está fora de suporte; veja [Versão legada](#versão-legada).
 
 ## Visão geral
 
@@ -17,7 +17,7 @@ A solução ativa é `WebApiCoreSeed.slnx`. O ponto de entrada está em `src/Web
 
 ## Pré-requisitos
 
-- [SDK do .NET **10.0.401**](global.json) para execução no host, conforme `global.json`.
+- [SDK do .NET **10.0.403**](global.json) para execução no host, conforme `global.json`.
 - Docker Engine com Compose v2 para SQL Server, Redis, stack completa e testes de integração (Testcontainers).
 - Git e terminal (Bash ou PowerShell); `curl` é opcional para smoke tests.
 - Senha forte local do SQL Server, segredo JWT e senha do seed. **Nunca os versione**.

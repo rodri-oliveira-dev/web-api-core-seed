@@ -17,8 +17,8 @@ assert_state() {
 }
 
 assert_state missing '[]' 'release absent'
-assert_state missing '[{"tag_name":"v2.0.0","draft":false,"prerelease":false,"published_at":"2026-10-08T00:00:00Z"}]' 'previous published release does not block patch'
 assert_state missing '[{"tag_name":"v1.0.0-legacy","draft":false,"prerelease":false,"published_at":"2026-10-07T00:00:00Z"}]' 'unrelated release'
+assert_state missing '[{"tag_name":"v2.0.0","draft":false,"prerelease":false,"published_at":"2026-10-08T00:00:00Z"}]' 'previous release does not satisfy 2.0.1'
 assert_state published '[{"tag_name":"v2.0.1","draft":false,"prerelease":false,"published_at":"2026-10-08T00:00:00Z","assets":[{"name":"template.nupkg"}]}]' 'published release'
 assert_state draft '[{"tag_name":"v2.0.1","draft":true,"prerelease":false,"published_at":null,"assets":[{"name":"template.nupkg"},{"name":"SHA256SUMS.txt"}]}]' 'draft release with already uploaded assets'
 assert_state draft '[{"tag_name":"v2.0.1","draft":false,"prerelease":false,"published_at":null,"assets":[{"name":"template.nupkg"}]}]' 'unpublished despite draft=false'

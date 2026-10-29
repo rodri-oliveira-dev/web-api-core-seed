@@ -7,7 +7,7 @@
 [![Template smoke](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/template-smoke.yml/badge.svg)](https://github.com/rodri-oliveira-dev/web-api-core-seed/actions/workflows/template-smoke.yml)
 [![Latest release](https://img.shields.io/github/v/release/rodri-oliveira-dev/web-api-core-seed?sort=semver)](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/latest)
 
-> **Project status:** maintained sample application targeting **.NET 10**, distributed as a locally installable `dotnet new` template and, **after the release workflow succeeds**, as a verified asset of [GitHub Release v2.0.1](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.1). **It is not published to NuGet.org.** The historical .NET Core 3.1 version is unsupported; see [Legacy](#legacy-version).
+> **Project status:** maintained sample application targeting **.NET 10**, distributed as a locally installable `dotnet new` template and, as a verified asset of [GitHub Release v2.0.1](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.1). **It is not published to NuGet.org.** The historical .NET Core 3.1 version is unsupported; see [Legacy](#legacy-version).
 
 ## Overview
 
@@ -17,7 +17,7 @@ The active solution is `WebApiCoreSeed.slnx`. The application entry point is `sr
 
 ## Requirements
 
-- [.NET SDK **10.0.401**](global.json) for host execution, matching `global.json`.
+- [.NET SDK **10.0.403**](global.json) for host execution, matching `global.json`.
 - Docker Engine with Compose v2 for SQL Server, Redis, the full stack and integration tests (Testcontainers).
 - Git and a shell (Bash or PowerShell); `curl` is optional for smoke tests.
 - A strong local SQL Server password, a JWT signing secret and a development seed password. **Never commit them**.
@@ -183,7 +183,7 @@ The template renames projects/namespaces and generates a unique `UserSecretsId`.
 
 ## Roadmap
 
-**v2.0.1 security servicing publication** is gated by [CI, CodeQL and template-smoke](.github/workflows/release-v2.yml) on the merged `main` commit. Download and verify the attached package from the [GitHub Release](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.1) **only after** the workflow succeeds. See the [release checklist](docs/releases/release-checklist.md). NuGet.org publication has not been selected.
+**v2.0.1 release publication** is gated by [CI, CodeQL and template-smoke](.github/workflows/release-v2.yml) on the merged `main` commit. Download and verify the attached package from the [GitHub Release](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.1) **only after** the workflow succeeds. See the [release checklist](docs/releases/release-checklist.md). NuGet.org publication has not been selected.
 
 ## Learning resources
 

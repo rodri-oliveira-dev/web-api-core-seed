@@ -137,16 +137,20 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p "$RUNNER_TEMP/release"
-          expected_version="${RELEASE_TAG#v}"
-          actual_version="$(dotnet msbuild template-pack/WebApiCoreSeed.Templates.csproj -nologo -getProperty:PackageVersion | tr -d '\r' | tail -n 1)"
-          if [[ "$actual_version" != "$expected_version" ]]; then
-            echo "::error::PackageVersion $actual_version does not match release tag $RELEASE_TAG."
-            exit 1
-          fi
           dotnet pack template-pack/WebApiCoreSeed.Templates.csproj \
             --configuration Release --output "$RUNNER_TEMP/release"
           test -s "$RUNNER_TEMP/release/$PACKAGE_NAME"
           echo "TEMPLATE_PACKAGE=$RUNNER_TEMP/release/$PACKAGE_NAME" >> "$GITHUB_ENV"
+
+      - name: Verify package-version alignment before smoke testing
+        if: steps.preflight.outputs.already_released == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          actual_version="$(dotnet msbuild template-pack/WebApiCoreSeed.Templates.csproj -nologo -getProperty:PackageVersion | tr -d '\r' | tail -n 1)"
+          test "$RELEASE_TAG" = "v$actual_version"
+          test "$PACKAGE_NAME" = "RodriOliveira.WebApiCoreSeed.Templates.$actual_version.nupkg"
+          test -s "$RUNNER_TEMP/release/$PACKAGE_NAME"
 
       - name: Test the exact packaged artifact (no write token)
         if: steps.preflight.outputs.already_released == 'false'
@@ -172,7 +176,7 @@ jobs:
     if: github.ref == 'refs/heads/main'
     runs-on: ${{ vars.RUNNER_OS || 'ubuntu-26.04' }}
     timeout-minutes: 15
-    # contents: write creates the tag/release after the read-only quality gates.
+    # contents: write creates the tag/release; no issue write permissions needed.
     # actions: read retrieves the verified package uploaded by the read-only job.
     permissions:
       contents: write
@@ -202,7 +206,7 @@ jobs:
           gh release create "$RELEASE_TAG" "$PACKAGE_NAME" SHA256SUMS.txt \
             --repo "$GITHUB_REPOSITORY" \
             --target "$GITHUB_SHA" \
-            --title "v2.0.1 — .NET 10 security-serviced template" \
+            --title "v2.0.1 - .NET 10 security servicing for project templates" \
             --notes-file v2.0.1.md --latest
 
       - name: Validate public publication, tag and downloaded assets

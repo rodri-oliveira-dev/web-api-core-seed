@@ -4,18 +4,16 @@ This changelog documents the maintained .NET 10 application. See [v2.0.1 release
 
 ## [Unreleased]
 
-Future changes are tracked here.
+Changes after v2.0.1 will be listed here. The release workflow creates new immutable tags only after the exact `main` commit passes required checks.
 
 ## [2.0.1]
 
-### Security and maintenance
+### Security and delivery
 
-- Refresh the generated template's .NET SDK baseline to **10.0.403** and ASP.NET Core Docker runtime image to **10.0.14**, incorporating the October 2026 .NET out-of-band security servicing update.
-- Publish a newly versioned `RodriOliveira.WebApiCoreSeed.Templates.2.0.1.nupkg` as a GitHub Release asset, without modifying the v2.0.0 release.
-- Validate the installed template's generated `global.json` and `Dockerfile` for a security-serviced .NET baseline.
-- Keep release checks restricted to the exact verified commit and published SHA-256 package checksum; no NuGet.org publication.
-
-See [v2.0.1 release notes](docs/releases/v2.0.1.md). Existing application deployments still require updating/rebuilding their runtime environments.
+- Incorporate the October 25, 2026 .NET 10 out-of-band security servicing baseline in generated projects (SDK `10.0.403`, ASP.NET Core runtime image `10.0.14`), following the security update merged in PR #57.
+- Publish a new template artifact `RodriOliveira.WebApiCoreSeed.Templates.2.0.1.nupkg` through GitHub Releases. Existing v2.0.0 tags and assets remain unchanged.
+- Align the release workflow, package metadata and documentation; validate the version and patched SDK/Docker image references inside the exact packaged artifact before publication.
+- This patch updates new template-generated projects. Existing deployments must separately install serviced runtimes or rebuild and redeploy containers.
 
 ## [2.0.0]
 

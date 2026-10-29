@@ -2,7 +2,7 @@
 
 [English](template-distribution.md) | [Português (Brasil)](template-distribution.pt-BR.md) | [Voltar ao README](../README.pt-BR.md)
 
-O repositório pode ser empacotado localmente como template NuGet. Após a conclusão do [workflow v2.0.1](../.github/workflows/release-v2.yml), **o mesmo pacote validado** será anexado à [GitHub Release v2.0.1](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.1). **Não há publicação no NuGet.org.** Se a release ainda não estiver disponível, confira o workflow; merge de código não comprova publicação. A versão 2.0.0 permanece disponível como release anterior.
+O repositório pode ser empacotado localmente como template NuGet. O pacote **2.0.1** verificado está disponível nos assets da [GitHub Release v2.0.1](https://github.com/rodri-oliveira-dev/web-api-core-seed/releases/tag/v2.0.1). **Não há publicação no NuGet.org.** A release anterior v2.0.0 permanece disponível.
 
 ## Identidade e conteúdo do pacote
 
@@ -12,7 +12,7 @@ O repositório pode ser empacotado localmente como template NuGet. Após a concl
 | Nome curto | `webapi-seed` |
 | ID do pacote | `RodriOliveira.WebApiCoreSeed.Templates` |
 | Versão | `2.0.1` (artefato estável) |
-| SDK | `global.json` — .NET 10.0.401 |
+| SDK | `global.json` — .NET 10.0.403 |
 | Token de origem | `WebApiCoreSeed`, substituído pelo nome passado em `-n` |
 
 O NuGet contém apenas projetos reutilizáveis, testes, gerador/contratos OpenAPI, scripts de Compose/Docker, configurações básicas e READMEs do projeto gerado em EN/PT-BR. **Não inclui** CI, histórico SDD, administração de contribuições, segredos ou saídas de compilação. Cada API gerada recebe um `UserSecretsId` novo, distinto do projeto histórico.
