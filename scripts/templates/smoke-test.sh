@@ -69,12 +69,12 @@ if not expected_version or package_version != expected_version:
     raise SystemExit(f"Package version {package_version} != project version {expected_version}")
 
 sdk_version = config.get("sdk", {}).get("version", "")
-if sdk_version != "10.0.403":
-    raise SystemExit(f"Template must ship the serviced .NET 10 SDK 10.0.403, got {sdk_version}")
+if sdk_version != "10.0.404":
+    raise SystemExit(f"Template must ship the serviced .NET 10 SDK 10.0.404, got {sdk_version}")
 
 for image, version, stage in (
-    ("sdk", "10.0.403", "restore"),
-    ("aspnet", "10.0.14", "runtime"),
+    ("sdk", "10.0.404", "restore"),
+    ("aspnet", "10.0.15", "runtime"),
 ):
     expected_from = f"FROM mcr.microsoft.com/dotnet/{image}:{version} AS {stage}"
     if not re.search(rf"^{re.escape(expected_from)}$", dockerfile, re.MULTILINE):
@@ -129,11 +129,11 @@ import sys
 from pathlib import Path
 
 sdk_version = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))["sdk"]["version"]
-if tuple(int(part) for part in sdk_version.split(".")) < (10, 0, 403):
-    raise SystemExit(f"Template SDK is below the serviced 10.0.403 baseline: {sdk_version}")
+if tuple(int(part) for part in sdk_version.split(".")) < (10, 0, 404):
+    raise SystemExit(f"Template SDK is below the serviced 10.0.404 baseline: {sdk_version}")
 
 dockerfile = Path(sys.argv[2]).read_text(encoding="utf-8")
-for image, minimum in (("sdk", (10, 0, 403)), ("aspnet", (10, 0, 14))):
+for image, minimum in (("sdk", (10, 0, 404)), ("aspnet", (10, 0, 15))):
     match = re.search(r"^FROM mcr\.microsoft\.com/dotnet/" + image + r":(\d+)\.(\d+)\.(\d+)(?:[-@\s]|$)", dockerfile, re.MULTILINE)
     if match is None or tuple(int(part) for part in match.groups()) < minimum:
         raise SystemExit(f"Template Dockerfile has no serviced {image} image (minimum {'.'.join(map(str, minimum))})")
