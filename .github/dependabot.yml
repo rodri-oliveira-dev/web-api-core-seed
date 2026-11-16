@@ -11,6 +11,13 @@ updates:
       dotnet-dependencies:
         patterns:
           - "*"
+    # Major ASP.NET Core/EF Core upgrades require a coordinated TFM migration.
+    # This .NET 10 template continues to accept compatible minor/patch updates.
+    ignore:
+      - dependency-name: "Microsoft.AspNetCore.*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "Microsoft.EntityFrameworkCore*"
+        update-types: ["version-update:semver-major"]
     open-pull-requests-limit: 5
     labels:
       - "dependencies"

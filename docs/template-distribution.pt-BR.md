@@ -12,7 +12,7 @@ O repositório pode ser empacotado localmente como template NuGet. O pacote **2.
 | Nome curto | `webapi-seed` |
 | ID do pacote | `RodriOliveira.WebApiCoreSeed.Templates` |
 | Versão | `2.0.1` (artefato estável) |
-| SDK | `global.json` — .NET 10.0.403 |
+| SDK | `global.json` — .NET 10.0.404 |
 | Token de origem | `WebApiCoreSeed`, substituído pelo nome passado em `-n` |
 
 O NuGet contém apenas projetos reutilizáveis, testes, gerador/contratos OpenAPI, scripts de Compose/Docker, configurações básicas e READMEs do projeto gerado em EN/PT-BR. **Não inclui** CI, histórico SDD, administração de contribuições, segredos ou saídas de compilação. Cada API gerada recebe um `UserSecretsId` novo, distinto do projeto histórico.
