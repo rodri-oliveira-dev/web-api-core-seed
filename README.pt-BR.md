@@ -17,7 +17,7 @@ A solução ativa é `WebApiCoreSeed.slnx`. O ponto de entrada está em `src/Web
 
 ## Pré-requisitos
 
-- [SDK do .NET **10.0.403**](global.json) para execução no host, conforme `global.json`.
+- [SDK do .NET **10.0.404**](global.json) para execução no host, conforme `global.json`.
 - Docker Engine com Compose v2 para SQL Server, Redis, stack completa e testes de integração (Testcontainers).
 - Git e terminal (Bash ou PowerShell); `curl` é opcional para smoke tests.
 - Senha forte local do SQL Server, segredo JWT e senha do seed. **Nunca os versione**.
