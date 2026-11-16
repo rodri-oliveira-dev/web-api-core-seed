@@ -18,10 +18,13 @@ updates:
         update-types: ["version-update:semver-major"]
       - dependency-name: "Microsoft.EntityFrameworkCore*"
         update-types: ["version-update:semver-major"]
+      # Microsoft.Extensions 11.x and related packages target .NET 11;
+      # keep this net10.0 template on a compatible major version.
+      - dependency-name: "Microsoft.Extensions.*"
+        update-types: ["version-update:semver-major"]
     open-pull-requests-limit: 5
     labels:
       - "dependencies"
-      - "dotnet"
 
   - package-ecosystem: "github-actions"
     directory: "/"
