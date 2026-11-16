@@ -12,7 +12,7 @@ The repository can be packed locally as a .NET template NuGet. The verified **2.
 | Short name | `webapi-seed` |
 | Package ID | `RodriOliveira.WebApiCoreSeed.Templates` |
 | Package version | `2.0.1` (stable release artifact) |
-| Target SDK | `global.json` — .NET 10.0.403 |
+| Target SDK | `global.json` — .NET 10.0.404 |
 | Source token | `WebApiCoreSeed`, replaced with the supplied `-n` name |
 
 The NuGet contains only the reusable source projects, tests, OpenAPI generator/contracts, Compose/Docker/runtime scripts, base configuration, and a generated-project README in EN/PT-BR. It explicitly **does not ship** the source repo CI, SDD history, contribution administration, secrets or `bin/obj` outputs. Each generated API receives a newly generated `UserSecretsId`; the historical project's fixed ID is not copied.
